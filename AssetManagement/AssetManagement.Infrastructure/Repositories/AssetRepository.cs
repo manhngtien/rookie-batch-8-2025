@@ -1,4 +1,4 @@
-﻿using AssetManagement.Core.Interfaces;
+﻿using AssetManagement.Core.Interfaces.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
