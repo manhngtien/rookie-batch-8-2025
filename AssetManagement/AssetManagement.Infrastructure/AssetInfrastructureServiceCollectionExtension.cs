@@ -1,4 +1,4 @@
-﻿using AssetManagement.Core.Interfaces;
+﻿using AssetManagement.Core.Interfaces.Repositories;
 using AssetManagement.Infrastructure.ConfigurationOptions;
 using AssetManagement.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;

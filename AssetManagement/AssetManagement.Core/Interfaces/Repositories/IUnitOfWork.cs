@@ -1,4 +1,4 @@
-﻿namespace AssetManagement.Core.Interfaces;
+﻿namespace AssetManagement.Core.Interfaces.Repositories;
 
 public interface IUnitOfWork
 {

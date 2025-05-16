@@ -9,8 +9,8 @@ namespace AssetManagement.Core.Entities
         public DateTime? UpdatedDate { get; set; }
         
         // Foreign key
-        public string StaffCode { get; set; }
-        
+        public string StaffCode { get; set; } = null!;
+
         // Navigation property
         public virtual User User { get; set; } = null!;
     }

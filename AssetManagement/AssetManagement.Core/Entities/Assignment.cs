@@ -7,10 +7,10 @@ public class Assignment
     public int Id { get; set; }
     public AssignmentStatus State { get; set; }
     public DateTime AssignedDate { get; set; }
-    public string Note { get; set; }
-    
+    public string Note { get; set; } = string.Empty;
+
     // Foreign keys
-    public string AssetCode { get; set; }
+    public string AssetCode { get; set; } = null!;
     public Guid AssignedBy { get; set; }
     public Guid AssignedTo { get; set; }
     

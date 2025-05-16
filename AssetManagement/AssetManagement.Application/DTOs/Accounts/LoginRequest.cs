@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AssetManagement.Application.Service
+namespace AssetManagement.Application.DTOs.Accounts
 {
-    public class IdentityService
+    class LoginRequest
     {
     }
 }

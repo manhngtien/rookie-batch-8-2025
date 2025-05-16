@@ -1,4 +1,4 @@
-﻿using AssetManagement.Core.Interfaces;
+﻿using AssetManagement.Core.Interfaces.Repositories;
 
 namespace AssetManagement.Infrastructure.Data;
 

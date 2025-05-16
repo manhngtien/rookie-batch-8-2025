@@ -3,7 +3,7 @@
 namespace AssetManagement.Core.Entities;
 public class ReturningRequest
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
     public ReturningRequestStatus State { get; set; }
     public DateTime ReturnedDate { get; set; }
     
