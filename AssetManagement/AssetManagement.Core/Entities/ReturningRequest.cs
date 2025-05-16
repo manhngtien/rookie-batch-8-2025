@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AssetManagement.Core.Enums;
 
-namespace AssetManagement.Core.Entities
+namespace AssetManagement.Core.Entities;
+public class ReturningRequest
 {
-    class ReturningRequest
-    {
-    }
+    public Guid Id { get; set; }
+    public ReturningRequestStatus State { get; set; }
+    public DateTime ReturnedDate { get; set; }
+    public Guid RequestedBy { get; set; }
+    public Guid AcceptedBy { get; set; }
 }

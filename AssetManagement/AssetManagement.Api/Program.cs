@@ -5,8 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
+var appSettings = new AppSettings();
+configuration.Bind(appSettings);
 
 /// Add services to the container.
+builder.Services.AddAssetInfrastructure(opt =>
+    configuration.GetSection("InfrastructureSettings").Bind(opt));
 
 // Add Controller and Validation filters 
 builder.Services.AddControllers(options =>
