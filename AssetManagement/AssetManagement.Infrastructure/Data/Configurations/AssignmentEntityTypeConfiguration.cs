@@ -21,17 +21,28 @@ public class AssignmentEntityTypeConfiguration : IEntityTypeConfiguration<Assign
         builder.Property(a => a.AssignedDate)
             .HasColumnName("AssignedDate");
 
-        builder.Property<string>(u => u.Note)
+        builder.Property<string>(a => a.Note)
             .HasColumnName("Note");
         
-        builder.Property<Guid>(u => u.AssignBy)
-            .HasColumnName("AssignBy");
+        builder.Property<Guid>(a => a.AssignedBy)
+            .HasColumnName("AssignedBy");
         
-        builder.Property<Guid>(u => u.AssignedTo)
+        builder.Property<Guid>(a => a.AssignedTo)
             .HasColumnName("AssignedTo");
 
-        builder.HasOne<Asset>()
+        builder.HasOne(a => a.Asset)
             .WithOne()
-            .HasForeignKey<Assignment>(a => a.AssetCode);
+            .HasForeignKey<Assignment>(a => a.AssetCode)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.HasOne<User>(a => a.AssignedToUser)
+            .WithOne()
+            .HasForeignKey<Assignment>(a => a.AssignedTo)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.HasOne<User>(a => a.AssignedByUser)
+            .WithOne()
+            .HasForeignKey<Assignment>(a => a.AssignedBy)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

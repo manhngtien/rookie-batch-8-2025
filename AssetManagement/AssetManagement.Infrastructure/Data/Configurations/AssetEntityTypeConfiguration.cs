@@ -10,7 +10,7 @@ public class AssetEntityTypeConfiguration : IEntityTypeConfiguration<Asset>
     public void Configure(EntityTypeBuilder<Asset> builder)
     {
         builder.ToTable("Assets");
-        builder.HasKey(a => a.Id);
+        builder.HasKey(a => a.AssetCode);
 
         builder.Property(a => a.AssetCode)
             .IsRequired()
@@ -22,17 +22,17 @@ public class AssetEntityTypeConfiguration : IEntityTypeConfiguration<Asset>
         builder.Property(a => a.Specification)
             .HasColumnName("Specification");
 
-        builder.Property<AssetStatus>(u => u.State)
+        builder.Property<AssetStatus>(a => a.State)
             .HasColumnName("Type");
         
-        builder.Property<ELocation>(u => u.Location)
+        builder.Property<ELocation>(a => a.Location)
             .HasColumnName("Location");
         
-        builder.Property<DateTime>(u => u.InstalledDate)
+        builder.Property<DateTime>(a => a.InstalledDate)
             .HasColumnName("InstalledDate");
 
-        builder.HasOne<Category>()
-            .WithMany()
+        builder.HasOne(a => a.Category)
+            .WithMany(c => c.Assets)
             .HasForeignKey(a => a.CategoryId)
             .OnDelete(DeleteBehavior.Restrict);
     }

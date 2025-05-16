@@ -22,5 +22,10 @@ public class CategoryEntityTypeConfiguration : IEntityTypeConfiguration<Category
         builder.Property(a => a.Total)
             .HasColumnName("Total")
             .HasDefaultValue(0);
+        
+        builder.HasMany(c => c.Assets)
+            .WithOne(a => a.Category)
+            .HasForeignKey(a => a.CategoryId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -6,4 +6,7 @@ public class Category
     public string Prefix { get; set; }
     public string CategoryName { get; set; }
     public int Total { get; set; }
+
+    // Navigation property
+    public virtual ICollection<Asset> Assets { get; set; } = [];
 }

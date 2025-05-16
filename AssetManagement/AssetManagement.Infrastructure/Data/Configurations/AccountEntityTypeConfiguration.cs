@@ -19,8 +19,8 @@ public class AccountEntityTypeConfiguration : IEntityTypeConfiguration<Account>
         
         builder.Property(a => a.UpdatedDate)
             .HasColumnName("UpdatedDate");
-
-        builder.HasOne<User>()
+        
+        builder.HasOne(a => a.User)
             .WithOne()
             .HasForeignKey<Account>(a => a.StaffCode)
             .OnDelete(DeleteBehavior.Cascade);

@@ -17,18 +17,20 @@ public class ReturningRequestEntityTypeConfiguration : IEntityTypeConfiguration<
         builder.Property(r => r.ReturnedDate)
             .HasColumnName("ReturnedDate");
         
-        builder.Property<Guid>(u => u.RequestedBy)
+        builder.Property<Guid>(r => r.RequestedBy)
             .HasColumnName("RequestedBy");
         
-        builder.Property<Guid>(u => u.AcceptedBy)
+        builder.Property<Guid>(r => r.AcceptedBy)
             .HasColumnName("AcceptedBy");
 
-        builder.HasOne<User>()
+        builder.HasOne<User>(r => r.RequestedByUser)
             .WithOne()
-            .HasForeignKey<ReturningRequest>(r => r.RequestedBy);
-        
-        builder.HasOne<User>()
+            .HasForeignKey<ReturningRequest>(r => r.RequestedBy)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne<User>(r => r.AcceptedByUser)
             .WithOne()
-            .HasForeignKey<ReturningRequest>(r => r.AcceptedBy);
+            .HasForeignKey<ReturningRequest>(r => r.AcceptedBy)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -9,7 +9,7 @@ var configuration = builder.Configuration;
 var appSettings = new AppSettings();
 configuration.Bind(appSettings);
 
-/// Add services to the container.
+// Add services to the container.
 builder.Services.AddAssetInfrastructure(opt =>
     configuration.GetSection("InfrastructureSettings").Bind(opt));
 

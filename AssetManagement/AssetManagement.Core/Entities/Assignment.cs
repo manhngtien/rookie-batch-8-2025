@@ -5,10 +5,17 @@ namespace AssetManagement.Core.Entities;
 public class Assignment
 {
     public int Id { get; set; }
-    public string AssetCode { get; set; }
     public AssignmentStatus State { get; set; }
     public DateTime AssignedDate { get; set; }
     public string Note { get; set; }
-    public Guid AssignBy { get; set; }
+    
+    // Foreign keys
+    public string AssetCode { get; set; }
+    public Guid AssignedBy { get; set; }
     public Guid AssignedTo { get; set; }
+    
+    // Navigation properties
+    public virtual Asset Asset { get; set; } = null!;
+    public virtual User AssignedByUser { get; set; } = null!;
+    public virtual User AssignedToUser { get; set; } = null!;
 }
