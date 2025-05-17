@@ -19,15 +19,17 @@ public class AssignmentEntityTypeConfiguration : IEntityTypeConfiguration<Assign
             .HasColumnName("State");
         
         builder.Property(a => a.AssignedDate)
+            .IsRequired()
             .HasColumnName("AssignedDate");
 
         builder.Property<string>(a => a.Note)
             .HasColumnName("Note");
         
-        builder.Property<Guid>(a => a.AssignedBy)
+        builder.Property<string>(a => a.AssignedBy)
             .HasColumnName("AssignedBy");
         
-        builder.Property<Guid>(a => a.AssignedTo)
+        builder.Property<string>(a => a.AssignedTo)
+            .IsRequired()
             .HasColumnName("AssignedTo");
 
         builder.HasOne(a => a.Asset)

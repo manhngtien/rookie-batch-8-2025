@@ -47,6 +47,7 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
             .HasDefaultValue(ERole.Staff);
 
         builder.Property<ELocation>(u => u.Location)
+            .IsRequired()
             .HasColumnName("Location");
 
         builder.Property<bool>(u => u.IsDisabled)

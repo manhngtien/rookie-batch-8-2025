@@ -8,8 +8,8 @@ public class ReturningRequest
     public DateTime ReturnedDate { get; set; }
     
     // Foreign keys
-    public Guid RequestedBy { get; set; }
-    public Guid AcceptedBy { get; set; }
+    public string RequestedBy { get; set; } = null!;
+    public string AcceptedBy { get; set; } = null!;
     
     // Navigation properties
     public virtual User RequestedByUser { get; set; } = null!;

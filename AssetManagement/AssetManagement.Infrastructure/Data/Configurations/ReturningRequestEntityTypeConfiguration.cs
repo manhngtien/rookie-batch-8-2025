@@ -17,10 +17,10 @@ public class ReturningRequestEntityTypeConfiguration : IEntityTypeConfiguration<
         builder.Property(r => r.ReturnedDate)
             .HasColumnName("ReturnedDate");
         
-        builder.Property<Guid>(r => r.RequestedBy)
+        builder.Property<string>(r => r.RequestedBy)
             .HasColumnName("RequestedBy");
         
-        builder.Property<Guid>(r => r.AcceptedBy)
+        builder.Property<string>(r => r.AcceptedBy)
             .HasColumnName("AcceptedBy");
 
         builder.HasOne<User>(r => r.RequestedByUser)

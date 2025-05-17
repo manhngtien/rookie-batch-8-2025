@@ -17,18 +17,22 @@ public class AssetEntityTypeConfiguration : IEntityTypeConfiguration<Asset>
             .HasColumnName("AssetCode");
         
         builder.Property(a => a.AssetName)
+            .IsRequired()
             .HasColumnName("AssetName");
         
         builder.Property(a => a.Specification)
+            .IsRequired()
             .HasColumnName("Specification");
 
         builder.Property<AssetStatus>(a => a.State)
+            .IsRequired()
             .HasColumnName("Type");
         
         builder.Property<ELocation>(a => a.Location)
             .HasColumnName("Location");
         
         builder.Property<DateTime>(a => a.InstalledDate)
+            .IsRequired()
             .HasColumnName("InstalledDate");
 
         builder.HasOne(a => a.Category)
