@@ -25,6 +25,7 @@ public static class AssetInfrastructureServiceCollectionExtension
         // Dependencies Services, Repos
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IAccountRepository, AccountRepository>();
         return services;
     }
 }

@@ -74,36 +74,88 @@ namespace AssetManagement.Infrastructure.Repositories
                 IsDisabled = entity.IsDisabled
             };
 
-            // Add to mock list to simulate persistence
             _mockUsers.Add(mockUser);
-
             return await Task.FromResult(mockUser);
+        }
+
+        public async Task DeleteAsync(User entity)
+        {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
+            var user = _mockUsers.FirstOrDefault(u => u.StaffCode == entity.StaffCode);
+            if (user == null)
+            {
+                throw new InvalidOperationException($"User with StaffCode {entity.StaffCode} not found.");
+            }
+
+            _mockUsers.Remove(user);
+            await Task.CompletedTask;
         }
 
         public IQueryable<User> GetAllAsync()
         {
-            // Return the mock user list as IQueryable
             return _mockUsers.AsQueryable();
         }
 
-        public Task DeleteAsync(User entity)
+        public async Task<User?> GetByIdAsync(string userId)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new ArgumentNullException(nameof(userId));
+            }
+
+            var user = _mockUsers.FirstOrDefault(u => u.StaffCode == userId);
+            return await Task.FromResult(user);
         }
 
-        public Task<User?> GetByIdAsync(string userId)
+        public async Task<User?> GetByIdAsync<TId>(TId id)
         {
-            throw new NotImplementedException();
+            if (id == null)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+
+            User? user = null;
+            if (id is string stringId)
+            {
+                user = _mockUsers.FirstOrDefault(u => u.StaffCode == stringId);
+            }
+            else if (id is Guid guidId)
+            {
+                // Assuming StaffCode could be parsed as Guid in some cases, or link to Account.Id
+                user = _mockUsers.FirstOrDefault(u => u.StaffCode == guidId.ToString());
+            }
+
+            return await Task.FromResult(user);
         }
 
-        public Task<User?> GetByIdAsync<TId>(TId id)
+        public async Task UpdateAsync(User entity)
         {
-            throw new NotImplementedException();
-        }
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
 
-        public Task UpdateAsync(User entity)
-        {
-            throw new NotImplementedException();
+            var existingUser = _mockUsers.FirstOrDefault(u => u.StaffCode == entity.StaffCode);
+            if (existingUser == null)
+            {
+                throw new InvalidOperationException($"User with StaffCode {entity.StaffCode} not found.");
+            }
+
+            existingUser.UserName = entity.UserName ?? existingUser.UserName;
+            existingUser.FirstName = entity.FirstName ?? existingUser.FirstName;
+            existingUser.LastName = entity.LastName ?? existingUser.LastName;
+            existingUser.DateOfBirth = entity.DateOfBirth != default ? entity.DateOfBirth : existingUser.DateOfBirth;
+            existingUser.JoinedDate = entity.JoinedDate != default ? entity.JoinedDate : existingUser.JoinedDate;
+            existingUser.Gender = entity.Gender;
+            existingUser.Type = entity.Type != default ? entity.Type : existingUser.Type;
+            existingUser.Location = entity.Location != default ? entity.Location : existingUser.Location;
+            existingUser.IsDisabled = entity.IsDisabled;
+
+            await Task.CompletedTask;
         }
     }
 }
