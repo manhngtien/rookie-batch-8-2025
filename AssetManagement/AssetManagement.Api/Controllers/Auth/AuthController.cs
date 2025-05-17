@@ -42,7 +42,7 @@ namespace AssetManagement.Api.Controllers.Auth
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromForm] LoginRequest loginRequest)
+        public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
         {
             var tokenResponse = await _identityService.LoginAsync(loginRequest);
             SetAuthCookies(tokenResponse.AccessToken, tokenResponse.RefreshToken);
@@ -60,7 +60,6 @@ namespace AssetManagement.Api.Controllers.Auth
         }
 
         [HttpGet("check")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CheckAuth()
         {
             var staffCode = User.GetUserId();
@@ -69,14 +68,6 @@ namespace AssetManagement.Api.Controllers.Auth
             return Ok(userResponse);
         }
 
-        [HttpGet("test")]
-        [Authorize(Roles = "Staff")]
-        public async Task<IActionResult> Test()
-        {
-            var staffCode = User.GetUserId();
-            var userResponse = await _identityService.GetCurrentUserAsync(staffCode);
-            return Ok(userResponse);
-        }
     }
 }
 

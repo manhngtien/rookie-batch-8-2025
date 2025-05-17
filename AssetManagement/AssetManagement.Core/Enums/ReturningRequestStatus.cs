@@ -2,6 +2,6 @@
 
 public enum ReturningRequestStatus
 {
-    WaitForReturning,
+    WaitForReturning = 1,
     Completed
 }
