@@ -2,6 +2,7 @@
 using AssetManagement.Api.Extentions;
 using AssetManagement.Application.DTOs.Accounts;
 using AssetManagement.Application.Interfaces.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AssetManagement.Api.Controllers.Auth
@@ -59,11 +60,21 @@ namespace AssetManagement.Api.Controllers.Auth
         }
 
         [HttpGet("check")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CheckAuth()
         {
             var staffCode = User.GetUserId();
             var userResponse = await _identityService.GetCurrentUserAsync(staffCode);
 
+            return Ok(userResponse);
+        }
+
+        [HttpGet("test")]
+        [Authorize(Roles = "Staff")]
+        public async Task<IActionResult> Test()
+        {
+            var staffCode = User.GetUserId();
+            var userResponse = await _identityService.GetCurrentUserAsync(staffCode);
             return Ok(userResponse);
         }
     }
