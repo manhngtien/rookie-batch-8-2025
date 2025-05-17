@@ -1,7 +1,7 @@
 ﻿using AssetManagement.Core.Entities;
-using AssetManagement.Core.Interfaces.Repositories.Base;
+using AssetManagement.Core.Interfaces.Base;
 
-namespace AssetManagement.Core.Interfaces.Repositories
+namespace AssetManagement.Core.Interfaces
 {
     interface IAssignmentRepository : IBaseRepository<Assignment>
     {

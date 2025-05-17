@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AssetManagement.Core.Interfaces.Repositories
+namespace AssetManagement.Core.Interfaces
 {
     interface IAccountRepository
     {

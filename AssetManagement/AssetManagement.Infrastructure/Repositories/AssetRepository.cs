@@ -1,5 +1,5 @@
 ﻿using AssetManagement.Core.Entities;
-using AssetManagement.Core.Interfaces.Repositories;
+using AssetManagement.Core.Interfaces;
 
 namespace AssetManagement.Infrastructure.Repositories
 {

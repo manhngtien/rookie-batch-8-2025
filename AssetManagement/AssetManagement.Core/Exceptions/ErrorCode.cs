@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace AssetManagement.Core.DTOs.Exceptions
+namespace AssetManagement.Core.Exceptions
 {
     public class ErrorCode
     {
@@ -8,7 +8,7 @@ namespace AssetManagement.Core.DTOs.Exceptions
         /// Custom error code, message, and status.
         /// </summary>
         // User related errors (600 - 699)
-
+        public static readonly ErrorCode USER_NOT_FOUND = new(600, "User not found", StatusCodes.Status404NotFound);
 
         // Access and token related errors (700 - 799)
         public static readonly ErrorCode UNAUTHORIZED_ACCESS = new(700, "Unauthorized access", StatusCodes.Status401Unauthorized);
@@ -20,6 +20,8 @@ namespace AssetManagement.Core.DTOs.Exceptions
 
         // Assets related errors (900 - 999) 
         public static readonly ErrorCode ASSET_NOT_FOUND = new(900, "Asset not found", StatusCodes.Status404NotFound);
+
+        // Assignment related errors (1000 - 1099)
 
         /// <summary>
         /// Atributes for error code, message, and status. 

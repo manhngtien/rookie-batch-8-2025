@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace AssetManagement.Core.DTOs.Paginations
+namespace AssetManagement.Application.DTOs.Paginations
 {
     public class PagedList<T> : List<T>
     {

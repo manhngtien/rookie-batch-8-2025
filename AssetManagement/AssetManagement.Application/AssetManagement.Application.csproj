@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AssetManagement.Core\AssetManagement.Core.csproj" />
+    <ProjectReference Include="..\AssetManagement.Infrastructure\AssetManagement.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

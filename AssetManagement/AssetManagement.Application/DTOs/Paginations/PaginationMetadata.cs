@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AssetManagement.Core.DTOs.Paginations
+namespace AssetManagement.Application.DTOs.Paginations
 {
     public class PaginationMetadata
     {
