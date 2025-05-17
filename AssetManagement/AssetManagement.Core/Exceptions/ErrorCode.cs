@@ -15,7 +15,6 @@ namespace AssetManagement.Core.Exceptions
         public static readonly ErrorCode UNAUTHORIZED_ACCESS = new(700, "Unauthorized access", StatusCodes.Status401Unauthorized);
         public static readonly ErrorCode ACCESS_DENIED = new(701, "Access denied to view or modify this resource", StatusCodes.Status403Forbidden);
         public static readonly ErrorCode INVALID_CLAIM = new(702, "Invalid claim", StatusCodes.Status403Forbidden);
-        public static readonly ErrorCode CANNOT_SET_JWT = new(703, "Cannot set JWT", StatusCodes.Status500InternalServerError);
         public static readonly ErrorCode INVALID_CREDENTIALS = new(704, "Invalid credentials", StatusCodes.Status401Unauthorized);
         public static readonly ErrorCode INVALID_REFRESH_TOKEN = new(705, "Invalid refresh token", StatusCodes.Status401Unauthorized);
         public static readonly ErrorCode REFRESH_TOKEN_EXPIRED = new(706, "Refresh token expired", StatusCodes.Status401Unauthorized);

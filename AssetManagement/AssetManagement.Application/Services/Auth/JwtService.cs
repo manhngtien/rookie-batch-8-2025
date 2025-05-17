@@ -43,14 +43,6 @@ namespace AssetManagement.Application.Services.Auth
             );
 
             var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-            if (!tokenString.Contains("."))
-            {
-                var attributes = new Dictionary<string, object>
-                {
-                    { "Message", "Cannot set JWT" }
-                };
-                throw new AppException(ErrorCode.CANNOT_SET_JWT, attributes);
-            }
             return tokenString;
         }
 
@@ -111,13 +103,13 @@ namespace AssetManagement.Application.Services.Auth
                 var accountIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
                 if (accountIdClaim == null || !Guid.TryParse(accountIdClaim.Value, out Guid accountId))
                 {
-                    throw new AppException(ErrorCode.INVALID_REFRESH_TOKEN);
+                    throw new AccessDeniedException(ErrorCode.INVALID_REFRESH_TOKEN);
                 }
                 return accountId;
             }
             catch
             {
-                throw new AppException(ErrorCode.INVALID_REFRESH_TOKEN);
+                throw new AccessDeniedException(ErrorCode.INVALID_REFRESH_TOKEN);
             }
         }
     }
