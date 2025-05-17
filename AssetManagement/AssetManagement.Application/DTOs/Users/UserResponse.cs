@@ -11,8 +11,8 @@ namespace AssetManagement.Application.DTOs.Users
         public required DateTime DateOfBirth { get; set; }
         public required DateTime JoinedDate { get; set; }
         public bool Gender { get; set; }
-        public ERole Type { get; set; }
-        public required ELocation Location { get; set; }
+        public required string Type { get; set; }
+        public required string Location { get; set; }
         public bool IsDisabled { get; set; }
     }
 }

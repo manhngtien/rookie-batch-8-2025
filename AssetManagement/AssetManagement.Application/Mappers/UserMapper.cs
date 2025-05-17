@@ -1,5 +1,6 @@
 ﻿using AssetManagement.Application.DTOs.Users;
 using AssetManagement.Core.Entities;
+using AssetManagement.Core.Enums;
 
 namespace AssetManagement.Application.Mappers
 {
@@ -16,8 +17,8 @@ namespace AssetManagement.Application.Mappers
                 DateOfBirth = user.DateOfBirth,
                 Gender = user.Gender,
                 JoinedDate = user.JoinedDate,
-                Type = user.Type,
-                Location = user.Location,
+                Type = Enum.GetName(user.Type) ?? "Unknown",
+                Location = Enum.GetName(user.Location) ?? "Unknown",
                 IsDisabled = user.IsDisabled,
             };
         }
