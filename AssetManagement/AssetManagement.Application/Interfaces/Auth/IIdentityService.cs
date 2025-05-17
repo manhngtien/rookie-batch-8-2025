@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AssetManagement.Application.DTOs.Accounts;
+using AssetManagement.Application.DTOs.Users;
 
-namespace AssetManagement.Core.Interfaces.Services.Auth
+namespace AssetManagement.Application.Interfaces.Auth
 {
     public interface IIdentityService
     {
-        Task<UserResponse> GetCurrentUserAsync(Guid userId);
+        Task<UserResponse> GetCurrentUserAsync(string staffCode);
         Task<TokenResponse> LoginAsync(LoginRequest loginRequest);
-        Task<TokenResponse> RefreshTokenAsync(RefreshTokenRequest dto);
-        Task<TokenResponse> RegisterAsync(RegisterRequest registerRequest);
+        Task<TokenResponse> RefreshTokenAsync(string? refreshToken);
     }
 }

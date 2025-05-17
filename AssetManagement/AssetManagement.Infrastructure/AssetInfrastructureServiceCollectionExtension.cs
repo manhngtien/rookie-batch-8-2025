@@ -14,14 +14,14 @@ public static class AssetInfrastructureServiceCollectionExtension
         var settings = new InfrastructureSettings();
         configureOption(settings);
         services.Configure(configureOption);
-        
+
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(settings.ConnectionStrings.Default));
-        
+
         services.AddIdentity<Account, IdentityRole<Guid>>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
-        
+
         // Dependencies Services, Repos
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IAssetRepository, AssetRepository>();

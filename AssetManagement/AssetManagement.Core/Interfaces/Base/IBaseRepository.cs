@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-
-namespace AssetManagement.Core.Interfaces.Base
+﻿namespace AssetManagement.Core.Interfaces.Base
 {
     public interface IBaseRepository<T> where T : class
     {

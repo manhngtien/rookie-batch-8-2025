@@ -1,4 +1,4 @@
-﻿using AssetManagement.Application.DTOs.Paginations;
+﻿using AssetManagement.Application.Paginations;
 using Microsoft.EntityFrameworkCore;
 
 namespace AssetManagement.Application.Services

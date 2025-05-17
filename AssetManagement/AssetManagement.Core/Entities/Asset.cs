@@ -10,10 +10,10 @@ public class Asset
     public AssetStatus State { get; set; }
     public ELocation Location { get; set; }
     public DateTime InstalledDate { get; set; }
-    
+
     // Foreign key   
     public int CategoryId { get; set; }
-    
+
     // Navigation property
     public virtual Category Category { get; set; } = null!;
 }
