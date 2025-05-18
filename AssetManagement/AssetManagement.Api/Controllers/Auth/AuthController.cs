@@ -68,6 +68,13 @@ namespace AssetManagement.Api.Controllers.Auth
             return Ok(userResponse);
         }
 
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            _httpContextAccessor.HttpContext!.Response.Cookies.Delete("auth_jwt");
+            _httpContextAccessor.HttpContext.Response.Cookies.Delete("refresh");
+            return NoContent();
+        }
     }
 }
 
