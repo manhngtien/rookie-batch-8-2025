@@ -1,4 +1,4 @@
-﻿using AssetManagement.Core.Interfaces.Repositories;
+﻿using AssetManagement.Core.Interfaces;
 
 namespace AssetManagement.Infrastructure.Data;
 
@@ -10,7 +10,7 @@ public class UnitOfWork : IUnitOfWork
     {
         _dbContext = dbContext;
     }
-    
+
     public async Task<int> CommitAsync(CancellationToken cancellationToken)
     {
         return await _dbContext.SaveChangesAsync(cancellationToken);

@@ -1,4 +1,4 @@
-﻿using AssetManagement.Core.DTOs.Exceptions;
+﻿using AssetManagement.Core.Exceptions;
 using AssetManagement.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 

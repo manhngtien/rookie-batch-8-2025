@@ -1,4 +1,4 @@
-﻿namespace AssetManagement.Core.DTOs.Paginations
+﻿namespace AssetManagement.Application.Paginations
 {
     public class PaginationParams
     {

@@ -7,7 +7,7 @@ namespace AssetManagement.Core.Entities
         public override Guid Id { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
-        
+
         // Foreign key
         public string StaffCode { get; set; } = null!;
 

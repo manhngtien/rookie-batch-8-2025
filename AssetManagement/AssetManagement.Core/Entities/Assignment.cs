@@ -13,7 +13,7 @@ public class Assignment
     public string AssetCode { get; set; } = null!;
     public string AssignedBy { get; set; }
     public required string AssignedTo { get; set; }
-    
+
     // Navigation properties
     public virtual Asset Asset { get; set; } = null!;
     public virtual User AssignedByUser { get; set; } = null!;

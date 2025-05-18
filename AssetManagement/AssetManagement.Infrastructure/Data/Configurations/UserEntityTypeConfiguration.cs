@@ -20,25 +20,25 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.UserName)
             .IsRequired()
             .HasColumnName("UserName");
-        
+
         builder.Property(u => u.FirstName)
             .IsRequired()
             .HasMaxLength(128)
             .HasColumnName("FirstName");
-        
+
         builder.Property(u => u.LastName)
             .IsRequired()
             .HasMaxLength(128)
             .HasColumnName("LastName");
-        
+
         builder.Property<DateTime>(u => u.DateOfBirth)
             .IsRequired()
             .HasColumnName("DateOfBirth");
-        
+
         builder.Property<DateTime>(u => u.JoinedDate)
             .IsRequired()
             .HasColumnName("JoinedDate");
-        
+
         builder.Property<bool>(u => u.Gender)
             .HasColumnName("Gender");
 

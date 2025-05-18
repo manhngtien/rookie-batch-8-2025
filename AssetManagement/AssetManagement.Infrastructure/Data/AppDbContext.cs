@@ -12,17 +12,17 @@ public class AppDbContext : IdentityDbContext<Account, IdentityRole<Guid>, Guid>
     public DbSet<Category> Categories { get; set; }
     public DbSet<Assignment> Assignments { get; set; }
     public DbSet<ReturningRequest> ReturnRequests { get; set; }
-    
+
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
     }
-    
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {   
+    {
         base.OnModelCreating(modelBuilder);
 
         // Renaming Identity Tables
@@ -32,7 +32,7 @@ public class AppDbContext : IdentityDbContext<Account, IdentityRole<Guid>, Guid>
         modelBuilder.Entity<IdentityUserLogin<Guid>>().ToTable("UserLogins");
         modelBuilder.Entity<IdentityUserToken<Guid>>().ToTable("UserTokens");
         modelBuilder.Entity<IdentityRoleClaim<Guid>>().ToTable("RoleClaims");
-        
+
         // Mapping Entities Configuration
         modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
     }

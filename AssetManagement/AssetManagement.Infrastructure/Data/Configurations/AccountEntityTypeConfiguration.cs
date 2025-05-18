@@ -13,13 +13,13 @@ public class AccountEntityTypeConfiguration : IEntityTypeConfiguration<Account>
         builder.Property(a => a.StaffCode)
             .IsRequired()
             .HasColumnName("StaffCode");
-        
+
         builder.Property(a => a.CreatedDate)
             .HasColumnName("CreatedDate");
-        
+
         builder.Property(a => a.UpdatedDate)
             .HasColumnName("UpdatedDate");
-        
+
         builder.HasOne(a => a.User)
             .WithOne()
             .HasForeignKey<Account>(a => a.StaffCode)

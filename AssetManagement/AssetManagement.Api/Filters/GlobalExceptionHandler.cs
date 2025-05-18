@@ -1,4 +1,5 @@
-﻿using AssetManagement.Core.DTOs.Exceptions;
+﻿using AssetManagement.Application.DTOs.Errors;
+using AssetManagement.Core.DTOs.Exceptions;
 using AssetManagement.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
@@ -41,9 +42,10 @@ namespace AssetManagement.Api.Filters
         private async Task<bool> HandleValidationExceptionAsync(HttpContext httpContext, ValidationException exception, CancellationToken cancellationToken)
         {
             var errorCode = exception.GetErrorCode();
-            var response = new ErrorResponse(
+            var response = new ErrorWithBodyResponse<Dictionary<string, object>>(
                 errorCode.GetCode(),
-                errorCode.GetMessage());
+                errorCode.GetMessage(),
+                exception.GetAttributes());
 
             httpContext.Response.StatusCode = errorCode.GetStatus();
             await httpContext.Response.WriteAsJsonAsync(response, cancellationToken);

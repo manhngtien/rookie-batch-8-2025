@@ -10,16 +10,16 @@ public class ReturningRequestEntityTypeConfiguration : IEntityTypeConfiguration<
     {
         builder.ToTable("ReturningRequests");
         builder.HasKey(r => r.Id);
-        
+
         builder.Property(r => r.State)
             .HasColumnName("State");
-        
+
         builder.Property(r => r.ReturnedDate)
             .HasColumnName("ReturnedDate");
-        
+
         builder.Property<string>(r => r.RequestedBy)
             .HasColumnName("RequestedBy");
-        
+
         builder.Property<string>(r => r.AcceptedBy)
             .HasColumnName("AcceptedBy");
 

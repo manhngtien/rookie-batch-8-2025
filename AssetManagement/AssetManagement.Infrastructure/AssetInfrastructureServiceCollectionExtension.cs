@@ -1,5 +1,5 @@
 using AssetManagement.Core.Entities;
-using AssetManagement.Core.Interfaces.Repositories;
+using AssetManagement.Core.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,17 +14,18 @@ public static class AssetInfrastructureServiceCollectionExtension
         var settings = new InfrastructureSettings();
         configureOption(settings);
         services.Configure(configureOption);
-        
+
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(settings.ConnectionStrings.Default));
-        
+
         services.AddIdentity<Account, IdentityRole<Guid>>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
-        
+
         // Dependencies Services, Repos
         services.AddScoped<IUnitOfWork, UnitOfWork>();
-        services.AddScoped<IAssetRepository, AssetRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IAccountRepository, AccountRepository>();
         return services;
     }
 }

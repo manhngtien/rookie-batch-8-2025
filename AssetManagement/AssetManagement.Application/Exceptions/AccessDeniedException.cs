@@ -1,5 +1,4 @@
-﻿
-using AssetManagement.Core.DTOs.Exceptions;
+﻿using AssetManagement.Core.Exceptions;
 
 namespace AssetManagement.Infrastructure.Exceptions
 {
