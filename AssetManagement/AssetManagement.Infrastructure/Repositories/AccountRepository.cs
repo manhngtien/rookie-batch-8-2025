@@ -2,10 +2,6 @@
 using AssetManagement.Core.Enums;
 using AssetManagement.Core.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AssetManagement.Infrastructure.Repositories
 {
@@ -136,11 +132,33 @@ namespace AssetManagement.Infrastructure.Repositories
                     case ERole.Staff:
                         roles.Add("Staff");
                         break;
-                        // Add other roles as needed
                 }
             }
 
             return await Task.FromResult(roles);
+        }
+
+        public async Task<Account?> GetByStaffCodeAsync(string staffCode)
+        {
+            var account = _mockAccounts.FirstOrDefault(a => a.StaffCode.Equals(staffCode, StringComparison.OrdinalIgnoreCase));
+            return await Task.FromResult(account);
+        }
+
+        public async Task<bool> ChangePasswordAsync(Account account, string newPassword)
+        {
+            if (account == null)
+            {
+                return false;
+            }
+
+            var existingAccount = _mockAccounts.FirstOrDefault(a => a.Id == account.Id);
+            if (existingAccount == null)
+            {
+                return false;
+            }
+
+            existingAccount.PasswordHash = _passwordHasher.HashPassword(null, newPassword);
+            return await Task.FromResult(true);
         }
     }
 }

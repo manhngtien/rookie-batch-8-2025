@@ -1,7 +1,7 @@
 ﻿using AssetManagement.Application.DTOs.Accounts;
 using FluentValidation;
 
-namespace AssetManagement.Application.Validators
+namespace AssetManagement.Application.Validators.Accounts
 {
     public class LoginRequestValidator : AbstractValidator<LoginRequest>
     {

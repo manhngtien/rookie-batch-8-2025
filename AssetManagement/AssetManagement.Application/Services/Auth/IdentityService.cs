@@ -101,5 +101,26 @@ namespace AssetManagement.Application.Services.Auth
                 UserResponse = user.MapModelToResponse(),
             };
         }
+
+        public async Task ChangePassword(string staffCode, ChangePasswordRequest changePasswordRequest)
+        {
+            var account = await _accountRepository.GetByStaffCodeAsync(staffCode);
+
+            if (account == null)
+            {
+                throw new AppException(ErrorCode.ACCOUNT_NOT_FOUND);
+            }
+            if (!await _accountRepository.CheckPasswordAsync(account, changePasswordRequest.OldPassword))
+            {
+                throw new AppException(ErrorCode.INVALID_CREDENTIALS);
+            }
+
+            var result = await _accountRepository.ChangePasswordAsync(account, changePasswordRequest.NewPassword);
+
+            if (!result)
+            {
+                throw new AppException(ErrorCode.SAVE_ERROR);
+            }
+        }
     }
 }

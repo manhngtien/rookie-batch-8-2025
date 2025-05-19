@@ -3,7 +3,7 @@ using AssetManagement.Api.Filters;
 using AssetManagement.Api.Settings;
 using AssetManagement.Application.Interfaces.Auth;
 using AssetManagement.Application.Services.Auth;
-using AssetManagement.Application.Validators;
+using AssetManagement.Application.Validators.Accounts;
 using AssetManagement.Core.Interfaces.Services.Auth;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
@@ -27,18 +27,18 @@ builder.Services.AddAssetInfrastructure(opt =>
 builder.Services.AddScoped<ITokenService, JwtService>();
 builder.Services.AddScoped<IIdentityService, IdentityService>();
 
-// Add Controller and Validation filters 
-builder.Services.AddControllers(options =>
-{
-    options.Filters.Add<ValidationFilter>();
-});
-builder.Services.AddValidatorsFromAssemblyContaining<LoginRequestValidator>();
-
 // Disable automatic model state error response
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;
 });
+
+// Add Controller and Validation filters 
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ValidationFilter>();
+});
+builder.Services.AddValidatorsFromAssembly(typeof(ChangePasswordRequestValidator).Assembly);
 
 // Bind settings
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));

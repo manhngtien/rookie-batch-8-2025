@@ -59,7 +59,17 @@ namespace AssetManagement.Api.Controllers.Auth
             return Ok(tokenResponse.UserResponse);
         }
 
+
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            _httpContextAccessor.HttpContext!.Response.Cookies.Delete("auth_jwt");
+            _httpContextAccessor.HttpContext.Response.Cookies.Delete("refresh");
+            return NoContent();
+        }
+
         [HttpGet("check")]
+        [Authorize]
         public async Task<IActionResult> CheckAuth()
         {
             var staffCode = User.GetUserId();
@@ -68,11 +78,12 @@ namespace AssetManagement.Api.Controllers.Auth
             return Ok(userResponse);
         }
 
-        [HttpPost("logout")]
-        public IActionResult Logout()
+        [HttpPost("change-password")]
+        [Authorize]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest changePasswordRequest)
         {
-            _httpContextAccessor.HttpContext!.Response.Cookies.Delete("auth_jwt");
-            _httpContextAccessor.HttpContext.Response.Cookies.Delete("refresh");
+            var staffCode = User.GetUserId();
+            await _identityService.ChangePassword(staffCode, changePasswordRequest);
             return NoContent();
         }
     }

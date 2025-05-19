@@ -7,6 +7,10 @@ namespace AssetManagement.Core.Exceptions
         /// <summary>
         /// Custom error code, message, and status.
         /// </summary>
+        /// 
+        // Database integration errors (500 - 599)
+        public static readonly ErrorCode SAVE_ERROR = new (500, "Error saving to database", StatusCodes.Status500InternalServerError);
+
         // User related errors (600 - 699)
         public static readonly ErrorCode ACCOUNT_NOT_FOUND = new(600, "Account not found", StatusCodes.Status404NotFound);
         public static readonly ErrorCode USER_NOT_FOUND = new(601, "User not found", StatusCodes.Status404NotFound);
@@ -21,7 +25,7 @@ namespace AssetManagement.Core.Exceptions
         public static readonly ErrorCode REFRESH_TOKEN_NOT_FOUND = new(707, "Refresh token not found", StatusCodes.Status404NotFound);
 
         // Validation related errors (800 - 899)
-        public static readonly ErrorCode VALIDATION_ERROR = new(800, "Validation error", StatusCodes.Status400BadRequest);
+        public static readonly ErrorCode VALIDATION_ERROR = new(800, "Validation error", StatusCodes.Status422UnprocessableEntity);
 
         // Assets related errors (900 - 999) 
         public static readonly ErrorCode ASSET_NOT_FOUND = new(900, "Asset not found", StatusCodes.Status404NotFound);
