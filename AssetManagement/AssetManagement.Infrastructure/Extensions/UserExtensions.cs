@@ -1,4 +1,5 @@
 ﻿using AssetManagement.Core.Entities;
+using AssetManagement.Core.Enums;
 
 namespace AssetManagement.Infrastructure.Extensions
 {
@@ -25,15 +26,21 @@ namespace AssetManagement.Infrastructure.Extensions
                 || x.StaffCode.ToString().ToLower().Contains(lowerCaseTerm));
         }
 
-        public static IQueryable<User> Filter(this IQueryable<User> query, string type)
+        public static IQueryable<User> Filter(this IQueryable<User> query, string? type)
         {
             if (!string.IsNullOrEmpty(type))
             {
-                query = query.Where(x => x.Type.Equals(type));
+                // Try to parse the string into an ERole enum
+                if (Enum.TryParse<ERole>(type, out var roleType))
+                {
+                    // Filter by the parsed enum value
+                    query = query.Where(x => x.Type == roleType);
+                }
             }
 
             return query;
         }
+
 
 
     }
