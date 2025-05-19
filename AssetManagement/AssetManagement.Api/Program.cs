@@ -10,6 +10,8 @@ using AssetManagement.Core.Interfaces.Services.Auth;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
+using AssetManagement.Application.Interfaces;
+using AssetManagement.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -30,6 +32,7 @@ builder.Services.AddScoped<ITokenService, JwtService>();
 builder.Services.AddScoped<IIdentityService, IdentityService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
+builder.Services.AddScoped<IAssetService, AssetService>();
 
 // Disable automatic model state error response
 builder.Services.Configure<ApiBehaviorOptions>(options =>
