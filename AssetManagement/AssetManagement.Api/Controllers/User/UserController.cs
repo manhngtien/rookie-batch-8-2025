@@ -8,6 +8,7 @@ using AssetManagement.Application.Interfaces.Auth;
 using Microsoft.AspNetCore.Mvc;
 using AssetManagement.Core.Exceptions;
 using AssetManagement.Infrastructure.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AssetManagement.Api.Controllers.User
 {
@@ -22,57 +23,34 @@ namespace AssetManagement.Api.Controllers.User
             _identityService = identityService;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserResponse>>> GetUsers([FromQuery] UserParams userParams)
         {
-            // 1. Get current logged-in user's staff code
+            // Get current logged-in user's staff code
             var staffCode = User.GetUserId();
 
-            // 2. Check if user is logged in
-            if (string.IsNullOrEmpty(staffCode))
-            {
-                throw new AppException(ErrorCode.UNAUTHORIZED_ACCESS);
-            }
+            // Get the admin's location
+            var adminLocation = await _userService.GetLocationByStaffCodeAsync(staffCode);
 
-            // 3. Get current user's information
-            var currentUser = await _identityService.GetCurrentUserAsync(staffCode);
-
-            // 4. Check if current user is admin
-            if (currentUser == null || currentUser.Type != "Admin")
-            {
-                throw new AppException(ErrorCode.ACCESS_DENIED);
-            }
-
-            // 5. Pass to service layer with user params
-            var users = await _userService.GetUsersAsync(userParams, currentUser);
+            // Get users filtered by the admin's location
+            var users = await _userService.GetUsersAsync(userParams, adminLocation);
 
             Response.AddPaginationHeader(users.Metadata);
             return Ok(users);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("{staffCode}")]
         public async Task<ActionResult<UserResponse>> GetUserById(string staffCode)
         {
-            // 1. Get current logged-in user's staff code
+            // Get current logged-in user's staff code
             var currentUserStaffCode = User.GetUserId();
 
-            // 2. Check if user is logged in
-            if (string.IsNullOrEmpty(currentUserStaffCode))
-            {
-                throw new AppException(ErrorCode.UNAUTHORIZED_ACCESS);
-            }
-
-            // 3. Get current user's information
-            var currentUser = await _identityService.GetCurrentUserAsync(currentUserStaffCode);
-
-            // 4. Check if current user is admin
-            if (currentUser == null || currentUser.Type != "Admin")
-            {
-                throw new AppException(ErrorCode.ACCESS_DENIED);
-            }
-
-            // 5. Pass current user to service to check location-based access
-            var user = await _userService.GetUserByIdAsync(staffCode, currentUser);
+            // Get the admin's location
+            var adminLocation = await _userService.GetLocationByStaffCodeAsync(currentUserStaffCode);
+            // Get user and verify location-based access
+            var user = await _userService.GetUserByIdAsync(staffCode, adminLocation);
             return Ok(user);
         }
     }

@@ -26,48 +26,7 @@ namespace AssetManagement.Application.Services.User
             _userRepository = userRepository;
         }
 
-        public async Task<PagedList<UserResponse>> GetUsersAsync(UserParams userParams, UserResponse currentUser)
-        {
-            // First, get all users
-            var query = _userRepository.GetAllAsync();
-
-            // Ensure the user is admin and filter users based on the admin's location
-            if (Enum.TryParse<ERole>(currentUser.Type, out var userRole) && userRole == ERole.Admin)
-            {
-                
-                // Filter users who have same location as the logged-in admin
-                if (Enum.TryParse<ELocation>(currentUser.Location, out var userLocation))
-                {
-                    query = query.Where(u => u.Location == userLocation);
-                }
-            }
-            else
-            {
-                // If not an admin, return empty result
-                return await PaginationService.ToPagedList(
-                    Enumerable.Empty<UserResponse>().AsQueryable(),
-                    userParams.PageNumber,
-                    userParams.PageSize
-                );
-            }
-
-            // Apply additional filters, sorting, and searching
-            query = query
-                .Sort(userParams.OrderBy)
-                .Search(userParams.SearchTerm)
-                .Filter(userParams.Type);
-
-            // Map to DTOs
-            var projectedQuery = query.Select(x => x.MapModelToResponse());
-
-            return await PaginationService.ToPagedList(
-                projectedQuery,
-                userParams.PageNumber,
-                userParams.PageSize
-            );
-        }
-
-        public async Task<UserResponse> GetUserByIdAsync(string staffCode, UserResponse currentUser)
+        public async Task<string> GetLocationByStaffCodeAsync(string staffCode)
         {
             var user = await _userRepository.GetByIdAsync(staffCode);
             if (user == null)
@@ -79,15 +38,54 @@ namespace AssetManagement.Application.Services.User
                 throw new AppException(ErrorCode.USER_NOT_FOUND, attributes);
             }
 
-            // Check if current user (admin) has the same location as the requested user
-            if (Enum.TryParse<ERole>(currentUser.Type, out var userRole) && userRole == ERole.Admin)
+            return user.Location.ToString();
+        }
+
+        public async Task<PagedList<UserResponse>> GetUsersAsync(UserParams userParams, string location)
+        {
+            // First, get all users
+            var query = _userRepository.GetAllAsync();
+
+            // Filter users by location (admin can only see users from their location)
+            if (Enum.TryParse<ELocation>(location, out var userLocation))
             {
-                if (Enum.TryParse<ELocation>(currentUser.Location, out var adminLocation) &&
-                    user.Location != adminLocation)
+                query = query.Where(u => u.Location == userLocation);
+            }
+
+            // Apply additional filters, sorting, and searching
+            query = query
+                .Sort(userParams.OrderBy)
+                .Search(userParams.SearchTerm)
+                .Filter(userParams.Type);
+
+            // Map to DTOs
+            var projectedQuery = query.Select(x => x.MapModelToResponse());
+
+            return await PaginationService.ToPagedListSync(
+                projectedQuery,
+                userParams.PageNumber,
+                userParams.PageSize
+            );
+        }
+
+        public async Task<UserResponse> GetUserByIdAsync(string staffCode, string location)
+        {
+            var user = await _userRepository.GetByIdAsync(staffCode);
+            if (user == null)
+            {
+                var attributes = new Dictionary<string, object>
                 {
-                    // Admin is trying to access a user from a different location
-                    throw new AppException(ErrorCode.ACCESS_DENIED);
-                }
+                    { "staffCode", staffCode }
+                };
+                throw new AppException(ErrorCode.USER_NOT_FOUND, attributes);
+            }
+
+            // Check if admin has the same location as the requested user
+            if (Enum.TryParse<ELocation>(location, out var adminLocation) &&
+                user.Location != adminLocation)
+            {
+                // Admin is trying to access a user from a different location
+                throw new AppException(ErrorCode.ACCESS_DENIED);
             }
 
             return user.MapModelToResponse();
