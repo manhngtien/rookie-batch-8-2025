@@ -31,6 +31,7 @@ builder.Services.AddAssetInfrastructure(opt =>
 builder.Services.AddScoped<ITokenService, JwtService>();
 builder.Services.AddScoped<IIdentityService, IdentityService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IReturningRequestService, ReturningRequestService>();
 
 builder.Services.AddScoped<IAssetService, AssetService>();
 
