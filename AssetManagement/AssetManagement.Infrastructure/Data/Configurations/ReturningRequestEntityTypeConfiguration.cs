@@ -18,11 +18,16 @@ public class ReturningRequestEntityTypeConfiguration : IEntityTypeConfiguration<
             .HasColumnName("ReturnedDate");
 
         builder.Property<string>(r => r.RequestedBy)
+            .IsRequired()
             .HasColumnName("RequestedBy");
 
         builder.Property<string>(r => r.AcceptedBy)
             .HasColumnName("AcceptedBy");
 
+        builder.Property(r => r.AssignmentId)
+            .IsRequired()
+            .HasColumnName("AssignmentId");
+            
         builder.HasOne<User>(r => r.RequestedByUser)
             .WithOne()
             .HasForeignKey<ReturningRequest>(r => r.RequestedBy)
@@ -31,6 +36,11 @@ public class ReturningRequestEntityTypeConfiguration : IEntityTypeConfiguration<
         builder.HasOne<User>(r => r.AcceptedByUser)
             .WithOne()
             .HasForeignKey<ReturningRequest>(r => r.AcceptedBy)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne<Assignment>(r => r.Assignment)
+            .WithOne()
+            .HasForeignKey<ReturningRequest>(r => r.AssignmentId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

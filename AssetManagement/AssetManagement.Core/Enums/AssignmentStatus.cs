@@ -2,6 +2,7 @@
 
 public enum AssignmentStatus
 {
-    Accepted = 1,
-    WaitForAcceptance
+    Accepted = 1, 
+    WaitForAcceptance, 
+    Declined
 }
