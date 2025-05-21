@@ -9,10 +9,10 @@ pr:
 
   paths:
     include:
-      - 'AssetManagement.Application/*'
-      - 'AssetManagement.Core/*'
-      - 'AssetManagement.Infrastructure/*'
-      - 'AssetManagement.Api/*'
+      - 'AssetManagement/AssetManagement.Application/*'
+      - 'AssetManagement/AssetManagement.Core/*'
+      - 'AssetManagement/AssetManagement.Infrastructure/*'
+      - 'AssetManagement/AssetManagement.Api/*'
       - './azure-pipelines/pr-pipeline.yml'
 
 pool:
@@ -25,7 +25,7 @@ resources:
 
 variables:
   tag: '$(Build.BuildId)'
-  solution: '**/*.sln'
+  solution: 'AssetManagement/AssetManagement.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   

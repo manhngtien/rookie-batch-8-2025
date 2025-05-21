@@ -6,10 +6,10 @@ trigger:
       - main
   paths:
     include:
-      - 'AssetManagement.Application/*'
-      - 'AssetManagement.Core/*'
-      - 'AssetManagement.Infrastructure/*'
-      - 'AssetManagement.Api/*'
+      - 'AssetManagement/AssetManagement.Application/*'
+      - 'AssetManagement/AssetManagement.Core/*'
+      - 'AssetManagement/AssetManagement.Infrastructure/*'
+      - 'AssetManagement/AssetManagement.Api/*'
       - './azure-pipelines/publish-pipeline.yml'
 
 pool:
@@ -28,7 +28,7 @@ variables:
   - name: dotnetSdkVersion
     value: '9.x'
   - name: webApiProjectName
-    value: 'AssetManagement.Api/AssetManagement.Api.csproj'
+    value: 'AssetManagement/AssetManagement.Api/AssetManagement.Api.csproj'
 
 stages:
   - stage: Build_And_Package
