@@ -2,8 +2,10 @@ using AssetManagement.Api.Extentions;
 using AssetManagement.Api.Filters;
 using AssetManagement.Api.Settings;
 using AssetManagement.Application.Interfaces.Auth;
+using AssetManagement.Application.Interfaces.User;
 using AssetManagement.Application.Services.Auth;
 using AssetManagement.Application.Validators.Accounts;
+using AssetManagement.Application.Services.User;
 using AssetManagement.Core.Interfaces.Services.Auth;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +28,8 @@ builder.Services.AddAssetInfrastructure(opt =>
 // Add Services
 builder.Services.AddScoped<ITokenService, JwtService>();
 builder.Services.AddScoped<IIdentityService, IdentityService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 
 // Disable automatic model state error response
 builder.Services.Configure<ApiBehaviorOptions>(options =>
@@ -33,7 +37,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     options.SuppressModelStateInvalidFilter = true;
 });
 
-// Add Controller and Validation filters 
+// Add Controller and Validation filters
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ValidationFilter>();

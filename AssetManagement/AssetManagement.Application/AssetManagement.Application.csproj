@@ -16,8 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DTOs\Assets\" />
-    <Folder Include="DTOs\Assignments\" />
     <Folder Include="DTOs\Categories\" />
     <Folder Include="DTOs\ReturningRequests\" />
   </ItemGroup>

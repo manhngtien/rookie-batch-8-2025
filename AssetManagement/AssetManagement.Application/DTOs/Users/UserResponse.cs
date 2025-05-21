@@ -8,6 +8,7 @@ namespace AssetManagement.Application.DTOs.Users
         public required string UserName { get; set; }
         public required string FirstName { get; set; }
         public required string LastName { get; set; }
+        public string FullName => $"{FirstName} {LastName}";
         public required DateTime DateOfBirth { get; set; }
         public required DateTime JoinedDate { get; set; }
         public bool Gender { get; set; }
