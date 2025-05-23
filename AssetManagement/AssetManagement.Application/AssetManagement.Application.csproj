@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Validators\ValidatorTemplate.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\AssetManagement.Core\AssetManagement.Core.csproj" />
     <ProjectReference Include="..\AssetManagement.Infrastructure\AssetManagement.Infrastructure.csproj" />
   </ItemGroup>

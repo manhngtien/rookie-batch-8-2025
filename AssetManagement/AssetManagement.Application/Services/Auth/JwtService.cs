@@ -3,7 +3,7 @@ using AssetManagement.Core.Entities;
 using AssetManagement.Core.Exceptions;
 using AssetManagement.Core.Interfaces.Services.Auth;
 using AssetManagement.Infrastructure.Exceptions;
-using Microsoft.Extensions.Options;
+using AssetManagement.Infrastructure.Settings.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -13,12 +13,13 @@ namespace AssetManagement.Application.Services.Auth
 {
     public class JwtService : ITokenService
     {
-        private readonly JwtSettings _jwt;
+        private readonly JwtOption _jwt;
 
-        public JwtService(IOptions<JwtSettings> jwtOptions)
+        public JwtService(JwtOption jwtOption)
         {
-            _jwt = jwtOptions.Value;
+            _jwt = jwtOption;
         }
+
 
         public string GenerateToken(Account account, IList<string> roles)
         {
