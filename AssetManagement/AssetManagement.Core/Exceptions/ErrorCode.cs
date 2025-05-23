@@ -31,6 +31,10 @@ namespace AssetManagement.Core.Exceptions
         public static readonly ErrorCode ASSET_NOT_FOUND = new(900, "Asset not found", StatusCodes.Status404NotFound);
 
         // Assignment related errors (1000 - 1099)
+        public static readonly ErrorCode ASSIGNMENT_NOT_FOUND = new(1000, "Assignment not found", StatusCodes.Status404NotFound);
+        public static readonly ErrorCode ASSIGNMENT_ALREADY_ACCEPTED = new(1001, "Assignment has already been accepted", StatusCodes.Status400BadRequest);
+        public static readonly ErrorCode ASSET_ALREADY_ASSIGNED = new(1002, "Asset is already assigned in an in-progress assignment", StatusCodes.Status400BadRequest);
+        public static readonly ErrorCode INVALID_DATE = new(1003, "Invalid date", StatusCodes.Status400BadRequest);
 
         /// <summary>
         /// Atributes for error code, message, and status. 

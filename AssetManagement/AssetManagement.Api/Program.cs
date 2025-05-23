@@ -1,6 +1,7 @@
 using AssetManagement.Api.Extentions;
 using AssetManagement.Api.Filters;
 using AssetManagement.Api.Settings;
+using AssetManagement.Application.Interfaces.Assignment;
 using AssetManagement.Application.Interfaces.Auth;
 using AssetManagement.Application.Interfaces.User;
 using AssetManagement.Application.Services.Auth;
@@ -32,6 +33,8 @@ builder.Services.AddScoped<ITokenService, JwtService>();
 builder.Services.AddScoped<IIdentityService, IdentityService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IReturningRequestService, ReturningRequestService>();
+builder.Services.AddScoped<IAssignmentService,AssignmentService>();
+
 
 builder.Services.AddScoped<IAssetService, AssetService>();
 
