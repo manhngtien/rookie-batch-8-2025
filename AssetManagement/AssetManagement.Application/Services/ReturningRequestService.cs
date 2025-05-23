@@ -13,12 +13,12 @@ public class ReturningRequestService : IReturningRequestService
     private readonly IReturningRequestRepository _returningRequestRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public ReturningRequestService(IReturningRequestRepository returningRequestRepository,  IUnitOfWork unitOfWork)
+    public ReturningRequestService(IReturningRequestRepository returningRequestRepository, IUnitOfWork unitOfWork)
     {
         _returningRequestRepository = returningRequestRepository;
         _unitOfWork = unitOfWork;
     }
-    
+
     public async Task<PagedList<ReturningRequestResponse>> GetReturningRequestsAsync(ReturningRequestParams returningRequestParams)
     {
         var returningRequests = _returningRequestRepository.GetAllAsync()
@@ -27,7 +27,7 @@ public class ReturningRequestService : IReturningRequestService
             .Filter(returningRequestParams.State, returningRequestParams.ReturnedDate);
 
         var returningRequestDto = returningRequests.Select(x => x.MapModelToResponse());
-        
+
         return await PaginationService.ToPagedList(
             returningRequestDto,
             returningRequestParams.PageNumber,

@@ -27,7 +27,7 @@ public class ReturningRequestEntityTypeConfiguration : IEntityTypeConfiguration<
         builder.Property(r => r.AssignmentId)
             .IsRequired()
             .HasColumnName("AssignmentId");
-            
+
         builder.HasOne<User>(r => r.RequestedByUser)
             .WithMany()
             .HasForeignKey(r => r.RequestedBy)

@@ -1,8 +1,6 @@
 ﻿using AssetManagement.Core.Entities;
 using AssetManagement.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AssetManagement.Infrastructure.Repositories
 {
@@ -24,7 +22,7 @@ namespace AssetManagement.Infrastructure.Repositories
                 .Include(r => r.RequestedByUser);
         }
 
-      
+
         public async Task<ReturningRequest?> GetByIdAsync(int returningRequestId)
         {
             return await _context.ReturnRequests

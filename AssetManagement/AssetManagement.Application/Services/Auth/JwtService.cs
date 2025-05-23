@@ -3,7 +3,6 @@ using AssetManagement.Core.Entities;
 using AssetManagement.Core.Exceptions;
 using AssetManagement.Core.Interfaces.Services.Auth;
 using AssetManagement.Infrastructure.Exceptions;
-using AssetManagement.Infrastructure.Settings.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;

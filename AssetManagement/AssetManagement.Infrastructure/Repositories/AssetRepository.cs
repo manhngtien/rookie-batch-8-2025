@@ -1,8 +1,6 @@
 ﻿using AssetManagement.Core.Entities;
 using AssetManagement.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AssetManagement.Infrastructure.Repositories
 {

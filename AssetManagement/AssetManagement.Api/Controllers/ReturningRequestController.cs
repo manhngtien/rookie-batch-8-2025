@@ -21,7 +21,7 @@ public class ReturningRequestController : BaseApiController
     public async Task<ActionResult<IEnumerable<ReturningRequestResponse>>> GetReturningRequests(
         [FromQuery] ReturningRequestParams returningRequestParams)
     {
-        var returningRequests = 
+        var returningRequests =
             await _returningRequestService.GetReturningRequestsAsync(returningRequestParams);
         return Ok(returningRequests);
     }

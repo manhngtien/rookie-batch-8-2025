@@ -1,5 +1,5 @@
-﻿using AssetManagement.Core.Entities;
-using AssetManagement.Application.DTOs.Assignments;
+﻿using AssetManagement.Application.DTOs.Assignments;
+using AssetManagement.Core.Entities;
 
 namespace AssetManagement.Application.Mappers
 {

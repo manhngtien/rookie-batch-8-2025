@@ -1,7 +1,5 @@
 using AssetManagement.Api.Extensions;
 using AssetManagement.Api.Filters;
-using AssetManagement.Api.SeedData;
-using AssetManagement.Application;
 using AssetManagement.Application.Validators.Accounts;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
@@ -78,7 +76,5 @@ app.UseAuthorization();
 app.UseCors();
 
 app.MapControllers();
-
-await DbInitializer.InitDb(app);
 
 app.Run();

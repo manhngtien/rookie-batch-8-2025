@@ -4,10 +4,7 @@ using AssetManagement.Application.Interfaces.Auth;
 using AssetManagement.Application.Services;
 using AssetManagement.Application.Services.Auth;
 using AssetManagement.Core.Interfaces.Services.Auth;
-using AssetManagement.Infrastructure.Settings.Options;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using System.Text;
 
 namespace Microsoft.Extensions.DependencyInjection
 {

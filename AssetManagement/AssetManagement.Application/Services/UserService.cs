@@ -1,14 +1,9 @@
 ﻿// Updated UserService.cs
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AssetManagement.Application.DTOs.Users;
 using AssetManagement.Application.Helpers.Params;
 using AssetManagement.Application.Interfaces;
 using AssetManagement.Application.Mappers;
 using AssetManagement.Application.Paginations;
-using AssetManagement.Core.Entities;
 using AssetManagement.Core.Enums;
 using AssetManagement.Core.Exceptions;
 using AssetManagement.Core.Interfaces;

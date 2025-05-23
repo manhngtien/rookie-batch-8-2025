@@ -1,14 +1,12 @@
 ﻿// Updated UserController.cs
 using AssetManagement.Api.Controllers.Base;
+using AssetManagement.Api.Extensions;
 using AssetManagement.Application.DTOs.Users;
 using AssetManagement.Application.Helpers.Params;
-using AssetManagement.Application.Interfaces.Auth;
-using Microsoft.AspNetCore.Mvc;
-using AssetManagement.Core.Exceptions;
-using AssetManagement.Infrastructure.Exceptions;
-using Microsoft.AspNetCore.Authorization;
-using AssetManagement.Api.Extensions;
 using AssetManagement.Application.Interfaces;
+using AssetManagement.Application.Interfaces.Auth;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AssetManagement.Api.Controllers
 {

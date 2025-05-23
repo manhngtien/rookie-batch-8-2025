@@ -1,5 +1,4 @@
 ﻿using AssetManagement.Core.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace AssetManagement.Infrastructure.Data;
 
