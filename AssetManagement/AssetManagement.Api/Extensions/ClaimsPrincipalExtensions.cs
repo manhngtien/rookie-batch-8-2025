@@ -2,7 +2,7 @@
 using AssetManagement.Infrastructure.Exceptions;
 using System.Security.Claims;
 
-namespace AssetManagement.Api.Extentions
+namespace AssetManagement.Api.Extensions
 {
     public static class ClaimsPrincipalExtensions
     {

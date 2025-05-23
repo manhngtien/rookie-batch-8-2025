@@ -1,4 +1,3 @@
-using AssetManagement.Api.Extentions;
 using AssetManagement.Api.Filters;
 using AssetManagement.Api.Settings;
 using AssetManagement.Application.Interfaces.Assignment;
@@ -13,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text;
 using AssetManagement.Application.Interfaces;
 using AssetManagement.Application.Services;
+using AssetManagement.Api.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;

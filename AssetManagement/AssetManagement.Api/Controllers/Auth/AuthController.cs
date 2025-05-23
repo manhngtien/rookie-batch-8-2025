@@ -1,5 +1,5 @@
 ﻿using AssetManagement.Api.Controllers.Base;
-using AssetManagement.Api.Extentions;
+using AssetManagement.Api.Extensions;
 using AssetManagement.Application.DTOs.Accounts;
 using AssetManagement.Application.Interfaces.Auth;
 using Microsoft.AspNetCore.Authorization;

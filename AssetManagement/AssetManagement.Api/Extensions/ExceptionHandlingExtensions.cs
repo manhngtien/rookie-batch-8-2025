@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-namespace AssetManagement.Api.Extentions
+namespace AssetManagement.Api.Extensions
 {
     public static class ExceptionHandlingExtensions
     {
