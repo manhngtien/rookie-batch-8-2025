@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AssetManagement.Application.DTOs.Users;
 using AssetManagement.Application.Helpers.Params;
-using AssetManagement.Application.Interfaces.User;
+using AssetManagement.Application.Interfaces;
 using AssetManagement.Application.Mappers;
 using AssetManagement.Application.Paginations;
 using AssetManagement.Core.Entities;
@@ -15,7 +15,7 @@ using AssetManagement.Core.Interfaces;
 using AssetManagement.Infrastructure.Exceptions;
 using AssetManagement.Infrastructure.Extensions;
 
-namespace AssetManagement.Application.Services.User
+namespace AssetManagement.Application.Services
 {
     public class UserService : IUserService
     {
@@ -61,7 +61,7 @@ namespace AssetManagement.Application.Services.User
             // Map to DTOs
             var projectedQuery = query.Select(x => x.MapModelToResponse());
 
-            return await PaginationService.ToPagedListSync(
+            return await PaginationService.ToPagedList(
                 projectedQuery,
                 userParams.PageNumber,
                 userParams.PageSize

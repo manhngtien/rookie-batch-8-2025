@@ -2,15 +2,15 @@
 using AssetManagement.Api.Controllers.Base;
 using AssetManagement.Application.DTOs.Users;
 using AssetManagement.Application.Helpers.Params;
-using AssetManagement.Application.Interfaces.User;
 using AssetManagement.Application.Interfaces.Auth;
 using Microsoft.AspNetCore.Mvc;
 using AssetManagement.Core.Exceptions;
 using AssetManagement.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using AssetManagement.Api.Extensions;
+using AssetManagement.Application.Interfaces;
 
-namespace AssetManagement.Api.Controllers.User
+namespace AssetManagement.Api.Controllers
 {
     public class UserController : BaseApiController
     {

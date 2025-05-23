@@ -2,7 +2,7 @@
 using AssetManagement.Api.Extensions;
 using AssetManagement.Application.DTOs.Assignments;
 using AssetManagement.Application.Helpers.Params;
-using AssetManagement.Application.Interfaces.Assignment;
+using AssetManagement.Application.Interfaces;
 using AssetManagement.Application.Paginations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +26,7 @@ public class AssignmentsController : BaseApiController
         Response.AddPaginationHeader(result.Metadata);
         return Ok(result);
     }
+
 
     [HttpGet("{id}")]
     [Authorize(Roles = "Admin")]

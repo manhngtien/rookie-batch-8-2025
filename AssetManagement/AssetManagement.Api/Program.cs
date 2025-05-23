@@ -1,5 +1,6 @@
 using AssetManagement.Api.Extensions;
 using AssetManagement.Api.Filters;
+using AssetManagement.Api.SeedData;
 using AssetManagement.Application;
 using AssetManagement.Application.Validators.Accounts;
 using FluentValidation;
@@ -39,7 +40,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("https://localhost:3000", "https://localhost:3001")
+        policy.WithOrigins("")
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials();
@@ -77,5 +78,7 @@ app.UseAuthorization();
 app.UseCors();
 
 app.MapControllers();
+
+await DbInitializer.InitDb(app);
 
 app.Run();

@@ -10,7 +10,7 @@ namespace AssetManagement.Infrastructure.Data;
 
 public class AppDbContext : IdentityDbContext<Account, IdentityRole<Guid>, Guid>
 {
-    public DbSet<User> Users { get; set; }
+    public DbSet<User> Staffs { get; set; }
     public DbSet<Asset> Assets { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Assignment> Assignments { get; set; }

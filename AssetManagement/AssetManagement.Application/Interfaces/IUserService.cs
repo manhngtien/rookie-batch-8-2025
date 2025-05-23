@@ -2,7 +2,7 @@
 using AssetManagement.Application.Helpers.Params;
 using AssetManagement.Application.Paginations;
 
-namespace AssetManagement.Application.Interfaces.User
+namespace AssetManagement.Application.Interfaces
 {
     public interface IUserService
     {

@@ -38,13 +38,13 @@ public class AssignmentEntityTypeConfiguration : IEntityTypeConfiguration<Assign
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne<User>(a => a.AssignedToUser)
-            .WithOne()
-            .HasForeignKey<Assignment>(a => a.AssignedTo)
+            .WithMany()
+            .HasForeignKey(a => a.AssignedTo)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne<User>(a => a.AssignedByUser)
-            .WithOne()
-            .HasForeignKey<Assignment>(a => a.AssignedBy)
+            .WithMany()
+            .HasForeignKey(a => a.AssignedBy)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
