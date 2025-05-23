@@ -10,12 +10,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AssetManagement.Api.Controllers
 {
-    public class UserController : BaseApiController
+    public class UsersController : BaseApiController
     {
         private readonly IUserService _userService;
         private readonly IIdentityService _identityService;
 
-        public UserController(IUserService userService, IIdentityService identityService)
+        public UsersController(IUserService userService, IIdentityService identityService)
         {
             _userService = userService;
             _identityService = identityService;
