@@ -4,20 +4,15 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-namespace AssetManagement.Api.Extentions
+namespace AssetManagement.Api.Extensions
 {
-    public static class ExceptionHandlingExtensions
+    public static class AuthenticationExtensions
     {
-        public static IServiceCollection AddGlobalExceptionHandling(this IServiceCollection services)
+        public static IServiceCollection AddCustomJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddExceptionHandler<GlobalExceptionHandler>();
-            services.AddProblemDetails();
-            return services;
-        }
-
-        public static IServiceCollection AddCustomJwtAuthentication(this IServiceCollection services, JwtSettings jwtSettings)
-        {
-            var key = Encoding.UTF8.GetBytes(jwtSettings.Key);
+            var jwtOption = new JwtOption();
+            configuration.GetSection("InfrastructureSettings:JwtOption").Bind(jwtOption);
+            var key = Encoding.UTF8.GetBytes(jwtOption.Key);
 
             services.AddAuthentication(opt =>
             {
@@ -33,8 +28,8 @@ namespace AssetManagement.Api.Extentions
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwtSettings.Issuer,
-                    ValidAudience = jwtSettings.Audience,
+                    ValidIssuer = jwtOption.Issuer,
+                    ValidAudience = jwtOption.Audience,
                     IssuerSigningKey = new SymmetricSecurityKey(key)
                 };
 

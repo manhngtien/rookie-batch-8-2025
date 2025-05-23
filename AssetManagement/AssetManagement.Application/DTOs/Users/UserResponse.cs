@@ -1,6 +1,4 @@
-﻿using AssetManagement.Core.Enums;
-
-namespace AssetManagement.Application.DTOs.Users
+﻿namespace AssetManagement.Application.DTOs.Users
 {
     public class UserResponse
     {

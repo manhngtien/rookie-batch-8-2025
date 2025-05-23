@@ -1,6 +1,6 @@
 ﻿using AssetManagement.Application.DTOs.Assignments;
 using AssetManagement.Application.Helpers.Params;
-using AssetManagement.Application.Interfaces.Assignment;
+using AssetManagement.Application.Interfaces;
 using AssetManagement.Application.Mappers;
 using AssetManagement.Application.Paginations;
 using AssetManagement.Core.Exceptions;
@@ -34,7 +34,7 @@ public class AssignmentService : IAssignmentService
 
         var projectedQuery = query.Select(a => a.MapModelToResponse());
 
-        return await PaginationService.ToPagedListSync(
+        return await PaginationService.ToPagedList(
             projectedQuery,
             assignmentParams.PageNumber,
             assignmentParams.PageSize

@@ -9,7 +9,7 @@ namespace AssetManagement.Core.Exceptions
         /// </summary>
         /// 
         // Database integration errors (500 - 599)
-        public static readonly ErrorCode SAVE_ERROR = new (500, "Error saving to database", StatusCodes.Status500InternalServerError);
+        public static readonly ErrorCode SAVE_ERROR = new(500, "Error saving to database", StatusCodes.Status500InternalServerError);
 
         // User related errors (600 - 699)
         public static readonly ErrorCode ACCOUNT_NOT_FOUND = new(600, "Account not found", StatusCodes.Status404NotFound);

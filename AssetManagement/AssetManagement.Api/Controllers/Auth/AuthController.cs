@@ -1,5 +1,5 @@
 ﻿using AssetManagement.Api.Controllers.Base;
-using AssetManagement.Api.Extentions;
+using AssetManagement.Api.Extensions;
 using AssetManagement.Application.DTOs.Accounts;
 using AssetManagement.Application.Interfaces.Auth;
 using Microsoft.AspNetCore.Authorization;
@@ -24,7 +24,7 @@ namespace AssetManagement.Api.Controllers.Auth
             {
                 HttpOnly = true,
                 Secure = true,
-                SameSite = SameSiteMode.Strict,
+                SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddHours(1),
                 Path = "/"
             };
@@ -34,7 +34,7 @@ namespace AssetManagement.Api.Controllers.Auth
             {
                 HttpOnly = true,
                 Secure = true,
-                SameSite = SameSiteMode.Strict,
+                SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddDays(7),
                 Path = "/"
             };

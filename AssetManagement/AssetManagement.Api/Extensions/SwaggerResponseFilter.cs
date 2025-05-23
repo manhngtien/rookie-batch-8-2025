@@ -1,7 +1,7 @@
 ﻿using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace AssetManagement.Api.Extentions
+namespace AssetManagement.Api.Extensions
 {
     public class SwaggerResponseFilter : IOperationFilter
     {

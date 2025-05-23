@@ -1,4 +1,5 @@
 ﻿using AssetManagement.Core.Entities;
+using AssetManagement.Infrastructure.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,7 @@ namespace AssetManagement.Infrastructure.Data;
 
 public class AppDbContext : IdentityDbContext<Account, IdentityRole<Guid>, Guid>
 {
-    public DbSet<User> Users { get; set; }
+    public DbSet<User> Staffs { get; set; }
     public DbSet<Asset> Assets { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Assignment> Assignments { get; set; }
@@ -38,26 +39,26 @@ public class AppDbContext : IdentityDbContext<Account, IdentityRole<Guid>, Guid>
         // Mapping Entities Configuration
         modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
     }
-    
+
     public class ProductContextFactory : IDesignTimeDbContextFactory<AppDbContext>
     {
         public AppDbContext CreateDbContext(string[] args)
         {
             var basePath = Path.Combine(Directory.GetCurrentDirectory(), "../AssetManagement.Api");
-    
+
             // Load configuration from appsettings.json
             IConfigurationRoot configuration = new ConfigurationBuilder()
                 .SetBasePath(basePath)
                 .AddJsonFile("appsettings.Development.json", optional: false, reloadOnChange: true)
                 .Build();
-    
+
             var infrastructureSettings = new InfrastructureSettings();
             configuration.GetSection("InfrastructureSettings").Bind(infrastructureSettings);
-            var connectionString = infrastructureSettings.ConnectionStrings.Default;
-    
+            var connectionString = infrastructureSettings.ConnectionStringsOption.Default;
+
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
             optionsBuilder.UseSqlServer(connectionString);
-    
+
             return new AppDbContext(optionsBuilder.Options);
         }
     }

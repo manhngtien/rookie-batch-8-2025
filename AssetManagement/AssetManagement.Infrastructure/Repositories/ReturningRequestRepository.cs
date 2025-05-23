@@ -2,48 +2,53 @@
 using AssetManagement.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace AssetManagement.Infrastructure.Repositories;
-
-public class ReturningRequestRepository : IReturningRequestRepository
+namespace AssetManagement.Infrastructure.Repositories
 {
-    private readonly AppDbContext _dbContext;
+    public class ReturningRequestRepository : IReturningRequestRepository
+    {
+        private readonly AppDbContext _context;
 
-    public ReturningRequestRepository(AppDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-    
-    public IQueryable<ReturningRequest> GetAllAsync()
-    {
-        return _dbContext.ReturnRequests
-            .Include(r => r.Assignment)
-            .ThenInclude(x => x.Asset)
-            .Include(r => r.AcceptedByUser)
-            .Include(r => r.RequestedByUser);
-    }
+        public ReturningRequestRepository(AppDbContext dbContext)
+        {
+            _context = dbContext;
+        }
 
-    public Task<ReturningRequest?> GetByIdAsync<TId>(TId id)
-    {
-        throw new NotImplementedException();
-    }
+        public IQueryable<ReturningRequest> GetAllAsync()
+        {
+            return _context.ReturnRequests
+                .Include(r => r.Assignment)
+                .ThenInclude(x => x.Asset)
+                .Include(r => r.AcceptedByUser)
+                .Include(r => r.RequestedByUser);
+        }
 
-    public Task<ReturningRequest> CreateAsync(ReturningRequest entity)
-    {
-        throw new NotImplementedException();
-    }
 
-    public Task UpdateAsync(ReturningRequest entity)
-    {
-        throw new NotImplementedException();
-    }
+        public async Task<ReturningRequest?> GetByIdAsync(int returningRequestId)
+        {
+            return await _context.ReturnRequests
+                .Include(r => r.Assignment)
+                .ThenInclude(x => x.Asset)
+                .Include(r => r.AcceptedByUser)
+                .Include(r => r.RequestedByUser)
+                .FirstOrDefaultAsync(r => r.Id == returningRequestId);
+        }
 
-    public Task DeleteAsync(ReturningRequest entity)
-    {
-        throw new NotImplementedException();
-    }
+        public async Task<ReturningRequest> CreateAsync(ReturningRequest entity)
+        {
+            await _context.ReturnRequests.AddAsync(entity);
+            return entity;
+        }
 
-    public Task<ReturningRequest?> GetByIdAsync(int returningRequestId)
-    {
-        throw new NotImplementedException();
+        public async Task UpdateAsync(ReturningRequest entity)
+        {
+            _context.ReturnRequests.Update(entity);
+            await Task.CompletedTask;
+        }
+
+        public async Task DeleteAsync(ReturningRequest entity)
+        {
+            _context.ReturnRequests.Remove(entity);
+            await Task.CompletedTask;
+        }
     }
 }

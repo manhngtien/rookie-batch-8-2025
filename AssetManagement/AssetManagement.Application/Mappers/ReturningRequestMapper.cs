@@ -11,8 +11,8 @@ public static class ReturningRequestMapper
         return new ReturningRequestResponse
         {
             Id = returningRequest.Id,
-            State = Enum.GetName(typeof(ReturningRequestStatus),returningRequest.State)!,
-            ReturnedDate = (returningRequest.ReturnedDate.HasValue) 
+            State = Enum.GetName(typeof(ReturningRequestStatus), returningRequest.State)!,
+            ReturnedDate = (returningRequest.ReturnedDate.HasValue)
                 ? DateOnly.FromDateTime(returningRequest.ReturnedDate.Value)
                 : null,
             RequestedBy = returningRequest.RequestedByUser.UserName,

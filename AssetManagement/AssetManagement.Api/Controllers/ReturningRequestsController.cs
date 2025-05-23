@@ -7,11 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AssetManagement.Api.Controllers;
 
-public class ReturningRequestController : BaseApiController
+public class ReturningRequestsController : BaseApiController
 {
     private readonly IReturningRequestService _returningRequestService;
 
-    public ReturningRequestController(IReturningRequestService returningRequestService)
+    public ReturningRequestsController(IReturningRequestService returningRequestService)
     {
         _returningRequestService = returningRequestService;
     }
@@ -21,7 +21,7 @@ public class ReturningRequestController : BaseApiController
     public async Task<ActionResult<IEnumerable<ReturningRequestResponse>>> GetReturningRequests(
         [FromQuery] ReturningRequestParams returningRequestParams)
     {
-        var returningRequests = 
+        var returningRequests =
             await _returningRequestService.GetReturningRequestsAsync(returningRequestParams);
         return Ok(returningRequests);
     }

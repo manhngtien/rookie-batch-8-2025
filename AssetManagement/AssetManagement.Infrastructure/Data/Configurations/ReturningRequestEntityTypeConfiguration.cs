@@ -27,15 +27,15 @@ public class ReturningRequestEntityTypeConfiguration : IEntityTypeConfiguration<
         builder.Property(r => r.AssignmentId)
             .IsRequired()
             .HasColumnName("AssignmentId");
-            
+
         builder.HasOne<User>(r => r.RequestedByUser)
-            .WithOne()
-            .HasForeignKey<ReturningRequest>(r => r.RequestedBy)
+            .WithMany()
+            .HasForeignKey(r => r.RequestedBy)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne<User>(r => r.AcceptedByUser)
-            .WithOne()
-            .HasForeignKey<ReturningRequest>(r => r.AcceptedBy)
+            .WithMany()
+            .HasForeignKey(r => r.AcceptedBy)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne<Assignment>(r => r.Assignment)

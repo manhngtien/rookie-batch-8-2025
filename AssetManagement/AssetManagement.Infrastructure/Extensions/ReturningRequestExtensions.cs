@@ -27,7 +27,7 @@ public static class ReturningRequestExtensions
             "stateDesc" => query.OrderByDescending(r => r.State),
             _ => query.OrderBy(r => r.Id)
         };
-        
+
         return query;
     }
 
@@ -51,10 +51,10 @@ public static class ReturningRequestExtensions
                 Enum.GetName(typeof(ReturningRequestStatus), x.State)!
                     .Equals(state, StringComparison.OrdinalIgnoreCase));
         }
-    
+
         if (returnedDate.HasValue)
         {
-            query = query.Where(x => 
+            query = query.Where(x =>
                 x.ReturnedDate.HasValue && DateOnly.FromDateTime(x.ReturnedDate.Value) == returnedDate);
         }
 

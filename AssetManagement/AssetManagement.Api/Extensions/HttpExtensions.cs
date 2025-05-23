@@ -2,7 +2,7 @@
 using Microsoft.Net.Http.Headers;
 using System.Text.Json;
 
-namespace AssetManagement.Api.Extentions
+namespace AssetManagement.Api.Extensions
 {
     public static class HttpExtensions
     {

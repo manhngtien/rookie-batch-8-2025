@@ -1,4 +1,4 @@
-﻿namespace AssetManagement.Infrastructure.ConfigurationOptions;
+﻿namespace AssetManagement.Infrastructure.Settings.Options;
 
 public class ConnectionStringsOption
 {

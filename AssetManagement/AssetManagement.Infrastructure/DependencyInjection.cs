@@ -1,22 +1,23 @@
 using AssetManagement.Core.Entities;
 using AssetManagement.Core.Interfaces;
+using AssetManagement.Infrastructure.Settings.Options;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
-public static class AssetInfrastructureServiceCollectionExtension
+public static class DependencyInjection
 {
     public static IServiceCollection AddAssetInfrastructure(this IServiceCollection services,
-        Action<InfrastructureSettings> configureOption)
+        IConfiguration configuration)
     {
         // Read Configuration Options From AppSettings
-        var settings = new InfrastructureSettings();
-        configureOption(settings);
-        services.Configure(configureOption);
+        var connectionStringsOption = new ConnectionStringsOption();
+        configuration.GetSection("InfrastructureSettings:ConnectionStringsOption").Bind(connectionStringsOption);
 
         services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(settings.ConnectionStrings.Default));
+            options.UseSqlServer(connectionStringsOption.Default));
 
         services.AddIdentity<Account, IdentityRole<Guid>>()
             .AddEntityFrameworkStores<AppDbContext>()
@@ -26,8 +27,8 @@ public static class AssetInfrastructureServiceCollectionExtension
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IAccountRepository, AccountRepository>();
-        services.AddScoped<IAssignmentRepository, AssignmentRepository>();
         services.AddScoped<IAssetRepository, AssetRepository>();
+        services.AddScoped<IAssignmentRepository, AssignmentRepository>();
         services.AddScoped<IReturningRequestRepository, ReturningRequestRepository>();
         return services;
     }

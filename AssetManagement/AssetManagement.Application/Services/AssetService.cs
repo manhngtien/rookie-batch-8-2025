@@ -26,7 +26,7 @@ public class AssetService : IAssetService
 
         var projectedQuery = query.Select(x => x.MapModelToResponse());
 
-        return PaginationService.ToPagedListSync(
+        return PaginationService.ToPagedList(
             projectedQuery,
             assetParams.PageNumber,
             assetParams.PageSize
