@@ -15,20 +15,22 @@ pr:
       - 'AssetManagement/AssetManagement.Api/*'
       - './azure-pipelines/pr-pipeline.yml'
 
+variables:
+  - group: BackendSecrets
+  - name: tag
+    value: '$(Build.BuildId)'
+  - name: solution
+    value: 'AssetManagement/AssetManagement.sln'
+  - name: buildPlatform
+    value: 'Any CPU'
+  - name: buildConfiguration
+    value: 'Release'
+
 pool:
   name: Default
   demands:
     - Agent.Name -equals $(AGENT_NAME)
 
-resources:
-  - repo: self
-
-variables:
-  tag: '$(Build.BuildId)'
-  solution: 'AssetManagement/AssetManagement.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
-  
 stages:
   - stage: Build
     displayName: 'CI: Build'
