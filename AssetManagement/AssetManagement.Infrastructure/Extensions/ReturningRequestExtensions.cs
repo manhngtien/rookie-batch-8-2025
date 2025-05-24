@@ -42,14 +42,18 @@ public static class ReturningRequestExtensions
                                 || r.RequestedByUser.UserName.ToLower().Contains(lowerCaseTerm));
     }
 
-    public static IQueryable<ReturningRequest> Filter(this IQueryable<ReturningRequest> query, string? state,
+    public static IQueryable<ReturningRequest> Filter(this IQueryable<ReturningRequest> query, string? stateValues,
         DateOnly? returnedDate)
     {
-        if (!string.IsNullOrEmpty(state))
+        if (!string.IsNullOrEmpty(stateValues))
         {
-            query = query.Where(x =>
-                Enum.GetName(typeof(ReturningRequestStatus), x.State)!.ToLower()
-                    .Equals(state.ToLower()));
+            string[] states = stateValues
+                .Split(',')
+                .Select(state => state.ToLower().Trim())
+                .ToArray();
+
+            query = query.Where(x => states.Contains(
+                x.State.ToString().ToLower()));
         }
 
         if (returnedDate.HasValue)

@@ -3,6 +3,6 @@
 public enum AssignmentStatus
 {
     Accepted = 1,
-    WaitForAcceptance,
+    Waiting_For_Acceptance,
     Declined
 }
