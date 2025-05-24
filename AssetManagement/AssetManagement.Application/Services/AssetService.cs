@@ -3,7 +3,9 @@ using AssetManagement.Application.Helpers.Params;
 using AssetManagement.Application.Interfaces;
 using AssetManagement.Application.Mappers;
 using AssetManagement.Application.Paginations;
+using AssetManagement.Core.Exceptions;
 using AssetManagement.Core.Interfaces;
+using AssetManagement.Infrastructure.Exceptions;
 using AssetManagement.Infrastructure.Extensions;
 
 namespace AssetManagement.Application.Services;
@@ -31,5 +33,20 @@ public class AssetService : IAssetService
             assetParams.PageNumber,
             assetParams.PageSize
         );
+    }
+
+    public async Task<AssetResponse> GetAssetByAssetCodeAsync(string assetCode)
+    {
+        var asset = await _assetRepository.GetByAssetCodeAsync(assetCode);
+        if (asset == null)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "assetCode", assetCode }
+            };
+            throw new AppException(ErrorCode.ASSET_NOT_FOUND, attributes);
+        }
+
+        return asset.MapModelToResponse();
     }
 }

@@ -25,5 +25,13 @@ namespace AssetManagement.Api.Controllers
             Response.AddPaginationHeader(assets.Metadata);
             return Ok(assets);
         }
+
+        [HttpGet("{assetCode}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<AssetResponse?>> GetAsset(string assetCode)
+        {
+            var asset = await _assetService.GetAssetByAssetCodeAsync(assetCode);
+            return Ok(asset);
+        }
     }
 }

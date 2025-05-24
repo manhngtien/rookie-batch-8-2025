@@ -36,10 +36,10 @@ public static class ReturningRequestExtensions
         if (string.IsNullOrEmpty(searchTerm))
             return query;
 
-        var lowerCaseTerm = searchTerm.Trim();
-        return query.Where(r => r.Assignment.AssetCode.Contains(lowerCaseTerm, StringComparison.OrdinalIgnoreCase)
-                                || r.Assignment.Asset.AssetName.Contains(lowerCaseTerm, StringComparison.OrdinalIgnoreCase)
-                                || r.RequestedByUser.UserName.Contains(lowerCaseTerm, StringComparison.OrdinalIgnoreCase));
+        var lowerCaseTerm = searchTerm.ToLower().Trim();
+        return query.Where(r => r.Assignment.AssetCode.ToLower().Contains(lowerCaseTerm)
+                                || r.Assignment.Asset.AssetName.ToLower().Contains(lowerCaseTerm)
+                                || r.RequestedByUser.UserName.ToLower().Contains(lowerCaseTerm));
     }
 
     public static IQueryable<ReturningRequest> Filter(this IQueryable<ReturningRequest> query, string? state,
@@ -48,8 +48,8 @@ public static class ReturningRequestExtensions
         if (!string.IsNullOrEmpty(state))
         {
             query = query.Where(x =>
-                Enum.GetName(typeof(ReturningRequestStatus), x.State)!
-                    .Equals(state, StringComparison.OrdinalIgnoreCase));
+                Enum.GetName(typeof(ReturningRequestStatus), x.State)!.ToLower()
+                    .Equals(state.ToLower()));
         }
 
         if (returnedDate.HasValue)
