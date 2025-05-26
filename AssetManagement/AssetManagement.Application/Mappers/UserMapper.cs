@@ -16,8 +16,8 @@ namespace AssetManagement.Application.Mappers
                 DateOfBirth = user.DateOfBirth,
                 Gender = user.Gender,
                 JoinedDate = user.JoinedDate,
-                Type = Enum.GetName(user.Type) ?? "Unknown",
-                Location = Enum.GetName(user.Location) ?? "Unknown",
+                Type = Enum.GetName(user.Type)!,
+                Location = Enum.GetName(user.Location)!,
                 IsDisabled = user.IsDisabled,
                 IsFirstLogin = user.IsFirstLogin
             };

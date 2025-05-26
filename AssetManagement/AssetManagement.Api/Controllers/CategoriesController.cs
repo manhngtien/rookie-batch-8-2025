@@ -10,18 +10,18 @@ namespace AssetManagement.Api.Controllers
 {
     public class CategoriesController : BaseApiController
     {
-        private readonly ICategoryService _assetService;
+        private readonly ICategoryService _categoryService;
 
         public CategoriesController(ICategoryService assetService)
         {
-            _assetService = assetService;
+            _categoryService = assetService;
         }
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<IEnumerable<CategoryResponse>>> GetCategories([FromQuery] CategoryParams assetParams)
+        public async Task<ActionResult<IEnumerable<CategoryResponse>>> GetCategories([FromQuery] CategoryParams categoryParams)
         {
-            var assets = await _assetService.GetCategoriesAsync(assetParams);
+            var assets = await _categoryService.GetCategoriesAsync(categoryParams);
             Response.AddPaginationHeader(assets.Metadata);
             return Ok(assets);
         }
