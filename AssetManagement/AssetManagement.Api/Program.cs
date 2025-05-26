@@ -71,11 +71,11 @@ app.UseHttpsRedirection();
 
 app.UseExceptionHandler();
 
+app.UseCors();
+
 app.UseAuthentication();
 
 app.UseAuthorization();
-
-app.UseCors();
 
 app.MapControllers();
 
