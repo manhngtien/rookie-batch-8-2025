@@ -6,7 +6,7 @@ using AssetManagement.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CategoriesManagement.Api.Controllers
+namespace AssetManagement.Api.Controllers
 {
     public class CategoriesController : BaseApiController
     {

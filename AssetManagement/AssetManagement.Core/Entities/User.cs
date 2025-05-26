@@ -10,6 +10,7 @@ namespace AssetManagement.Core.Entities
         public required string LastName { get; set; }
         public required DateTime DateOfBirth { get; set; }
         public required DateTime JoinedDate { get; set; }
+        public bool IsFirstLogin { get; set; } = true;
         public bool Gender { get; set; }
         public ERole Type { get; set; }
         public required ELocation Location { get; set; }

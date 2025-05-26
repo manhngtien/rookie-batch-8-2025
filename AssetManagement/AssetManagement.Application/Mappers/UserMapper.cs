@@ -19,6 +19,7 @@ namespace AssetManagement.Application.Mappers
                 Type = Enum.GetName(user.Type) ?? "Unknown",
                 Location = Enum.GetName(user.Location) ?? "Unknown",
                 IsDisabled = user.IsDisabled,
+                IsFirstLogin = user.IsFirstLogin
             };
         }
     }
