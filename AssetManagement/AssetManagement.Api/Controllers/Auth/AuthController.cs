@@ -41,6 +41,19 @@ namespace AssetManagement.Api.Controllers.Auth
             _httpContextAccessor.HttpContext.Response.Cookies.Append("refresh", refreshToken, refreshCookieOptions);
         }
 
+        private void ClearAuthCookies()
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Path = "/"
+            };
+            _httpContextAccessor.HttpContext!.Response.Cookies.Delete("auth_jwt", cookieOptions);
+            _httpContextAccessor.HttpContext.Response.Cookies.Delete("refresh", cookieOptions);
+        }
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
         {
@@ -63,8 +76,7 @@ namespace AssetManagement.Api.Controllers.Auth
         [HttpPost("logout")]
         public IActionResult Logout()
         {
-            _httpContextAccessor.HttpContext!.Response.Cookies.Delete("auth_jwt");
-            _httpContextAccessor.HttpContext.Response.Cookies.Delete("refresh");
+            ClearAuthCookies();
             return NoContent();
         }
 

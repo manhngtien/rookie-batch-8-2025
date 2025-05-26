@@ -1,5 +1,4 @@
 ﻿using AssetManagement.Core.Entities;
-using AssetManagement.Core.Enums;
 
 namespace AssetManagement.Infrastructure.Extensions;
 

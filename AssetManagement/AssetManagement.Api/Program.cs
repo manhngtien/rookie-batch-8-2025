@@ -38,7 +38,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("")
+        policy.WithOrigins("https://ntg-asset-management.vercel.app")
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials();
@@ -48,6 +48,8 @@ builder.Services.AddCors(options =>
 // Exception handling and authentication
 builder.Services.AddGlobalExceptionHandling();
 builder.Services.AddCustomJwtAuthentication(configuration);
+
+
 
 
 /// App configuration

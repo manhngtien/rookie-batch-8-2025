@@ -1,5 +1,5 @@
 using AssetManagement.Application.DTOs.Assignments;
-using AssetManagement.Application.DTOs.Category;
+using AssetManagement.Application.DTOs.Categories;
 using AssetManagement.Core.Enums;
 
 namespace AssetManagement.Application.DTOs.Assets;

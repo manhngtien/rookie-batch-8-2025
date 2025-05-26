@@ -48,7 +48,6 @@ namespace AssetManagement.Application.Services.Auth
             var roles = await _accountRepository.GetRolesAsync(account);
             var accessToken = _jwt.GenerateToken(account, roles);
             var refreshToken = _jwt.GenerateRefreshToken(account.Id);
-            var refreshTokenExpiresAt = DateTime.UtcNow.AddDays(7);
 
             var user = await _userRepository.GetByIdAsync(account.StaffCode);
             if (user == null)
@@ -86,7 +85,6 @@ namespace AssetManagement.Application.Services.Auth
             var roles = await _accountRepository.GetRolesAsync(account);
             var newAccessToken = _jwt.GenerateToken(account, roles);
             var newRefreshToken = _jwt.GenerateRefreshToken(accountId);
-            var newRefreshTokenExpiresAt = DateTime.UtcNow.AddDays(7);
 
             var user = await _userRepository.GetByIdAsync(account.StaffCode);
             if (user == null)
@@ -112,7 +110,7 @@ namespace AssetManagement.Application.Services.Auth
             }
             if (!await _accountRepository.CheckPasswordAsync(account, changePasswordRequest.OldPassword))
             {
-                throw new AppException(ErrorCode.INVALID_CREDENTIALS);
+                throw new AppException(ErrorCode.INVALID_OLD_PASSWORD);
             }
 
             var result = await _accountRepository.ChangePasswordAsync(account, changePasswordRequest.NewPassword);

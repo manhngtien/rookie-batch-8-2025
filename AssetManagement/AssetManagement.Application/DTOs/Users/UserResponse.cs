@@ -13,5 +13,6 @@
         public required string Type { get; set; }
         public required string Location { get; set; }
         public bool IsDisabled { get; set; }
+        public bool IsFirstLogin { get; set; }
     }
 }

@@ -31,6 +31,10 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
             .HasMaxLength(128)
             .HasColumnName("LastName");
 
+        builder.Property(u => u.IsFirstLogin)
+            .HasDefaultValue(Boolean.TrueString)
+            .HasColumnName("IsFirstLogin");
+
         builder.Property<DateTime>(u => u.DateOfBirth)
             .IsRequired()
             .HasColumnName("DateOfBirth");
