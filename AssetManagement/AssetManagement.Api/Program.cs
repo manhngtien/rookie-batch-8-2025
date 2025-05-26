@@ -2,6 +2,7 @@ using AssetManagement.Api.Extensions;
 using AssetManagement.Api.Filters;
 using AssetManagement.Application.Validators.Accounts;
 using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -48,6 +49,11 @@ builder.Services.AddCors(options =>
 // Exception handling and authentication
 builder.Services.AddGlobalExceptionHandling();
 builder.Services.AddCustomJwtAuthentication(configuration);
+
+builder.Services.Configure<IdentityOptions>(opt =>
+{
+    opt.Password.RequireUppercase = false;
+});
 
 
 /// App configuration

@@ -21,9 +21,9 @@ namespace AssetManagement.Api.Filters
 
             return exception switch
             {
+                AccessDeniedException accessDeniedException => await HandleAccessDeniedExceptionAsync(httpContext, accessDeniedException, cancellationToken),
                 ValidationException validationException => await HandleValidationExceptionAsync(httpContext, validationException, cancellationToken),
                 AppException appException => await HandleAppExceptionAsync(httpContext, appException, cancellationToken),
-                AccessDeniedException accessDeniedException => await HandleAccessDeniedExceptionAsync(httpContext, accessDeniedException, cancellationToken),
                 NotImplementedException notImplementedException => await HandleNotImplementedExceptionAsync(httpContext, notImplementedException, cancellationToken),
                 _ => await HandleGenericExceptionAsync(httpContext, exception, cancellationToken)
             };
