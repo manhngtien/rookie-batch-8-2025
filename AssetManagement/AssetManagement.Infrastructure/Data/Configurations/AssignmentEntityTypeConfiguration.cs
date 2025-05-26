@@ -33,8 +33,8 @@ public class AssignmentEntityTypeConfiguration : IEntityTypeConfiguration<Assign
             .HasColumnName("AssignedTo");
 
         builder.HasOne(a => a.Asset)
-            .WithOne()
-            .HasForeignKey<Assignment>(a => a.AssetCode)
+            .WithMany(a => a.Assignments)
+            .HasForeignKey(a => a.AssetCode)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne<User>(a => a.AssignedToUser)

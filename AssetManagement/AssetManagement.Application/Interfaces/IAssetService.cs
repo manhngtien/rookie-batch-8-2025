@@ -7,4 +7,5 @@ namespace AssetManagement.Application.Interfaces;
 public interface IAssetService
 {
     Task<PagedList<AssetResponse>> GetAssetsAsync(AssetParams assetParams);
+    Task<AssetResponse> GetAssetByAssetCodeAsync(string assetCode);
 }

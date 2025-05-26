@@ -36,20 +36,24 @@ public static class ReturningRequestExtensions
         if (string.IsNullOrEmpty(searchTerm))
             return query;
 
-        var lowerCaseTerm = searchTerm.Trim();
-        return query.Where(r => r.Assignment.AssetCode.Contains(lowerCaseTerm, StringComparison.OrdinalIgnoreCase)
-                                || r.Assignment.Asset.AssetName.Contains(lowerCaseTerm, StringComparison.OrdinalIgnoreCase)
-                                || r.RequestedByUser.UserName.Contains(lowerCaseTerm, StringComparison.OrdinalIgnoreCase));
+        var lowerCaseTerm = searchTerm.ToLower().Trim();
+        return query.Where(r => r.Assignment.AssetCode.ToLower().Contains(lowerCaseTerm)
+                                || r.Assignment.Asset.AssetName.ToLower().Contains(lowerCaseTerm)
+                                || r.RequestedByUser.UserName.ToLower().Contains(lowerCaseTerm));
     }
 
-    public static IQueryable<ReturningRequest> Filter(this IQueryable<ReturningRequest> query, string? state,
+    public static IQueryable<ReturningRequest> Filter(this IQueryable<ReturningRequest> query, string? stateValues,
         DateOnly? returnedDate)
     {
-        if (!string.IsNullOrEmpty(state))
+        if (!string.IsNullOrEmpty(stateValues))
         {
-            query = query.Where(x =>
-                Enum.GetName(typeof(ReturningRequestStatus), x.State)!
-                    .Equals(state, StringComparison.OrdinalIgnoreCase));
+            string[] states = stateValues
+                .Split(',')
+                .Select(state => state.ToLower().Trim())
+                .ToArray();
+
+            query = query.Where(x => states.Contains(
+                x.State.ToString().ToLower()));
         }
 
         if (returnedDate.HasValue)

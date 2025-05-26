@@ -3,8 +3,8 @@
 public enum AssetStatus
 {
     Available = 1,
-    NotAvailable,
+    Not_Available,
     Assigned,
-    WaitingForRecycling,
+    Waiting_For_Recycling,
     Recycled
 }

@@ -19,10 +19,11 @@ namespace AssetManagement.Infrastructure.Repositories
                 .Include(a => a.Category);
         }
 
-        public async Task<Asset?> GetByIdAsync(string assetCode)
+        public async Task<Asset?> GetByAssetCodeAsync(string assetCode)
         {
             return await _context.Assets
                 .Include(a => a.Category)
+                .Include(a => a.Assignments)
                 .FirstOrDefaultAsync(a => a.AssetCode == assetCode);
         }
 

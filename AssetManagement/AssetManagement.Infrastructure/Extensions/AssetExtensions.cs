@@ -31,21 +31,31 @@ namespace AssetManagement.Infrastructure.Extensions
             var lowerCaseTerm = searchTerm.Trim().ToLower();
 
             return query.Where(
-                x => x.AssetName.Contains(lowerCaseTerm, StringComparison.OrdinalIgnoreCase)
-                || x.AssetCode.Contains(lowerCaseTerm, StringComparison.OrdinalIgnoreCase)
+                x => x.AssetName.ToLower().Contains(lowerCaseTerm)
+                || x.AssetCode.ToLower().Contains(lowerCaseTerm)
             );
         }
 
-        public static IQueryable<Asset> Filter(this IQueryable<Asset> query, string? categoryName, string? state)
+        public static IQueryable<Asset> Filter(this IQueryable<Asset> query, string? categoryNameValues, string? stateValues)
         {
-            if (!string.IsNullOrEmpty(categoryName))
+            if (!string.IsNullOrEmpty(categoryNameValues))
             {
-                query = query.Where(x => x.Category.CategoryName.Equals(categoryName, StringComparison.OrdinalIgnoreCase));
+                string[] categoryNames = categoryNameValues
+                    .Split(',')
+                    .Select(categoryName => categoryName.ToLower().Trim())
+                    .ToArray();
+
+                query = query.Where(x => categoryNames.Contains(x.Category.CategoryName.ToLower()));
             }
 
-            if (!string.IsNullOrEmpty(state))
+            if (!string.IsNullOrEmpty(stateValues))
             {
-                query = query.Where(x => x.State.ToString().Equals(state, StringComparison.OrdinalIgnoreCase));
+                string[] states = stateValues
+                    .Split(',')
+                    .Select(state => state.ToLower().Trim())
+                    .ToArray();
+
+                query = query.Where(x => states.Contains(x.State.ToString().ToLower()));
             }
 
             return query;

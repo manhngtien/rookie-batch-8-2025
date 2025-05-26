@@ -1,5 +1,6 @@
 ﻿using AssetManagement.Application.DTOs.Assets;
 using AssetManagement.Core.Entities;
+using AssetManagement.Core.Enums;
 
 namespace AssetManagement.Application.Mappers
 {
@@ -12,11 +13,11 @@ namespace AssetManagement.Application.Mappers
                 AssetCode = asset.AssetCode,
                 AssetName = asset.AssetName,
                 Specification = asset.Specification,
-                State = asset.State.ToString(),
+                State = Enum.GetName<AssetStatus>(asset.State)!,
                 Location = asset.Location,
-                InstalledDate = asset.InstalledDate,
-                CategoryId = asset.CategoryId,
-                CategoryName = asset.Category.CategoryName,
+                InstalledDate = DateOnly.FromDateTime(asset.InstalledDate),
+                Category = asset.Category.MapModelToResponse(),
+                Assignments = asset.Assignments.Select(a => a.MapModelToResponse()).ToList()
             };
         }
     }
