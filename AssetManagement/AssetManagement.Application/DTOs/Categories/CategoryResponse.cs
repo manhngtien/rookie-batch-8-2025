@@ -1,4 +1,4 @@
-﻿namespace AssetManagement.Application.DTOs.Category;
+﻿namespace AssetManagement.Application.DTOs.Categories;
 
 public class CategoryResponse
 {

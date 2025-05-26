@@ -24,6 +24,7 @@ namespace AssetManagement.Api.Filters
                 ValidationException validationException => await HandleValidationExceptionAsync(httpContext, validationException, cancellationToken),
                 AppException appException => await HandleAppExceptionAsync(httpContext, appException, cancellationToken),
                 AccessDeniedException accessDeniedException => await HandleAccessDeniedExceptionAsync(httpContext, accessDeniedException, cancellationToken),
+                NotImplementedException notImplementedException => await HandleNotImplementedExceptionAsync(httpContext, notImplementedException, cancellationToken),
                 _ => await HandleGenericExceptionAsync(httpContext, exception, cancellationToken)
             };
         }
@@ -63,6 +64,20 @@ namespace AssetManagement.Api.Filters
 
             httpContext.Response.StatusCode = errorCode.GetStatus();
             await httpContext.Response.WriteAsJsonAsync(response, cancellationToken);
+            return true;
+        }
+
+        private async Task<bool> HandleNotImplementedExceptionAsync(HttpContext httpContext, NotImplementedException exception, CancellationToken cancellationToken)
+        {
+            var problemDetails = new ProblemDetails
+            {
+                Status = StatusCodes.Status501NotImplemented,
+                Title = "Not Implemented",
+                Detail = exception.Message,
+                Instance = httpContext.Request.Path
+            };
+            httpContext.Response.StatusCode = StatusCodes.Status501NotImplemented;
+            await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
             return true;
         }
 
