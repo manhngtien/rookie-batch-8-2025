@@ -14,6 +14,7 @@ namespace AssetManagement.Core.Exceptions
         // User related errors (600 - 699)
         public static readonly ErrorCode ACCOUNT_NOT_FOUND = new(600, "Account not found", StatusCodes.Status404NotFound);
         public static readonly ErrorCode USER_NOT_FOUND = new(601, "User not found", StatusCodes.Status404NotFound);
+        public static readonly ErrorCode INVALID_OLD_PASSWORD = new(602, "Invalid old password", StatusCodes.Status400BadRequest);
 
         // Access and token related errors (700 - 799)
         public static readonly ErrorCode UNAUTHORIZED_ACCESS = new(700, "Unauthorized access", StatusCodes.Status401Unauthorized);

@@ -112,7 +112,7 @@ namespace AssetManagement.Application.Services.Auth
             }
             if (!await _accountRepository.CheckPasswordAsync(account, changePasswordRequest.OldPassword))
             {
-                throw new AppException(ErrorCode.INVALID_CREDENTIALS);
+                throw new AppException(ErrorCode.INVALID_OLD_PASSWORD);
             }
 
             var result = await _accountRepository.ChangePasswordAsync(account, changePasswordRequest.NewPassword);
