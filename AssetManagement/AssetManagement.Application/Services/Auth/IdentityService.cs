@@ -48,7 +48,6 @@ namespace AssetManagement.Application.Services.Auth
             var roles = await _accountRepository.GetRolesAsync(account);
             var accessToken = _jwt.GenerateToken(account, roles);
             var refreshToken = _jwt.GenerateRefreshToken(account.Id);
-            var refreshTokenExpiresAt = DateTime.UtcNow.AddDays(7);
 
             var user = await _userRepository.GetByIdAsync(account.StaffCode);
             if (user == null)
@@ -86,7 +85,6 @@ namespace AssetManagement.Application.Services.Auth
             var roles = await _accountRepository.GetRolesAsync(account);
             var newAccessToken = _jwt.GenerateToken(account, roles);
             var newRefreshToken = _jwt.GenerateRefreshToken(accountId);
-            var newRefreshTokenExpiresAt = DateTime.UtcNow.AddDays(7);
 
             var user = await _userRepository.GetByIdAsync(account.StaffCode);
             if (user == null)
