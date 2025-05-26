@@ -87,7 +87,7 @@ namespace AssetManagement.Api.Filters
             {
                 Status = StatusCodes.Status500InternalServerError,
                 Title = "Server Error",
-                Detail = "An unexpected error occurred",
+                Detail = exception.Message,
                 Instance = httpContext.Request.Path
             };
 
