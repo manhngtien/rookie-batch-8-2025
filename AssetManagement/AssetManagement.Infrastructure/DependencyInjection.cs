@@ -19,7 +19,15 @@ public static class DependencyInjection
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(connectionStringsOption.Default));
 
-        services.AddIdentity<Account, IdentityRole<Guid>>()
+        services.AddIdentity<Account, IdentityRole<Guid>>(opt =>
+        {
+            opt.Password.RequireDigit = true;
+            opt.Password.RequireLowercase = true;
+            opt.Password.RequireNonAlphanumeric = true;
+            opt.Password.RequireUppercase = false;
+            opt.Password.RequiredLength = 6;
+            opt.Password.RequiredUniqueChars = 1;
+        })
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
 

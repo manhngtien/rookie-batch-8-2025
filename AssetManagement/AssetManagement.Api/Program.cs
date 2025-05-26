@@ -50,10 +50,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddGlobalExceptionHandling();
 builder.Services.AddCustomJwtAuthentication(configuration);
 
-builder.Services.Configure<IdentityOptions>(opt =>
-{
-    opt.Password.RequireUppercase = false;
-});
+
 
 
 /// App configuration
