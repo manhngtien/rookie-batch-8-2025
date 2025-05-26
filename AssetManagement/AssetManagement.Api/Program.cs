@@ -2,7 +2,6 @@ using AssetManagement.Api.Extensions;
 using AssetManagement.Api.Filters;
 using AssetManagement.Application.Validators.Accounts;
 using FluentValidation;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -12,18 +12,18 @@ namespace AssetManagement.Api.Controllers
     {
         private readonly ICategoryService _categoryService;
 
-        public CategoriesController(ICategoryService assetService)
+        public CategoriesController(ICategoryService categoryService)
         {
-            _categoryService = assetService;
+            _categoryService = categoryService;
         }
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<CategoryResponse>>> GetCategories([FromQuery] CategoryParams categoryParams)
         {
-            var assets = await _categoryService.GetCategoriesAsync(categoryParams);
-            Response.AddPaginationHeader(assets.Metadata);
-            return Ok(assets);
+            var categories = await _categoryService.GetCategoriesAsync(categoryParams);
+            Response.AddPaginationHeader(categories.Metadata);
+            return Ok(categories);
         }
     }
 }
