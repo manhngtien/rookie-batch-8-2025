@@ -7,7 +7,7 @@ namespace AssetManagement.Core.Exceptions
         /// <summary>
         /// Custom error code, message, and status.
         /// </summary>
-        /// 
+        ///
         // Database integration errors (500 - 599)
         public static readonly ErrorCode SAVE_ERROR = new(500, "Error saving to database", StatusCodes.Status500InternalServerError);
 
@@ -28,7 +28,7 @@ namespace AssetManagement.Core.Exceptions
         // Validation related errors (800 - 899)
         public static readonly ErrorCode VALIDATION_ERROR = new(800, "Validation error", StatusCodes.Status422UnprocessableEntity);
 
-        // Assets related errors (900 - 999) 
+        // Assets related errors (900 - 999)
         public static readonly ErrorCode ASSET_NOT_FOUND = new(900, "Asset not found", StatusCodes.Status404NotFound);
 
         // Assignment related errors (1000 - 1099)
@@ -36,9 +36,11 @@ namespace AssetManagement.Core.Exceptions
         public static readonly ErrorCode ASSIGNMENT_ALREADY_ACCEPTED = new(1001, "Assignment has already been accepted", StatusCodes.Status400BadRequest);
         public static readonly ErrorCode ASSET_ALREADY_ASSIGNED = new(1002, "Asset is already assigned in an in-progress assignment", StatusCodes.Status400BadRequest);
         public static readonly ErrorCode INVALID_DATE = new(1003, "Invalid date", StatusCodes.Status400BadRequest);
+        public static readonly ErrorCode INVALID_LOCATION = new(1004, "Invalid location", StatusCodes.Status400BadRequest);
+        public static readonly ErrorCode ASSET_NOT_AVAILABLE = new(1005, "Asset is not available", StatusCodes.Status400BadRequest);
 
         /// <summary>
-        /// Atributes for error code, message, and status. 
+        /// Atributes for error code, message, and status.
         /// </summary>
         private readonly int _code;
         private readonly string _message;
