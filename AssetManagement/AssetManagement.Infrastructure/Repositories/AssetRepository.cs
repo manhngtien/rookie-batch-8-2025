@@ -27,6 +27,13 @@ namespace AssetManagement.Infrastructure.Repositories
                 .FirstOrDefaultAsync(a => a.AssetCode == assetCode);
         }
 
+        public async Task<int> GetTotalPrefixByAssetName(string assetName)
+        {
+            return await _context.Assets
+                .Where(x => x.AssetName == assetName)
+                .CountAsync();
+        }
+
         public async Task<Asset> CreateAsync(Asset entity)
         {
             await _context.Assets.AddAsync(entity);

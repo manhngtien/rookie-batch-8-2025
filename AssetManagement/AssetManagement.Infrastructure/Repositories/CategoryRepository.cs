@@ -1,5 +1,6 @@
 ﻿using AssetManagement.Core.Entities;
 using AssetManagement.Core.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace AssetManagement.Infrastructure.Repositories
 {
@@ -27,9 +28,9 @@ namespace AssetManagement.Infrastructure.Repositories
             return _context.Categories;
         }
 
-        public Task<Category?> GetByIdAsync(int categoryId)
+        public async Task<Category?> GetByIdAsync(int categoryId)
         {
-            throw new NotImplementedException();
+            return await _context.Categories.FirstOrDefaultAsync(c => c.Id == categoryId);
         }
 
         public Task UpdateAsync(Category entity)
