@@ -35,12 +35,12 @@ namespace AssetManagement.Api.Controllers
         
         [HttpPost()]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> CreateAsset([FromForm] CreateAssetRequest assetRequest)
+        public async Task<ActionResult<AssetResponse>> CreateAsset([FromForm] CreateAssetRequest assetRequest)
         {
             var staffCode = User.GetUserId();
-            await _assetService.CreateAssetAsync(staffCode, assetRequest);
-            
-            return Created();
+            var asset = await _assetService.CreateAssetAsync(staffCode, assetRequest);
+
+            return CreatedAtAction(nameof(GetAsset), new { assetCode = asset.AssetCode }, asset);
         }
     }
 }

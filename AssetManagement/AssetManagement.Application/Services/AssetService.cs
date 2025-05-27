@@ -64,7 +64,7 @@ public class AssetService : IAssetService
         return asset.MapModelToResponse();
     }
 
-    public async Task CreateAssetAsync(string staffCode, CreateAssetRequest createAssetRequest)
+    public async Task<AssetResponse> CreateAssetAsync(string staffCode, CreateAssetRequest createAssetRequest)
     {
         var category = await _categoryRepository.GetByIdAsync(createAssetRequest.CategoryId);
         if (category is null)
@@ -124,7 +124,9 @@ public class AssetService : IAssetService
             throw new AppException(ErrorCode.ASSET_INVALID_STATE, attributes);
         }
         
-        await _assetRepository.CreateAsync(asset);
+        var createdAsset = await _assetRepository.CreateAsync(asset);
         await _unitOfWork.CommitAsync();
+
+        return createdAsset.MapModelToResponse();
     }
 }
