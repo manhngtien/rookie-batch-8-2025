@@ -14,6 +14,6 @@ namespace AssetManagement.Application.DTOs.Users
         public required DateTime DateOfBirth { get; set; }
         public bool Gender { get; set; }
         public required DateTime JoinedDate { get; set; }
-        public required string Type { get; set; } // Thay đổi từ ERole sang string
+        public required string Type { get; set; }
     }
 }

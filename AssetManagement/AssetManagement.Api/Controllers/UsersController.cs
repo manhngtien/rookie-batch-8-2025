@@ -60,15 +60,19 @@ namespace AssetManagement.Api.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<UserResponse>> CreateUser([FromBody] CreateUserRequest createUserRequest)
+        public async Task<IActionResult> CreateUser([FromForm] CreateUserRequest createUserRequest)
         {
             // Get current logged-in user's staff code
             var staffCode = User.GetUserId();
 
             var createdUser = await _userService.CreateUserAsync(createUserRequest, staffCode);
 
-            return StatusCode(StatusCodes.Status201Created);
+            // Trả về CreatedAtAction với staffCode và đường dẫn đến action GetUserById
+            return CreatedAtAction(nameof(GetUserById),
+                                new { staffCode = createdUser.StaffCode },
+                                createdUser);
         }
+
 
 
     }
