@@ -1,4 +1,5 @@
 ﻿using AssetManagement.Api.Controllers.Base;
+using AssetManagement.Api.Extensions;
 using AssetManagement.Application.DTOs.ReturningRequests;
 using AssetManagement.Application.Helpers.Params;
 using AssetManagement.Application.Interfaces;
@@ -23,6 +24,7 @@ public class ReturningRequestsController : BaseApiController
     {
         var returningRequests =
             await _returningRequestService.GetReturningRequestsAsync(returningRequestParams);
+        Response.AddPaginationHeader(returningRequests.Metadata);
         return Ok(returningRequests);
     }
 }
