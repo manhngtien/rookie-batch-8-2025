@@ -109,6 +109,15 @@ namespace AssetManagement.Application.Services
                 throw new AppException(ErrorCode.USER_NOT_FOUND);
             }
 
+            // Chuyển đổi Type từ string sang enum
+            if (!Enum.TryParse<ERole>(createUserRequest.Type, true, out var roleType))
+            {
+                throw new AppException(ErrorCode.VALIDATION_ERROR, new Dictionary<string, object>
+        {
+            { "type", $"Invalid role type: {createUserRequest.Type}. Valid values are: {string.Join(", ", Enum.GetNames<ERole>())}" }
+        });
+            }
+
             // Generate staff code
             string staffCode = GenerateStaffCode();
 
@@ -125,7 +134,7 @@ namespace AssetManagement.Application.Services
                 DateOfBirth = createUserRequest.DateOfBirth,
                 JoinedDate = createUserRequest.JoinedDate,
                 Gender = createUserRequest.Gender,
-                Type = createUserRequest.Type,
+                Type = roleType, // Sử dụng giá trị enum đã chuyển đổi
                 Location = admin.Location,
                 IsDisabled = false,
                 IsFirstLogin = true
@@ -155,7 +164,7 @@ namespace AssetManagement.Application.Services
             }
 
             // Add user to appropriate role
-            var roleResult = await _accountRepository.AddToRoleAsync(account, createUserRequest.Type.ToString());
+            var roleResult = await _accountRepository.AddToRoleAsync(account, roleType.ToString());
             if (!roleResult.Succeeded)
             {
                 // Handle role assignment failure
@@ -168,6 +177,7 @@ namespace AssetManagement.Application.Services
 
             return user.MapModelToResponse();
         }
+
 
         private string GenerateStaffCode()
         {

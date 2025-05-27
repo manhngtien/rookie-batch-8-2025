@@ -1,5 +1,6 @@
 ﻿using AssetManagement.Application.DTOs.Accounts;
 using AssetManagement.Application.DTOs.Users;
+using AssetManagement.Core.Enums;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -32,7 +33,13 @@ namespace AssetManagement.Application.Validators.Users
                 .WithMessage("Joined date is Saturday or Sunday. Please select a different date");
 
             RuleFor(x => x.Type)
-                .IsInEnum().WithMessage("Invalid role type");
+                .NotEmpty().WithMessage("Type is required")
+                .Must(BeValidRoleType).WithMessage("Invalid role type. Valid values are: Admin, Staff");
+        }
+
+        private bool BeValidRoleType(string type)
+        {
+            return Enum.TryParse<ERole>(type, true, out _);
         }
     }
 }
