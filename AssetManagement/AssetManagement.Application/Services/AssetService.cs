@@ -78,12 +78,13 @@ public class AssetService : IAssetService
 
             throw new AppException(ErrorCode.CATEGORY_NOT_FOUND, attributes);
         }
-        
-        int count = await _assetRepository.GetTotalPrefixByAssetName(createAssetRequest.AssetName) + 1;
-        string assetCode = $"{category.Prefix.ToUpper()}{count.ToString().PadLeft(6, '0')}";
+
+        int nextSequence = await _assetRepository.GetMaxSequenceForCategoryPrefixAsync(category.Prefix) + 1;
+        int length = 8 - category.Prefix.Length;
+        string assetCode = $"{category.Prefix.ToUpper()}{nextSequence.ToString().PadLeft(length, '0')}";
         
         var user = await _userRepository.GetByIdAsync(staffCode);
-        
+
         var asset = new Asset
         {
             AssetCode = assetCode,
@@ -93,10 +94,22 @@ public class AssetService : IAssetService
             InstalledDate = createAssetRequest.InstalledDate,
             CategoryId = createAssetRequest.CategoryId
         };
-        
+
         AssetStatus statusEnumValue;
         if (Enum.TryParse<AssetStatus>(createAssetRequest.State, true, out statusEnumValue))
         {
+            if (statusEnumValue != AssetStatus.Available && statusEnumValue != AssetStatus.Not_Available)
+            {
+                var attributes = new Dictionary<string, object>
+                {
+                    {
+                        "assetState", createAssetRequest.State
+                    }
+                };
+                
+                throw new AppException(ErrorCode.ASSET_INVALID_STATE, attributes);
+            }
+
             asset.State = statusEnumValue;
         }
         else

@@ -26,14 +26,31 @@ namespace AssetManagement.Infrastructure.Repositories
                 .Include(a => a.Assignments)
                 .FirstOrDefaultAsync(a => a.AssetCode == assetCode);
         }
-
-        public async Task<int> GetTotalPrefixByAssetName(string assetName)
+        
+        public async Task<int> GetMaxSequenceForCategoryPrefixAsync(string categoryPrefix)
         {
-            return await _context.Assets
-                .Where(x => x.AssetName == assetName)
-                .CountAsync();
-        }
+            int prefixLength = categoryPrefix.Length;
 
+            var maxSequenceString = await _context.Assets
+                .Where(a => a.AssetCode.StartsWith(categoryPrefix))
+                .Select(a => a.AssetCode.Substring(prefixLength))
+                .ToListAsync();
+        
+            int maxSequence = 0;
+            foreach (var seqStr in maxSequenceString)
+            {
+                if (int.TryParse(seqStr, out int currentSeq))
+                {
+                    if (currentSeq > maxSequence)
+                    {
+                        maxSequence = currentSeq;
+                    }
+                }
+            }
+            
+            return maxSequence;
+        }
+        
         public async Task<Asset> CreateAsync(Asset entity)
         {
             await _context.Assets.AddAsync(entity);
