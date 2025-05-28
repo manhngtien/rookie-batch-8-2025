@@ -59,6 +59,8 @@ namespace AssetManagement.Application.Services
             // Exclude the currently logged in user
             query = query.Where(u => u.StaffCode != currentUserStaffCode);
 
+            query = query.Where(u => !u.IsDisabled);
+
             // Filter users by location (admin can only see users from their location)
             if (Enum.TryParse<ELocation>(location, out var userLocation))
             {

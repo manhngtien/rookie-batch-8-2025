@@ -56,9 +56,13 @@ namespace AssetManagement.Infrastructure.Repositories
         {
             return await _context.Assignments
                 .Include(a => a.ReturningRequest)
-                .Where(a => a.State.Equals(AssignmentStatus.Accepted))
                 .Where(a => a.AssignedToUser.StaffCode == staffCode || a.AssignedByUser.StaffCode == staffCode)
-                .Where(a => a.ReturningRequest != null && a.ReturningRequest.State.Equals(ReturningRequestStatus.Completed))
+                .Where(a => a.State != AssignmentStatus.Accepted ||
+                            (
+                                a.State == AssignmentStatus.Accepted &&
+                                a.ReturningRequest != null &&
+                                a.ReturningRequest.State != ReturningRequestStatus.Completed)
+                            )
                 .AnyAsync();
         }
     }
