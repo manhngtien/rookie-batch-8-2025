@@ -5,6 +5,8 @@ using AssetManagement.Application.DTOs.Users;
 using AssetManagement.Application.Helpers.Params;
 using AssetManagement.Application.Interfaces;
 using AssetManagement.Application.Interfaces.Auth;
+using AssetManagement.Core.Exceptions;
+using AssetManagement.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -45,10 +47,9 @@ namespace AssetManagement.Api.Controllers
             // Get current logged-in user's staff code
             var currentUserStaffCode = User.GetUserId();
 
-            // Prevent accessing the current user's details
             if (staffCode == currentUserStaffCode)
             {
-                return BadRequest("Cannot access your own user details in this context.");
+                throw new AppException(ErrorCode.SELF_ACCESS_DENIED);
             }
 
             // Get the admin's location
@@ -81,15 +82,12 @@ namespace AssetManagement.Api.Controllers
 
             if (staffCode == currentUserStaffCode)
             {
-                return BadRequest("Cannot update your own user details in this context.");
+                throw new AppException(ErrorCode.SELF_ACCESS_DENIED);
             }
 
             var updatedUser = await _userService.UpdateUserAsync(staffCode, updateUserRequest, currentUserStaffCode);
 
             return Ok(updatedUser);
         }
-
-
-
     }
 }

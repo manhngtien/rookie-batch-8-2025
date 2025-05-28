@@ -16,6 +16,7 @@ namespace AssetManagement.Core.Exceptions
         public static readonly ErrorCode USER_NOT_FOUND = new(601, "User not found", StatusCodes.Status404NotFound);
         public static readonly ErrorCode INVALID_OLD_PASSWORD = new(602, "Invalid old password", StatusCodes.Status400BadRequest);
         public static readonly ErrorCode IDENTITY_CREATION_FAILED = new(603, "Create user failed", StatusCodes.Status500InternalServerError);
+        public static readonly ErrorCode SELF_ACCESS_DENIED = new(604, "Cannot access or modify your own user details in this administrative context", StatusCodes.Status403Forbidden);
 
         // Access and token related errors (700 - 799)
         public static readonly ErrorCode UNAUTHORIZED_ACCESS = new(700, "Unauthorized access", StatusCodes.Status401Unauthorized);
