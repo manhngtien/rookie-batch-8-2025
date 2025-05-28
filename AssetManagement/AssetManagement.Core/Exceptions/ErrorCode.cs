@@ -33,7 +33,9 @@ namespace AssetManagement.Core.Exceptions
         // Assets related errors (900 - 999)
         public static readonly ErrorCode ASSET_NOT_FOUND = new(900, "Asset not found", StatusCodes.Status404NotFound);
         public static readonly ErrorCode ASSET_INVALID_STATE = new(901, "Asset is in invalid state", StatusCodes.Status400BadRequest);
-        
+        public static readonly ErrorCode ASSET_CANNOT_BE_DELETED = new(905, "Cannot delete an asset that is currently assigned", StatusCodes.Status400BadRequest);
+
+        public static readonly ErrorCode ASSET_HAS_HISTORICAL_ASSIGNMENTS = new(908, "Cannot delete the asset because it belongs to one or more historical assignments. If the asset is not able to be used anymore, please update its state in Edit Asset page", StatusCodes.Status400BadRequest);
         // Assignment related errors (1000 - 1099)
         public static readonly ErrorCode ASSIGNMENT_NOT_FOUND = new(1000, "Assignment not found", StatusCodes.Status404NotFound);
         public static readonly ErrorCode ASSIGNMENT_ALREADY_ACCEPTED = new(1001, "Assignment has already been accepted", StatusCodes.Status400BadRequest);
