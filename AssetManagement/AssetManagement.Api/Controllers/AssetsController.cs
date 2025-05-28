@@ -11,7 +11,6 @@ namespace AssetManagement.Api.Controllers
     public class AssetsController : BaseApiController
     {
         private readonly IAssetService _assetService;
-
         public AssetsController(IAssetService assetService)
         {
             _assetService = assetService;
@@ -32,6 +31,16 @@ namespace AssetManagement.Api.Controllers
         {
             var asset = await _assetService.GetAssetByAssetCodeAsync(assetCode);
             return Ok(asset);
+        }
+        
+        [HttpPost()]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<AssetResponse>> CreateAsset([FromForm] CreateAssetRequest assetRequest)
+        {
+            var staffCode = User.GetUserId();
+            var asset = await _assetService.CreateAssetAsync(staffCode, assetRequest);
+
+            return CreatedAtAction(nameof(GetAsset), new { assetCode = asset.AssetCode }, asset);
         }
     }
 }

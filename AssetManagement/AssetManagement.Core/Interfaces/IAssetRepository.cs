@@ -6,5 +6,6 @@ namespace AssetManagement.Core.Interfaces
     public interface IAssetRepository : IBaseRepository<Asset>
     {
         Task<Asset?> GetByAssetCodeAsync(string assetCode);
+        Task<int> GetMaxSequenceForCategoryPrefixAsync(string categoryPrefix);
     }
 }
