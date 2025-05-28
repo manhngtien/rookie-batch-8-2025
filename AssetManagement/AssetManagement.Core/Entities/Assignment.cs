@@ -10,12 +10,14 @@ public class Assignment
     public string Note { get; set; } = string.Empty;
 
     // Foreign keys
-    public string AssetCode { get; set; } = null!;
-    public string AssignedBy { get; set; }
+    public required string AssetCode { get; set; } 
+    public required string AssignedBy { get; set; }
     public required string AssignedTo { get; set; }
+    public int? ReturningRequestId { get; set; }
 
     // Navigation properties
     public virtual Asset Asset { get; set; } = null!;
     public virtual User AssignedByUser { get; set; } = null!;
     public virtual User AssignedToUser { get; set; } = null!;
+    public virtual ReturningRequest? ReturningRequest { get; set; }
 }

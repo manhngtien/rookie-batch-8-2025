@@ -89,5 +89,22 @@ namespace AssetManagement.Api.Controllers
 
             return Ok(updatedUser);
         }
+
+        [HttpDelete("{staffCode}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DisableUser(string staffCode)
+        {
+            // Get current logged-in user's staff code
+            var currentUserStaffCode = User.GetUserId();
+
+            if (staffCode == currentUserStaffCode)
+            {
+                throw new AppException(ErrorCode.SELF_ACCESS_DENIED);
+            }
+
+            await _userService.DisableUserAsync(staffCode);
+
+            return NoContent();
+        }
     }
 }

@@ -14,6 +14,6 @@ public class ReturningRequest
 
     // Navigation properties
     public virtual User RequestedByUser { get; set; } = null!;
-    public virtual User AcceptedByUser { get; set; }
+    public virtual User? AcceptedByUser { get; set; }
     public virtual Assignment Assignment { get; set; } = null!;
 }

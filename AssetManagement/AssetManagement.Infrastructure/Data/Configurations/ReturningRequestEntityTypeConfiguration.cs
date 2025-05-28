@@ -21,7 +21,7 @@ public class ReturningRequestEntityTypeConfiguration : IEntityTypeConfiguration<
             .IsRequired()
             .HasColumnName("RequestedBy");
 
-        builder.Property<string>(r => r.AcceptedBy)
+        builder.Property<string?>(r => r.AcceptedBy)
             .HasColumnName("AcceptedBy");
 
         builder.Property(r => r.AssignmentId)
@@ -36,11 +36,6 @@ public class ReturningRequestEntityTypeConfiguration : IEntityTypeConfiguration<
         builder.HasOne<User>(r => r.AcceptedByUser)
             .WithMany()
             .HasForeignKey(r => r.AcceptedBy)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        builder.HasOne<Assignment>(r => r.Assignment)
-            .WithOne()
-            .HasForeignKey<ReturningRequest>(r => r.AssignmentId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

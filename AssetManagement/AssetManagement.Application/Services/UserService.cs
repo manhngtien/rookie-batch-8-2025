@@ -12,6 +12,7 @@ using AssetManagement.Infrastructure.Exceptions;
 using AssetManagement.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Identity;
 using System.Globalization;
+using System.Security;
 using System.Text;
 
 namespace AssetManagement.Application.Services
@@ -20,15 +21,18 @@ namespace AssetManagement.Application.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IAccountRepository _accountRepository;
+        private readonly IAssignmentRepository _assignmentRepository;
         private readonly IUnitOfWork _unitOfWork;
 
         public UserService(
             IUserRepository userRepository,
             IAccountRepository accountRepository,
+            IAssignmentRepository assignmentRepository,
             IUnitOfWork unitOfWork)
         {
             _userRepository = userRepository;
             _accountRepository = accountRepository;
+            _assignmentRepository = assignmentRepository;
             _unitOfWork = unitOfWork;
         }
 
@@ -54,6 +58,8 @@ namespace AssetManagement.Application.Services
 
             // Exclude the currently logged in user
             query = query.Where(u => u.StaffCode != currentUserStaffCode);
+
+            query = query.Where(u => !u.IsDisabled);
 
             // Filter users by location (admin can only see users from their location)
             if (Enum.TryParse<ELocation>(location, out var userLocation))
@@ -269,9 +275,9 @@ namespace AssetManagement.Application.Services
             if (!Enum.TryParse<ERole>(updateUserRequest.Type, true, out var roleType))
             {
                 throw new AppException(ErrorCode.VALIDATION_ERROR, new Dictionary<string, object>
-        {
-            { "type", $"Invalid role type: {updateUserRequest.Type}. Valid values are: {string.Join(", ", Enum.GetNames<ERole>())}" }
-        });
+                {
+                    { "type", $"Invalid role type: {updateUserRequest.Type}. Valid values are: {string.Join(", ", Enum.GetNames<ERole>())}" }
+                });
             }
 
             // Cập nhật thông tin user
@@ -307,6 +313,30 @@ namespace AssetManagement.Application.Services
             return user.MapModelToResponse();
         }
 
+        public async Task DisableUserAsync(string staffCode)
+        {
+            var user = await _userRepository.GetByIdAsync(staffCode);
+            if (user == null)
+            {
+                throw new AppException(ErrorCode.USER_NOT_FOUND, new Dictionary<string, object>
+                { 
+                    { "staffCode", staffCode }
+                });
+            }
 
+            if(await _assignmentRepository.IsUserInViewAssignments(staffCode))
+            {
+                throw new AppException(ErrorCode.USER_HAS_ACTIVE_ASSIGNMENTS, new Dictionary<string, object>
+                {
+                    { "staffCode", staffCode }
+                });
+            }
+
+            user.IsDisabled = true;
+
+            await _userRepository.UpdateAsync(user);
+
+            await _unitOfWork.CommitAsync();
+        }
     }
 }
