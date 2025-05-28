@@ -32,6 +32,14 @@ public class AssignmentEntityTypeConfiguration : IEntityTypeConfiguration<Assign
             .IsRequired()
             .HasColumnName("AssignedTo");
 
+        builder.Property<int?>(a => a.ReturningRequestId)
+            .HasColumnName("ReturningRequestId");
+
+        builder.HasOne<ReturningRequest>(a => a.ReturningRequest)
+            .WithOne(r => r.Assignment)
+            .HasForeignKey<Assignment>(a => a.ReturningRequestId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.HasOne(a => a.Asset)
             .WithMany(a => a.Assignments)
             .HasForeignKey(a => a.AssetCode)

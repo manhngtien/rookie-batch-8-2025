@@ -1,4 +1,5 @@
 ﻿using AssetManagement.Core.Entities;
+using AssetManagement.Core.Enums;
 using AssetManagement.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -49,6 +50,16 @@ namespace AssetManagement.Infrastructure.Repositories
         {
             _context.Assignments.Remove(entity);
             await Task.CompletedTask;
+        }
+
+        public async Task<bool> IsUserInViewAssignments(string staffCode)
+        {
+            return await _context.Assignments
+                .Include(a => a.ReturningRequest)
+                .Where(a => a.State.Equals(AssignmentStatus.Accepted))
+                .Where(a => a.AssignedToUser.StaffCode == staffCode || a.AssignedByUser.StaffCode == staffCode)
+                .Where(a => a.ReturningRequest != null && a.ReturningRequest.State.Equals(ReturningRequestStatus.Completed))
+                .AnyAsync();
         }
     }
 }

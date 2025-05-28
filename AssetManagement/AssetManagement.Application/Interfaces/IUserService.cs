@@ -11,6 +11,6 @@ namespace AssetManagement.Application.Interfaces
         Task<string> GetLocationByStaffCodeAsync(string staffCode);
         Task<UserResponse> CreateUserAsync(CreateUserRequest createUserRequest, string adminStaffCode);
         Task<UserResponse> UpdateUserAsync(string staffCode, UpdateUserRequest updateUserRequest, string adminStaffCode);
-
+        Task DisableUserAsync(string staffCode);
     }
 }

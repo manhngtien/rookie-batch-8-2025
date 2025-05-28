@@ -41,7 +41,8 @@ namespace AssetManagement.Core.Exceptions
         public static readonly ErrorCode INVALID_DATE = new(1003, "Invalid date", StatusCodes.Status400BadRequest);
         public static readonly ErrorCode INVALID_LOCATION = new(1004, "Invalid location", StatusCodes.Status400BadRequest);
         public static readonly ErrorCode ASSET_NOT_AVAILABLE = new(1005, "Asset is not available", StatusCodes.Status400BadRequest);
-        
+        public static readonly ErrorCode USER_HAS_ACTIVE_ASSIGNMENTS = new(1006, "User has active assignments", StatusCodes.Status400BadRequest);
+
         // Category related errors (1100 - 1199)
         public static readonly ErrorCode CATEGORY_NOT_FOUND = new(1100, "Category not found", StatusCodes.Status404NotFound);
         
