@@ -38,7 +38,24 @@ public class AssignmentService : IAssignmentService
         var query = _assignmentRepository.GetAllAsync()
             .Sort(assignmentParams.OrderBy)
             .Search(assignmentParams.SearchTerm)
-            .Filter(assignmentParams.State, assignmentParams.AssignedDate);
+            .Filter(assignmentParams.State, assignmentParams.AssignedDate)
+            .Where(a => a.ReturningRequest == null || a.ReturningRequest.State != ReturningRequestStatus.Completed);
+
+        var projectedQuery = query.Select(a => a.MapModelToResponse());
+
+        return await PaginationService.ToPagedList(
+            projectedQuery,
+            assignmentParams.PageNumber,
+            assignmentParams.PageSize
+        );
+    }
+
+    public async Task<PagedList<AssignmentResponse>> GetAssignmentsByStaffCodeAsync(string staffCode, AssignmentParams assignmentParams)
+    {
+        var query = _assignmentRepository.GetAllAsync()
+            .Sort(assignmentParams.OrderBy)
+            .Where(a => a.AssignedTo == staffCode && a.AssignedDate <= DateTime.UtcNow)
+            .Where(a => a.ReturningRequest == null || a.ReturningRequest.State != ReturningRequestStatus.Completed);
 
         var projectedQuery = query.Select(a => a.MapModelToResponse());
 

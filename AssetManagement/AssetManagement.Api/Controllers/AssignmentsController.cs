@@ -63,6 +63,16 @@ public class AssignmentsController : BaseApiController
         return CreatedAtAction(nameof(GetAssignmentById), new { id = assignment.Id }, assignment);
     }
 
+    [HttpGet("myAssignments")]
+    [Authorize]
+    public async Task<ActionResult<PagedList<AssignmentResponse>>> GetCurrentUserAssignments([FromQuery] AssignmentParams assignmentParams)
+    {
+        var staffCode = User.GetUserId();
+        var result = await _assignmentService.GetAssignmentsByStaffCodeAsync(staffCode, assignmentParams);
+        Response.AddPaginationHeader(result.Metadata);
+        return Ok(result);
+    }
+
 
     //[HttpPut]
     //public IActionResult UpdateAssignments()
