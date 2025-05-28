@@ -34,6 +34,11 @@ namespace AssetManagement.Infrastructure.Repositories
             return await _userManager.FindByNameAsync(userName);
         }
 
+        public IQueryable<Account> GetAllAccounts()
+        {
+            return _context.Users;
+        }
+
         public async Task<Account?> GetByIdAsync(Guid accountId)
         {
             return await _context.Users
@@ -51,6 +56,18 @@ namespace AssetManagement.Infrastructure.Repositories
         public async Task<IList<string>> GetRolesAsync(Account account)
         {
             return await _userManager.GetRolesAsync(account);
+        }
+
+        public async Task<(bool Succeeded, IEnumerable<string> Errors)> CreateAccountAsync(Account account, string password)
+        {
+            var result = await _userManager.CreateAsync(account, password);
+            return (result.Succeeded, result.Errors.Select(e => e.Description));
+        }
+
+        public async Task<(bool Succeeded, IEnumerable<string> Errors)> AddToRoleAsync(Account account, string role)
+        {
+            var result = await _userManager.AddToRoleAsync(account, role);
+            return (result.Succeeded, result.Errors.Select(e => e.Description));
         }
     }
 }

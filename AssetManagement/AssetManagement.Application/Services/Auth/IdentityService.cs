@@ -14,15 +14,18 @@ namespace AssetManagement.Application.Services.Auth
         private readonly ITokenService _jwt;
         private readonly IUserRepository _userRepository;
         private readonly IAccountRepository _accountRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
         public IdentityService(
             ITokenService jwt,
             IUserRepository userRepository,
-            IAccountRepository accountRepository)
+            IAccountRepository accountRepository,
+            IUnitOfWork unitOfWork)
         {
             _jwt = jwt;
             _userRepository = userRepository;
             _accountRepository = accountRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<UserResponse> GetCurrentUserAsync(string staffCode)
@@ -113,12 +116,26 @@ namespace AssetManagement.Application.Services.Auth
                 throw new AppException(ErrorCode.INVALID_OLD_PASSWORD);
             }
 
+            var user = await _userRepository.GetByIdAsync(account.StaffCode);
+            if (user == null)
+            {
+                throw new AppException(ErrorCode.USER_NOT_FOUND);
+            }
+            if (user.IsFirstLogin)
+            {
+                user.IsFirstLogin = false;
+                await _userRepository.UpdateAsync(user);
+            }
+
             var result = await _accountRepository.ChangePasswordAsync(account, changePasswordRequest.NewPassword);
 
             if (!result)
             {
+
                 throw new AppException(ErrorCode.SAVE_ERROR);
             }
+
+            await _unitOfWork.CommitAsync();
         }
     }
 }
