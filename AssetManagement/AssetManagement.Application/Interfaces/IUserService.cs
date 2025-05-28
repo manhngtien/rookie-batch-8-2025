@@ -10,6 +10,7 @@ namespace AssetManagement.Application.Interfaces
         Task<UserResponse> GetUserByIdAsync(string staffCode, string location);
         Task<string> GetLocationByStaffCodeAsync(string staffCode);
         Task<UserResponse> CreateUserAsync(CreateUserRequest createUserRequest, string adminStaffCode);
+        Task<UserResponse> UpdateUserAsync(string staffCode, UpdateUserRequest updateUserRequest, string adminStaffCode);
 
     }
 }

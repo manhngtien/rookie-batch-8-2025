@@ -5,6 +5,8 @@ using AssetManagement.Application.DTOs.Users;
 using AssetManagement.Application.Helpers.Params;
 using AssetManagement.Application.Interfaces;
 using AssetManagement.Application.Interfaces.Auth;
+using AssetManagement.Core.Exceptions;
+using AssetManagement.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -45,10 +47,9 @@ namespace AssetManagement.Api.Controllers
             // Get current logged-in user's staff code
             var currentUserStaffCode = User.GetUserId();
 
-            // Prevent accessing the current user's details
             if (staffCode == currentUserStaffCode)
             {
-                return BadRequest("Cannot access your own user details in this context.");
+                throw new AppException(ErrorCode.SELF_ACCESS_DENIED);
             }
 
             // Get the admin's location
@@ -67,13 +68,26 @@ namespace AssetManagement.Api.Controllers
 
             var createdUser = await _userService.CreateUserAsync(createUserRequest, staffCode);
 
-            // Trả về CreatedAtAction với staffCode và đường dẫn đến action GetUserById
             return CreatedAtAction(nameof(GetUserById),
                                 new { staffCode = createdUser.StaffCode },
                                 createdUser);
         }
 
+        [HttpPut("{staffCode}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateUser(string staffCode, [FromForm] UpdateUserRequest updateUserRequest)
+        {
+            // Get current logged-in user's staff code
+            var currentUserStaffCode = User.GetUserId();
 
+            if (staffCode == currentUserStaffCode)
+            {
+                throw new AppException(ErrorCode.SELF_ACCESS_DENIED);
+            }
 
+            var updatedUser = await _userService.UpdateUserAsync(staffCode, updateUserRequest, currentUserStaffCode);
+
+            return Ok(updatedUser);
+        }
     }
 }

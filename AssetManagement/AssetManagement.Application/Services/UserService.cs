@@ -113,9 +113,9 @@ namespace AssetManagement.Application.Services
             if (!Enum.TryParse<ERole>(createUserRequest.Type, true, out var roleType))
             {
                 throw new AppException(ErrorCode.VALIDATION_ERROR, new Dictionary<string, object>
-        {
+                {
             { "type", $"Invalid role type: {createUserRequest.Type}. Valid values are: {string.Join(", ", Enum.GetNames<ERole>())}" }
-        });
+                });
             }
 
             // Generate staff code
@@ -181,13 +181,11 @@ namespace AssetManagement.Application.Services
 
         private string GenerateStaffCode()
         {
-            // Lấy tất cả người dùng
             var allUsers = _userRepository.GetAllAsync().ToList();
             int lastNumber = 0;
 
             if (allUsers.Any())
             {
-                // Vì tất cả staff code đều bắt đầu bằng "SD", chúng ta có thể bỏ điều kiện lọc
                 var codes = allUsers
                     .Select(u => u.StaffCode)
                     .Select(c =>
@@ -202,7 +200,7 @@ namespace AssetManagement.Application.Services
             }
 
             int newNumber = lastNumber + 1;
-            // Sử dụng chuỗi định dạng D4 để đảm bảo luôn có 4 chữ số (thêm số 0 ở đầu nếu cần)
+           
             return $"SD{newNumber:D4}";
         }
 
@@ -212,10 +210,9 @@ namespace AssetManagement.Application.Services
             string firstName = request.FirstName.Trim();
             string lastName = request.LastName.Trim();
 
-            // Tạo username: Lấy toàn bộ first name + chữ cái đầu tiên của mỗi từ trong last name
             StringBuilder usernameBuilder = new StringBuilder(firstName.ToLower());
 
-            // Xử lý last name, lấy chữ cái đầu tiên của mỗi từ
+           
             string[] lastNameParts = lastName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             foreach (var part in lastNameParts)
             {
@@ -225,7 +222,6 @@ namespace AssetManagement.Application.Services
                 }
             }
 
-            // Chuẩn hóa tên người dùng (loại bỏ dấu, khoảng trắng)
             string baseUsername = usernameBuilder.ToString()
                 .Normalize(NormalizationForm.FormD)
                 .Where(c => char.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
@@ -233,7 +229,6 @@ namespace AssetManagement.Application.Services
                 .ToString()
                 .Replace(" ", "");
 
-            // Kiểm tra nếu username đã tồn tại và tạo username duy nhất
             string username = baseUsername;
             int counter = 1;
 
@@ -243,11 +238,75 @@ namespace AssetManagement.Application.Services
                 counter++;
             }
 
-            // Tạo mật khẩu [username]@[DOB in ddMMyyy]
             string password = $"{username}@{request.DateOfBirth:ddMMyyyy}";
 
             return (username, password);
         }
+
+        public async Task<UserResponse> UpdateUserAsync(string staffCode, UpdateUserRequest updateUserRequest, string adminStaffCode)
+        {
+            // Kiểm tra admin
+            var admin = await _userRepository.GetByIdAsync(adminStaffCode);
+            if (admin == null)
+            {
+                throw new AppException(ErrorCode.USER_NOT_FOUND);
+            }
+
+            // Lấy thông tin user cần cập nhật
+            var user = await _userRepository.GetByIdAsync(staffCode);
+            if (user == null)
+            {
+                throw new AppException(ErrorCode.USER_NOT_FOUND, new Dictionary<string, object> { { "staffCode", staffCode } });
+            }
+
+            // Kiểm tra xem admin có cùng location với user không
+            if (admin.Location != user.Location)
+            {
+                throw new AppException(ErrorCode.ACCESS_DENIED);
+            }
+
+            // Chuyển đổi Type từ string sang enum
+            if (!Enum.TryParse<ERole>(updateUserRequest.Type, true, out var roleType))
+            {
+                throw new AppException(ErrorCode.VALIDATION_ERROR, new Dictionary<string, object>
+        {
+            { "type", $"Invalid role type: {updateUserRequest.Type}. Valid values are: {string.Join(", ", Enum.GetNames<ERole>())}" }
+        });
+            }
+
+            // Cập nhật thông tin user
+            user.DateOfBirth = updateUserRequest.DateOfBirth;
+            user.Gender = updateUserRequest.Gender;
+            user.JoinedDate = updateUserRequest.JoinedDate;
+            user.Type = roleType;
+
+            // Cập nhật user trong repository
+            await _userRepository.UpdateAsync(user);
+
+            // Cập nhật UpdatedDate trong Account
+            var account = await _accountRepository.GetByStaffCodeAsync(staffCode);
+            if (account != null)
+            {
+                account.UpdatedDate = DateTime.Now;
+
+                // Cập nhật role nếu Type thay đổi
+                var currentRoles = await _accountRepository.GetRolesAsync(account);
+                if (!currentRoles.Contains(roleType.ToString()))
+                {
+                    // Xóa tất cả roles hiện tại và thêm role mới
+                    foreach (var role in currentRoles)
+                    {
+                        await _accountRepository.RemoveFromRoleAsync(account, role);
+                    }
+                    await _accountRepository.AddToRoleAsync(account, roleType.ToString());
+                }
+            }
+
+            await _unitOfWork.CommitAsync();
+
+            return user.MapModelToResponse();
+        }
+
 
     }
 }
