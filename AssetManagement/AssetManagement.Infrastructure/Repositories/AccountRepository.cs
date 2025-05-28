@@ -69,5 +69,12 @@ namespace AssetManagement.Infrastructure.Repositories
             var result = await _userManager.AddToRoleAsync(account, role);
             return (result.Succeeded, result.Errors.Select(e => e.Description));
         }
+
+        public async Task<(bool Succeeded, IEnumerable<string> Errors)> RemoveFromRoleAsync(Account account, string role)
+        {
+            var result = await _userManager.RemoveFromRoleAsync(account, role);
+            return (result.Succeeded, result.Errors.Select(e => e.Description));
+        }
+
     }
 }

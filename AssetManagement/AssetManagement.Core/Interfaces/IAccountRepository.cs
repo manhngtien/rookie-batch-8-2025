@@ -11,6 +11,7 @@ namespace AssetManagement.Core.Interfaces
         IQueryable<Account> GetAllAccounts();
         Task<(bool Succeeded, IEnumerable<string> Errors)> CreateAccountAsync(Account account, string password);
         Task<(bool Succeeded, IEnumerable<string> Errors)> AddToRoleAsync(Account account, string role);
+        Task<(bool Succeeded, IEnumerable<string> Errors)> RemoveFromRoleAsync(Account account, string role);
 
         // UserManager
         Task<Account?> FindByUserNameAsync(string userName);

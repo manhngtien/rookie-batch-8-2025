@@ -67,10 +67,26 @@ namespace AssetManagement.Api.Controllers
 
             var createdUser = await _userService.CreateUserAsync(createUserRequest, staffCode);
 
-            // Trả về CreatedAtAction với staffCode và đường dẫn đến action GetUserById
             return CreatedAtAction(nameof(GetUserById),
                                 new { staffCode = createdUser.StaffCode },
                                 createdUser);
+        }
+
+        [HttpPut("{staffCode}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateUser(string staffCode, [FromForm] UpdateUserRequest updateUserRequest)
+        {
+            // Get current logged-in user's staff code
+            var currentUserStaffCode = User.GetUserId();
+
+            if (staffCode == currentUserStaffCode)
+            {
+                return BadRequest("Cannot update your own user details in this context.");
+            }
+
+            var updatedUser = await _userService.UpdateUserAsync(staffCode, updateUserRequest, currentUserStaffCode);
+
+            return Ok(updatedUser);
         }
 
 
