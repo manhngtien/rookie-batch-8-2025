@@ -65,16 +65,16 @@ namespace AssetManagement.Infrastructure.Extensions
                 (a.AssignedToUser != null && a.AssignedToUser.UserName != null && a.AssignedToUser.UserName.ToLower().Contains(lowerCaseTerm)));
         }
 
-        public static IQueryable<Assignment> Filter(this IQueryable<Assignment> query, string? state, DateOnly? assignedDate)
+        public static IQueryable<Assignment> Filter(this IQueryable<Assignment> query, string? stateValues, DateOnly? assignedDate)
         {
-            if (!string.IsNullOrEmpty(state))
+            if (!string.IsNullOrEmpty(stateValues))
             {
-                // Try to parse the string into an AssignmentStatus enum
-                if (Enum.TryParse<AssignmentStatus>(state, true, out var assignmentState))
-                {
-                    // Filter by the parsed enum value
-                    query = query.Where(a => a.State == assignmentState);
-                }
+                string[] states = stateValues
+                    .Split(',')
+                    .Select(state => state.ToLower().Trim())
+                    .ToArray();
+
+                query = query.Where(x => states.Contains(x.State.ToString().ToLower()));
             }
 
             if (assignedDate.HasValue)
