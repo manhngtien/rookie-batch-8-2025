@@ -115,13 +115,31 @@ namespace AssetManagement.Application.Services
                 throw new AppException(ErrorCode.USER_NOT_FOUND);
             }
 
-            // Chuyển đổi Type từ string sang enum
+            // Convert Type from string to enum
             if (!Enum.TryParse<ERole>(createUserRequest.Type, true, out var roleType))
             {
                 throw new AppException(ErrorCode.VALIDATION_ERROR, new Dictionary<string, object>
                 {
             { "type", $"Invalid role type: {createUserRequest.Type}. Valid values are: {string.Join(", ", Enum.GetNames<ERole>())}" }
                 });
+            }
+
+            ELocation userLocation;
+
+            if (roleType == ERole.Admin && !string.IsNullOrEmpty(createUserRequest.Location))
+            {
+                // For Admin users, use the selected location
+                if (!Enum.TryParse<ELocation>(createUserRequest.Location, true, out userLocation))
+                {
+                    throw new AppException(ErrorCode.VALIDATION_ERROR, new Dictionary<string, object>
+            {
+                { "location", $"Invalid location: {createUserRequest.Location}. Valid values are: {string.Join(", ", Enum.GetNames<ELocation>())}" }
+            });
+                }
+            }
+            else
+            {
+                userLocation = admin.Location;
             }
 
             // Generate staff code
@@ -140,16 +158,14 @@ namespace AssetManagement.Application.Services
                 DateOfBirth = createUserRequest.DateOfBirth,
                 JoinedDate = createUserRequest.JoinedDate,
                 Gender = createUserRequest.Gender,
-                Type = roleType, // Sử dụng giá trị enum đã chuyển đổi
-                Location = admin.Location,
+                Type = roleType,
+                Location = userLocation, 
                 IsDisabled = false,
                 IsFirstLogin = true
             };
-
-            // Create user in the repository
+           
             await _userRepository.CreateAsync(user);
 
-            // Create account
             var account = new Account
             {
                 Id = Guid.NewGuid(),
@@ -183,6 +199,7 @@ namespace AssetManagement.Application.Services
 
             return user.MapModelToResponse();
         }
+
 
 
         private string GenerateStaffCode()
