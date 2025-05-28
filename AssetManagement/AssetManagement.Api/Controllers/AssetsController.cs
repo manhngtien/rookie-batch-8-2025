@@ -3,6 +3,7 @@ using AssetManagement.Api.Extensions;
 using AssetManagement.Application.DTOs.Assets;
 using AssetManagement.Application.Helpers.Params;
 using AssetManagement.Application.Interfaces;
+using AssetManagement.Application.Paginations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -50,6 +51,25 @@ namespace AssetManagement.Api.Controllers
         {
             await _assetService.DeleteAssetAsync(assetCode);
             return NoContent();
+        }
+
+        [HttpGet("myAssets")]
+        [Authorize]
+        public async Task<ActionResult<PagedList<AssetResponse>>> GetCurrentUserAssets([FromQuery] AssetParams assetParams)
+        {
+            var staffCode = User.GetUserId();
+
+            var assets = await _assetService.GetUserAssetsAsync(assetParams, staffCode);
+            Response.AddPaginationHeader(assets.Metadata);
+            return Ok(assets);
+        }
+
+        [HttpPut("{assetCode}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<AssetResponse>> UpdateAssets(string assetCode, [FromBody] UpdateAssetRequest updateAssetRequest)
+        {
+            var updatedAsset = await _assetService.UpdateAssetAsync(assetCode, updateAssetRequest);
+            return Ok(updatedAsset);
         }
     }
 }

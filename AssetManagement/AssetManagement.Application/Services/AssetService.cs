@@ -10,6 +10,8 @@ using AssetManagement.Core.Exceptions;
 using AssetManagement.Core.Interfaces;
 using AssetManagement.Infrastructure.Exceptions;
 using AssetManagement.Infrastructure.Extensions;
+using AssetManagement.Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,7 +28,8 @@ public class AssetService : IAssetService
         IAssetRepository assetRepository,
         ICategoryRepository categoryRepository,
         IUserRepository userRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork
+    )
     {
         _assetRepository = assetRepository;
         _categoryRepository = categoryRepository;
@@ -129,6 +132,87 @@ public class AssetService : IAssetService
         await _unitOfWork.CommitAsync();
 
         return createdAsset.MapModelToResponse();
+    }
+
+    public async Task<PagedList<AssetResponse>> GetUserAssetsAsync(AssetParams assetParams, string staffCode)
+    {
+        var query = _assetRepository.GetAllAsync()
+            .Where(asset => asset.Assignments.Any(a => a.AssignedTo == staffCode))
+            .Sort(assetParams.OrderBy)
+            .Search(assetParams.SearchTerm)
+            .Filter(assetParams.Category, assetParams.State?.ToString());
+
+        var projectedQuery = query.Select(x => x.MapModelToResponse());
+
+        return await PaginationService.ToPagedList(
+            projectedQuery,
+            assetParams.PageNumber,
+            assetParams.PageSize
+        );
+    }
+
+    public async Task<AssetResponse> UpdateAssetAsync(string assetCode, UpdateAssetRequest updateAssetRequest)
+    {
+        // Fetch the asset
+        var asset = await _assetRepository.GetByAssetCodeAsync(assetCode);
+        if (asset == null)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "assetCode", assetCode }
+            };
+            throw new AppException(ErrorCode.ASSET_NOT_FOUND, attributes);
+        }
+
+        // AC1: Cannot edit assets in "Assigned" state
+        if (asset.State == AssetStatus.Assigned)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "assetCode", assetCode },
+                { "state", asset.State.ToString() }
+            };
+            throw new AppException(ErrorCode.ASSET_CANNOT_BE_EDITED, attributes);
+        }
+
+        // Validate the state
+        if (!Enum.TryParse<AssetStatus>(updateAssetRequest.State, true, out var newState))
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "state", updateAssetRequest.State }
+            };
+            throw new AppException(ErrorCode.INVALID_ASSET_STATE, attributes);
+        }
+
+        // Validate InstalledDate (not in the future relative to today, May 27, 2025)
+        var today = DateTime.UtcNow;
+        if (updateAssetRequest.InstalledDate > today)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "installedDate", updateAssetRequest.InstalledDate.ToString("yyyy-MM-dd") }
+            };
+            throw new AppException(ErrorCode.INVALID_DATE, attributes);
+        }
+
+        // Update the asset fields
+        asset.AssetName = updateAssetRequest.AssetName;
+        asset.Specification = updateAssetRequest.Specification;
+        asset.InstalledDate = updateAssetRequest.InstalledDate.Date;
+        asset.State = newState;
+
+        try
+        {
+            await _assetRepository.UpdateAsync(asset);
+            await _unitOfWork.CommitAsync();
+        }
+        catch (DbUpdateException)
+        {
+            throw new AppException(ErrorCode.SAVE_ERROR, new Dictionary<string, object>());
+        }
+
+        return asset.MapModelToResponse();
     }
 
     public async Task DeleteAssetAsync(string assetCode)
