@@ -79,15 +79,18 @@ public class AssignmentsController : BaseApiController
     //{
     //    return MethodNotAllowed();
     //}
-
-
-    //[HttpDelete]
-    //public IActionResult DeleteAssignments()
-    //{
-    //    return MethodNotAllowed();
-    //}
-
-
+    
+    [HttpDelete("{assignmentId:int}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> DeleteAssignment(int assignmentId)
+    {
+        var staffCode = User.GetUserId();
+        
+        await _assignmentService.DeleteAssignmentAsync(staffCode, assignmentId);
+        
+        return NoContent();
+    }
+    
     private IActionResult MethodNotAllowed()
     {
         return StatusCode(StatusCodes.Status405MethodNotAllowed);
