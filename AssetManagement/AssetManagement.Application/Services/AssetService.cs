@@ -36,12 +36,13 @@ public class AssetService : IAssetService
         _unitOfWork = unitOfWork;
     }
 
-    public Task<PagedList<AssetResponse>> GetAssetsAsync(AssetParams assetParams)
+    public Task<PagedList<AssetResponse>> GetAssetsAsync(string location, AssetParams assetParams)
     {
         var query = _assetRepository.GetAllAsync()
             .Sort(assetParams.OrderBy)
             .Search(assetParams.SearchTerm)
-            .Filter(assetParams.Category, assetParams.State?.ToString());
+            .Filter(assetParams.Category, assetParams.State?.ToString())
+            .Where(a => a.Location.ToString().ToLower() == location.ToLower());
 
         var projectedQuery = query.Select(x => x.MapModelToResponse());
 
@@ -52,7 +53,7 @@ public class AssetService : IAssetService
         );
     }
 
-    public async Task<AssetResponse> GetAssetByAssetCodeAsync(string assetCode)
+    public async Task<AssetResponse?> GetAssetByAssetCodeAsync(string location, string assetCode)
     {
         var asset = await _assetRepository.GetByAssetCodeAsync(assetCode);
         if (asset == null)
@@ -62,6 +63,15 @@ public class AssetService : IAssetService
                 { "assetCode", assetCode }
             };
             throw new AppException(ErrorCode.ASSET_NOT_FOUND, attributes);
+        }
+
+        if (asset.Location.ToString().ToLower() != location.ToLower())
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "location", location }
+            };
+            throw new AppException(ErrorCode.INVALID_LOCATION, attributes);
         }
 
         return asset.MapModelToResponse();
@@ -85,7 +95,7 @@ public class AssetService : IAssetService
         int nextSequence = category.Total + 1;
         int length = 8 - category.Prefix.Length;
         string assetCode = $"{category.Prefix.ToUpper()}{nextSequence.ToString().PadLeft(length, '0')}";
-        
+
         var user = await _userRepository.GetByIdAsync(staffCode);
 
         var asset = new Asset
@@ -109,7 +119,7 @@ public class AssetService : IAssetService
                         "assetState", createAssetRequest.State
                     }
                 };
-                
+
                 throw new AppException(ErrorCode.ASSET_INVALID_STATE, attributes);
             }
 
@@ -123,10 +133,10 @@ public class AssetService : IAssetService
                     "assetState", createAssetRequest.State
                 }
             };
-            
+
             throw new AppException(ErrorCode.ASSET_INVALID_STATE, attributes);
         }
-        
+
         var createdAsset = await _assetRepository.CreateAsync(asset);
         category.Total++;
         

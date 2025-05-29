@@ -6,12 +6,10 @@ namespace AssetManagement.Application.Interfaces;
 
 public interface IAssetService
 {
-    Task<PagedList<AssetResponse>> GetAssetsAsync(AssetParams assetParams);
-    Task<AssetResponse> GetAssetByAssetCodeAsync(string assetCode);
+    Task<PagedList<AssetResponse>> GetAssetsAsync(string location, AssetParams assetParams);
+    Task<AssetResponse?> GetAssetByAssetCodeAsync(string location, string assetCode);
     Task<AssetResponse> CreateAssetAsync(string staffCode, CreateAssetRequest createAssetRequest);
     Task<PagedList<AssetResponse>> GetUserAssetsAsync(AssetParams assetParams, string staffCode);
-    Task<AssetResponse> UpdateAssetAsync(string assetCode, UpdateAssetRequest updateAssetRequest); 
-
-
+    Task<AssetResponse> UpdateAssetAsync(string assetCode, UpdateAssetRequest updateAssetRequest);
     Task DeleteAssetAsync(string assetCode);
 }

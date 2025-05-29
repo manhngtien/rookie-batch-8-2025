@@ -3,6 +3,8 @@ using AssetManagement.Api.Extensions;
 using AssetManagement.Application.DTOs.Assets;
 using AssetManagement.Application.Helpers.Params;
 using AssetManagement.Application.Interfaces;
+using AssetManagement.Core.Exceptions;
+using AssetManagement.Infrastructure.Exceptions;
 using AssetManagement.Application.Paginations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,16 +14,31 @@ namespace AssetManagement.Api.Controllers
     public class AssetsController : BaseApiController
     {
         private readonly IAssetService _assetService;
-        public AssetsController(IAssetService assetService)
+        private readonly IUserService _userService;
+
+        public AssetsController(IAssetService assetService, IUserService userService)
         {
             _assetService = assetService;
+            _userService = userService;
         }
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<AssetResponse>>> GetAssets([FromQuery] AssetParams assetParams)
         {
-            var assets = await _assetService.GetAssetsAsync(assetParams);
+            var staffCode = User.GetUserId();
+            var location = await _userService.GetLocationByStaffCodeAsync(staffCode);
+
+            if (location == null)
+            {
+                var attributes = new Dictionary<string, object>
+                {
+                    { "location", location ?? string.Empty}
+                };
+                throw new AppException(ErrorCode.INVALID_LOCATION, attributes);
+            }
+
+            var assets = await _assetService.GetAssetsAsync(location, assetParams);
             Response.AddPaginationHeader(assets.Metadata);
             return Ok(assets);
         }
@@ -30,10 +47,22 @@ namespace AssetManagement.Api.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<AssetResponse?>> GetAsset(string assetCode)
         {
-            var asset = await _assetService.GetAssetByAssetCodeAsync(assetCode);
+            var staffCode = User.GetUserId();
+            var location = await _userService.GetLocationByStaffCodeAsync(staffCode);
+
+            if (location == null)
+            {
+                var attributes = new Dictionary<string, object>
+                {
+                    { "location", location ?? string.Empty }
+                };
+                throw new AppException(ErrorCode.INVALID_LOCATION, attributes);
+            }
+
+            var asset = await _assetService.GetAssetByAssetCodeAsync(location, assetCode);
             return Ok(asset);
         }
-        
+
         [HttpPost()]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<AssetResponse>> CreateAsset([FromForm] CreateAssetRequest assetRequest)
