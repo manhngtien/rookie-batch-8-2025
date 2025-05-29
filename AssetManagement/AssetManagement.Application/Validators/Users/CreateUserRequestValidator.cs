@@ -35,11 +35,23 @@ namespace AssetManagement.Application.Validators.Users
             RuleFor(x => x.Type)
                 .NotEmpty().WithMessage("Type is required")
                 .Must(BeValidRoleType).WithMessage("Invalid role type. Valid values are: Admin, Staff");
+
+            When(x => x.Type?.Equals("Admin", StringComparison.OrdinalIgnoreCase) == true, () =>
+            {
+                RuleFor(x => x.Location)
+                    .NotEmpty().WithMessage("Location is required for Admin users")
+                    .Must(BeValidLocationType).WithMessage("Invalid location. Valid values are: HCM, HN, DN");
+            });
         }
 
         private bool BeValidRoleType(string type)
         {
             return Enum.TryParse<ERole>(type, true, out _);
+        }
+
+        private bool BeValidLocationType(string location)
+        {
+            return Enum.TryParse<ELocation>(location, true, out _);
         }
     }
 }
