@@ -11,6 +11,7 @@ using AssetManagement.Core.Interfaces;
 using AssetManagement.Infrastructure.Exceptions;
 using AssetManagement.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace AssetManagement.Application.Services;
 
@@ -128,5 +129,51 @@ public class AssetService : IAssetService
         await _unitOfWork.CommitAsync();
 
         return createdAsset.MapModelToResponse();
+    }
+
+    public async Task DeleteAssetAsync(string assetCode)
+    {
+        // Fetch the asset
+        var asset = await _assetRepository.GetByAssetCodeAsync(assetCode);
+        if (asset == null)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "assetCode", assetCode }
+            };
+            throw new AppException(ErrorCode.ASSET_NOT_FOUND, attributes);
+        }
+
+        // Check if the asset has any historical assignments
+        if (asset.Assignments != null && asset.Assignments.Any())
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "assetCode", assetCode }
+            };
+            throw new AppException(ErrorCode.ASSET_HAS_HISTORICAL_ASSIGNMENTS, attributes);
+
+        }
+
+        // Prevent deletion if the asset is in "Assigned" state
+        if (asset.State == AssetStatus.Assigned)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "assetCode", assetCode },
+                { "state", asset.State.ToString() }
+            };
+            throw new AppException(ErrorCode.ASSET_CANNOT_BE_DELETED, attributes);
+        }
+
+        try
+        {
+            await _assetRepository.DeleteAsync(asset);
+            await _unitOfWork.CommitAsync(); // Commit changes using UnitOfWork
+        }
+        catch (DbUpdateException)
+        {
+            throw new AppException(ErrorCode.SAVE_ERROR, new Dictionary<string, object>());
+        }
     }
 }

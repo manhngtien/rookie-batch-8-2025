@@ -42,5 +42,14 @@ namespace AssetManagement.Api.Controllers
 
             return CreatedAtAction(nameof(GetAsset), new { assetCode = asset.AssetCode }, asset);
         }
+
+
+        [HttpDelete("{assetCode}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteAssets(string assetCode)
+        {
+            await _assetService.DeleteAssetAsync(assetCode);
+            return NoContent();
+        }
     }
 }
