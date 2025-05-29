@@ -5,12 +5,13 @@ using AssetManagement.Application.Paginations;
 
 namespace AssetManagement.Application.Interfaces
 {
-    public interface IAssignmentService
-    {
-        Task<PagedList<AssignmentResponse>> GetAssignmentsAsync(AssignmentParams assignmentParams);
-        Task<PagedList<AssignmentResponse>> GetAssignmentsByStaffCodeAsync(string staffCode, AssignmentParams assignmentParams);
-        Task<AssignmentResponse> GetAssignmentByIdAsync(int id);
-        Task<AssignmentResponse> CreateAssignmentAsync(string adminStaffCode, CreateAssignmentRequest assignmentRequest);
-        Task DeleteAssignmentAsync(string staffCode, int assignmentId);
-    }
+	public interface IAssignmentService
+	{
+		Task<PagedList<AssignmentResponse>> GetAssignmentsAsync(AssignmentParams assignmentParams);
+		Task<PagedList<AssignmentResponse>> GetAssignmentsByStaffCodeAsync(string staffCode, AssignmentParams assignmentParams);
+		Task<AssignmentResponse> GetAssignmentByIdAsync(int id);
+		Task<AssignmentResponse> CreateAssignmentAsync(string adminStaffCode, CreateAssignmentRequest assignmentRequest);
+		Task<AssignmentResponse> UpdateAssignmentAsync(int id, string staffCode, UpdateAssignmentRequest assignmentRequest);
+		Task DeleteAssignmentAsync(string staffCode, int assignmentId);
+	}
 }

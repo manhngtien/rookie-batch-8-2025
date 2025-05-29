@@ -9,9 +9,6 @@ using AssetManagement.Core.Exceptions;
 using AssetManagement.Core.Interfaces;
 using AssetManagement.Infrastructure.Exceptions;
 using AssetManagement.Infrastructure.Extensions;
-using AssetManagement.Infrastructure.Repositories;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace AssetManagement.Application.Services;
@@ -36,25 +33,47 @@ public class AssetService : IAssetService
         _unitOfWork = unitOfWork;
     }
 
-    public Task<PagedList<AssetResponse>> GetAssetsAsync(string location, AssetParams assetParams)
+    public async Task<PagedList<AssetResponse>> GetAssetsAsync(string staffCode, AssetParams assetParams)
     {
+        var staff = await _userRepository.GetByIdAsync(staffCode);
+        if (staff is null)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "staffCode", staffCode }
+            };
+
+            throw new AppException(ErrorCode.USER_NOT_FOUND, attributes);
+        }
+
         var query = _assetRepository.GetAllAsync()
+            .Where(a => a.Location.ToString().ToLower() == staff.Location.ToString().ToLower())
             .Sort(assetParams.OrderBy)
             .Search(assetParams.SearchTerm)
-            .Filter(assetParams.Category, assetParams.State?.ToString())
-            .Where(a => a.Location.ToString().ToLower() == location.ToLower());
+            .Filter(assetParams.Category, assetParams.State?.ToString());
 
         var projectedQuery = query.Select(x => x.MapModelToResponse());
 
-        return PaginationService.ToPagedList(
+        return await PaginationService.ToPagedList(
             projectedQuery,
             assetParams.PageNumber,
             assetParams.PageSize
         );
     }
 
-    public async Task<AssetResponse?> GetAssetByAssetCodeAsync(string location, string assetCode)
+    public async Task<AssetResponse?> GetAssetByAssetCodeAsync(string assetCode, string staffCode)
     {
+        var staff = await _userRepository.GetByIdAsync(staffCode);
+        if (staff is null)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "staffCode", staffCode }
+            };
+
+            throw new AppException(ErrorCode.USER_NOT_FOUND, attributes);
+        }
+
         var asset = await _assetRepository.GetByAssetCodeAsync(assetCode);
         if (asset == null)
         {
@@ -65,11 +84,11 @@ public class AssetService : IAssetService
             throw new AppException(ErrorCode.ASSET_NOT_FOUND, attributes);
         }
 
-        if (asset.Location.ToString().ToLower() != location.ToLower())
+        if (asset.Location != staff.Location)
         {
             var attributes = new Dictionary<string, object>
             {
-                { "location", location }
+                { "location", staff.Location.ToString().ToLower() }
             };
             throw new AppException(ErrorCode.INVALID_LOCATION, attributes);
         }
@@ -139,7 +158,7 @@ public class AssetService : IAssetService
 
         var createdAsset = await _assetRepository.CreateAsync(asset);
         category.Total++;
-        
+
         await _unitOfWork.CommitAsync();
 
         return createdAsset.MapModelToResponse();

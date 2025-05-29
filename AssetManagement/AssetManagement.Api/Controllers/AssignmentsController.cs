@@ -63,6 +63,27 @@ public class AssignmentsController : BaseApiController
         return CreatedAtAction(nameof(GetAssignmentById), new { id = assignment.Id }, assignment);
     }
 
+    [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<AssignmentResponse>> UpdateAssignment(int id, [FromForm] UpdateAssignmentRequest assignmentRequest)
+    {
+        if (id != assignmentRequest.Id)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "assignmentId", assignmentRequest.Id },
+                { "id", assignmentRequest.Id }
+            };
+            throw new AppException(ErrorCode.INVALID_ASSIGNMENT_ID, attributes);
+        }
+
+        var staffCode = User.GetUserId();
+
+        var updatedAssignment = await _assignmentService.UpdateAssignmentAsync(id, staffCode, assignmentRequest);
+
+        return Ok(updatedAssignment);
+    }
+
     [HttpGet("myAssignments")]
     [Authorize]
     public async Task<ActionResult<PagedList<AssignmentResponse>>> GetCurrentUserAssignments([FromQuery] AssignmentParams assignmentParams)
@@ -79,18 +100,18 @@ public class AssignmentsController : BaseApiController
     //{
     //    return MethodNotAllowed();
     //}
-    
+
     [HttpDelete("{assignmentId:int}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteAssignment(int assignmentId)
     {
         var staffCode = User.GetUserId();
-        
+
         await _assignmentService.DeleteAssignmentAsync(staffCode, assignmentId);
-        
+
         return NoContent();
     }
-    
+
     private IActionResult MethodNotAllowed()
     {
         return StatusCode(StatusCodes.Status405MethodNotAllowed);

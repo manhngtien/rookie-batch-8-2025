@@ -27,18 +27,8 @@ namespace AssetManagement.Api.Controllers
         public async Task<ActionResult<IEnumerable<AssetResponse>>> GetAssets([FromQuery] AssetParams assetParams)
         {
             var staffCode = User.GetUserId();
-            var location = await _userService.GetLocationByStaffCodeAsync(staffCode);
 
-            if (location == null)
-            {
-                var attributes = new Dictionary<string, object>
-                {
-                    { "location", location ?? string.Empty}
-                };
-                throw new AppException(ErrorCode.INVALID_LOCATION, attributes);
-            }
-
-            var assets = await _assetService.GetAssetsAsync(location, assetParams);
+            var assets = await _assetService.GetAssetsAsync(staffCode, assetParams);
             Response.AddPaginationHeader(assets.Metadata);
             return Ok(assets);
         }
@@ -48,18 +38,8 @@ namespace AssetManagement.Api.Controllers
         public async Task<ActionResult<AssetResponse?>> GetAsset(string assetCode)
         {
             var staffCode = User.GetUserId();
-            var location = await _userService.GetLocationByStaffCodeAsync(staffCode);
 
-            if (location == null)
-            {
-                var attributes = new Dictionary<string, object>
-                {
-                    { "location", location ?? string.Empty }
-                };
-                throw new AppException(ErrorCode.INVALID_LOCATION, attributes);
-            }
-
-            var asset = await _assetService.GetAssetByAssetCodeAsync(location, assetCode);
+            var asset = await _assetService.GetAssetByAssetCodeAsync(assetCode, staffCode);
             return Ok(asset);
         }
 
