@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using AssetManagement.Application.DTOs.Assets;
 using AssetManagement.Application.Helpers.Params;
 using AssetManagement.Application.Interfaces;
@@ -83,7 +82,7 @@ public class AssetService : IAssetService
             throw new AppException(ErrorCode.CATEGORY_NOT_FOUND, attributes);
         }
 
-        int nextSequence = await _assetRepository.GetMaxSequenceForCategoryPrefixAsync(category.Prefix) + 1;
+        int nextSequence = category.Total + 1;
         int length = 8 - category.Prefix.Length;
         string assetCode = $"{category.Prefix.ToUpper()}{nextSequence.ToString().PadLeft(length, '0')}";
         
@@ -129,6 +128,8 @@ public class AssetService : IAssetService
         }
         
         var createdAsset = await _assetRepository.CreateAsync(asset);
+        category.Total++;
+        
         await _unitOfWork.CommitAsync();
 
         return createdAsset.MapModelToResponse();

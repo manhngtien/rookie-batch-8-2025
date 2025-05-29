@@ -37,5 +37,10 @@ public class ReturningRequestEntityTypeConfiguration : IEntityTypeConfiguration<
             .WithMany()
             .HasForeignKey(r => r.AcceptedBy)
             .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.HasOne<Assignment>(r => r.Assignment)
+            .WithOne(r => r.ReturningRequest)
+            .HasForeignKey<ReturningRequest>(r => r.AssignmentId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

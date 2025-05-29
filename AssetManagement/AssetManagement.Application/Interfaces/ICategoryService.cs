@@ -1,11 +1,11 @@
 ﻿using AssetManagement.Application.DTOs.Categories;
-using AssetManagement.Application.Helpers.Params;
-using AssetManagement.Application.Paginations;
 
 namespace AssetManagement.Application.Interfaces
 {
     public interface ICategoryService
     {
-        public Task<PagedList<CategoryResponse>> GetCategoriesAsync(CategoryParams categoryParams);
+        public Task<List<CategoryResponse>> GetCategoriesAsync();
+        public Task<CategoryResponse?> GetCategoryByIdAsync(int categoryId);
+        public Task<CategoryResponse> CreateCategoryAsync(CreateCategoryRequest createCategoryRequest);
     }
 }

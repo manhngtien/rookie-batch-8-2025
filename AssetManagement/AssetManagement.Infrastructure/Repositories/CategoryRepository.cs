@@ -13,9 +13,10 @@ namespace AssetManagement.Infrastructure.Repositories
             _context = dbContext;
         }
 
-        public Task<Category> CreateAsync(Category entity)
+        public async Task<Category> CreateAsync(Category entity)
         {
-            throw new NotImplementedException();
+            await _context.Categories.AddAsync(entity);
+            return entity;
         }
 
         public Task DeleteAsync(Category entity)
@@ -31,6 +32,16 @@ namespace AssetManagement.Infrastructure.Repositories
         public async Task<Category?> GetByIdAsync(int categoryId)
         {
             return await _context.Categories.FirstOrDefaultAsync(c => c.Id == categoryId);
+        }
+
+        public async Task<bool> FindCategoryByName(string categoryName)
+        {
+            return await _context.Categories.AnyAsync(c => c.CategoryName == categoryName);
+        }
+
+        public async Task<bool> FindCategoryByPrefix(string prefix)
+        {
+            return await _context.Categories.AnyAsync(c => c.Prefix == prefix);
         }
 
         public Task UpdateAsync(Category entity)

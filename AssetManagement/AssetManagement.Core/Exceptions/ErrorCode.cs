@@ -52,6 +52,8 @@ namespace AssetManagement.Core.Exceptions
         // Category related errors (1100 - 1199)
         public static readonly ErrorCode CATEGORY_NOT_FOUND = new(1100, "Category not found", StatusCodes.Status404NotFound);
         public static readonly ErrorCode CATEGORY_MODIFICATION_NOT_ALLOWED = new(1101, "Category modification is not allowed", StatusCodes.Status400BadRequest);
+        public static readonly ErrorCode CATEGORY_NAME_ALREADY_EXISTS = new(1101, "Category is already existed. Please enter a different category", StatusCodes.Status409Conflict);
+        public static readonly ErrorCode CATEGORY_PREFIX_ALREADY_EXISTS = new(1102, "Prefix is already existed. Please enter a different prefix", StatusCodes.Status409Conflict);
 
         /// <summary>
         /// Atributes for error code, message, and status.
