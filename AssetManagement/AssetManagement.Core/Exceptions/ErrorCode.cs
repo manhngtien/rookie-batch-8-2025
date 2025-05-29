@@ -33,9 +33,12 @@ namespace AssetManagement.Core.Exceptions
         // Assets related errors (900 - 999)
         public static readonly ErrorCode ASSET_NOT_FOUND = new(900, "Asset not found", StatusCodes.Status404NotFound);
         public static readonly ErrorCode ASSET_INVALID_STATE = new(901, "Asset is in invalid state", StatusCodes.Status400BadRequest);
+        public static readonly ErrorCode ASSET_CANNOT_BE_EDITED = new(903, "Cannot edit an asset that is currently assigned", StatusCodes.Status400BadRequest);
+        public static readonly ErrorCode INVALID_ASSET_STATE = new(904, "Invalid asset state", StatusCodes.Status400BadRequest);
         public static readonly ErrorCode ASSET_CANNOT_BE_DELETED = new(905, "Cannot delete an asset that is currently assigned", StatusCodes.Status400BadRequest);
-
+        public static readonly ErrorCode ASSET_SORTING_ERROR = new(907, "Failed to sort assets with the edited asset on top", StatusCodes.Status500InternalServerError);
         public static readonly ErrorCode ASSET_HAS_HISTORICAL_ASSIGNMENTS = new(908, "Cannot delete the asset because it belongs to one or more historical assignments. If the asset is not able to be used anymore, please update its state in Edit Asset page", StatusCodes.Status400BadRequest);
+
         // Assignment related errors (1000 - 1099)
         public static readonly ErrorCode ASSIGNMENT_NOT_FOUND = new(1000, "Assignment not found", StatusCodes.Status404NotFound);
         public static readonly ErrorCode ASSIGNMENT_ALREADY_ACCEPTED = new(1001, "Assignment has already been accepted", StatusCodes.Status400BadRequest);
@@ -43,11 +46,13 @@ namespace AssetManagement.Core.Exceptions
         public static readonly ErrorCode INVALID_DATE = new(1003, "Invalid date", StatusCodes.Status400BadRequest);
         public static readonly ErrorCode INVALID_LOCATION = new(1004, "Invalid location", StatusCodes.Status400BadRequest);
         public static readonly ErrorCode ASSET_NOT_AVAILABLE = new(1005, "Asset is not available", StatusCodes.Status400BadRequest);
+
         public static readonly ErrorCode USER_HAS_ACTIVE_ASSIGNMENTS = new(1006, "User has active assignments", StatusCodes.Status400BadRequest);
 
         // Category related errors (1100 - 1199)
         public static readonly ErrorCode CATEGORY_NOT_FOUND = new(1100, "Category not found", StatusCodes.Status404NotFound);
-        
+        public static readonly ErrorCode CATEGORY_MODIFICATION_NOT_ALLOWED = new(1101, "Category modification is not allowed", StatusCodes.Status400BadRequest);
+
         /// <summary>
         /// Atributes for error code, message, and status.
         /// </summary>
