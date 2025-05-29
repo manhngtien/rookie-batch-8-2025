@@ -11,5 +11,6 @@ namespace AssetManagement.Application.Interfaces
         Task<PagedList<AssignmentResponse>> GetAssignmentsByStaffCodeAsync(string staffCode, AssignmentParams assignmentParams);
         Task<AssignmentResponse> GetAssignmentByIdAsync(int id);
         Task<AssignmentResponse> CreateAssignmentAsync(string adminStaffCode, CreateAssignmentRequest assignmentRequest);
+        Task DeleteAssignmentAsync(string staffCode, int assignmentId);
     }
 }
