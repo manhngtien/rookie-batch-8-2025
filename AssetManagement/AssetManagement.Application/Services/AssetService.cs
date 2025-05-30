@@ -9,9 +9,6 @@ using AssetManagement.Core.Exceptions;
 using AssetManagement.Core.Interfaces;
 using AssetManagement.Infrastructure.Exceptions;
 using AssetManagement.Infrastructure.Extensions;
-using AssetManagement.Infrastructure.Repositories;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace AssetManagement.Application.Services;
@@ -36,24 +33,47 @@ public class AssetService : IAssetService
         _unitOfWork = unitOfWork;
     }
 
-    public Task<PagedList<AssetResponse>> GetAssetsAsync(AssetParams assetParams)
+    public async Task<PagedList<AssetResponse>> GetAssetsAsync(string staffCode, AssetParams assetParams)
     {
+        var staff = await _userRepository.GetByIdAsync(staffCode);
+        if (staff is null)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "staffCode", staffCode }
+            };
+
+            throw new AppException(ErrorCode.USER_NOT_FOUND, attributes);
+        }
+
         var query = _assetRepository.GetAllAsync()
+            .Where(a => a.Location.ToString().ToLower() == staff.Location.ToString().ToLower())
             .Sort(assetParams.OrderBy)
             .Search(assetParams.SearchTerm)
             .Filter(assetParams.Category, assetParams.State?.ToString());
 
         var projectedQuery = query.Select(x => x.MapModelToResponse());
 
-        return PaginationService.ToPagedList(
+        return await PaginationService.ToPagedList(
             projectedQuery,
             assetParams.PageNumber,
             assetParams.PageSize
         );
     }
 
-    public async Task<AssetResponse> GetAssetByAssetCodeAsync(string assetCode)
+    public async Task<AssetResponse?> GetAssetByAssetCodeAsync(string assetCode, string staffCode)
     {
+        var staff = await _userRepository.GetByIdAsync(staffCode);
+        if (staff is null)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "staffCode", staffCode }
+            };
+
+            throw new AppException(ErrorCode.USER_NOT_FOUND, attributes);
+        }
+
         var asset = await _assetRepository.GetByAssetCodeAsync(assetCode);
         if (asset == null)
         {
@@ -62,6 +82,15 @@ public class AssetService : IAssetService
                 { "assetCode", assetCode }
             };
             throw new AppException(ErrorCode.ASSET_NOT_FOUND, attributes);
+        }
+
+        if (asset.Location != staff.Location)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "location", staff.Location.ToString().ToLower() }
+            };
+            throw new AppException(ErrorCode.INVALID_LOCATION, attributes);
         }
 
         return asset.MapModelToResponse();
@@ -85,7 +114,7 @@ public class AssetService : IAssetService
         int nextSequence = category.Total + 1;
         int length = 8 - category.Prefix.Length;
         string assetCode = $"{category.Prefix.ToUpper()}{nextSequence.ToString().PadLeft(length, '0')}";
-        
+
         var user = await _userRepository.GetByIdAsync(staffCode);
 
         var asset = new Asset
@@ -109,7 +138,7 @@ public class AssetService : IAssetService
                         "assetState", createAssetRequest.State
                     }
                 };
-                
+
                 throw new AppException(ErrorCode.ASSET_INVALID_STATE, attributes);
             }
 
@@ -123,13 +152,13 @@ public class AssetService : IAssetService
                     "assetState", createAssetRequest.State
                 }
             };
-            
+
             throw new AppException(ErrorCode.ASSET_INVALID_STATE, attributes);
         }
-        
+
         var createdAsset = await _assetRepository.CreateAsync(asset);
         category.Total++;
-        
+
         await _unitOfWork.CommitAsync();
 
         return createdAsset.MapModelToResponse();

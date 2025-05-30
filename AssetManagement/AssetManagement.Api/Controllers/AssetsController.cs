@@ -12,6 +12,7 @@ namespace AssetManagement.Api.Controllers
     public class AssetsController : BaseApiController
     {
         private readonly IAssetService _assetService;
+
         public AssetsController(IAssetService assetService)
         {
             _assetService = assetService;
@@ -21,7 +22,9 @@ namespace AssetManagement.Api.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<AssetResponse>>> GetAssets([FromQuery] AssetParams assetParams)
         {
-            var assets = await _assetService.GetAssetsAsync(assetParams);
+            var staffCode = User.GetUserId();
+
+            var assets = await _assetService.GetAssetsAsync(staffCode, assetParams);
             Response.AddPaginationHeader(assets.Metadata);
             return Ok(assets);
         }
@@ -30,10 +33,12 @@ namespace AssetManagement.Api.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<AssetResponse?>> GetAsset(string assetCode)
         {
-            var asset = await _assetService.GetAssetByAssetCodeAsync(assetCode);
+            var staffCode = User.GetUserId();
+
+            var asset = await _assetService.GetAssetByAssetCodeAsync(assetCode, staffCode);
             return Ok(asset);
         }
-        
+
         [HttpPost()]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<AssetResponse>> CreateAsset([FromForm] CreateAssetRequest assetRequest)
