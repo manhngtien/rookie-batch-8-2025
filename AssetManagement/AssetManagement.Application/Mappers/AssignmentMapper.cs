@@ -11,11 +11,11 @@ namespace AssetManagement.Application.Mappers
             {
                 Id = assignment.Id,
                 State = assignment.State.ToString(),
-                AssetCode = assignment.AssetCode ?? string.Empty,
-                AssignedDate = DateOnly.FromDateTime(assignment.AssignedDate), // Chuyển từ DateTime sang DateOnly
-                AssetName = assignment.Asset?.AssetName ?? string.Empty,
-                AssignedTo = assignment.AssignedToUser?.UserName ?? string.Empty,
-                AssignedBy = assignment.AssignedByUser?.UserName ?? string.Empty,
+                AssetCode = assignment.AssetCode,
+                AssignedDate = DateOnly.FromDateTime(assignment.AssignedDate),
+                AssetName = assignment.Asset.AssetName,
+                AssignedByUser = assignment.AssignedByUser.MapModelToResponse(),
+                AssignedToUser = assignment.AssignedToUser.MapModelToResponse(),
                 Note = assignment.Note ?? string.Empty
             };
         }
