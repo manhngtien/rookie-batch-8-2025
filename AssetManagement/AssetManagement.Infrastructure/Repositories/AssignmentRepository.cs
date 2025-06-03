@@ -33,11 +33,13 @@ namespace AssetManagement.Infrastructure.Repositories
 
         public async Task<Assignment> CreateAsync(Assignment entity)
         {
-            if (entity == null)
-                throw new ArgumentNullException(nameof(entity));
-
             await _context.Assignments.AddAsync(entity);
-            return entity;
+            
+            return await _context.Assignments
+                .Include(a => a.Asset)
+                .Include(a => a.AssignedToUser)
+                .Include(a => a.AssignedByUser)
+                .FirstOrDefaultAsync(a => a.Id == entity.Id) ?? entity;
         }
 
         public async Task UpdateAsync(Assignment entity)

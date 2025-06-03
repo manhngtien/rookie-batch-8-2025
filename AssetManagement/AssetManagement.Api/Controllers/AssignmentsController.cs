@@ -42,9 +42,9 @@ public class AssignmentsController : BaseApiController
     public async Task<IActionResult> CreateAssignment([FromForm] CreateAssignmentRequest assignmentRequest)
     {
         var staffCode = User.GetUserId();
-        var assignmentId = await _assignmentService.CreateAssignmentAsync(staffCode, assignmentRequest);
+        var assignment = await _assignmentService.CreateAssignmentAsync(staffCode, assignmentRequest);
         
-        return CreatedAtAction(nameof(GetAssignmentById), new {id = assignmentId}, assignmentId);
+        return CreatedAtAction(nameof(GetAssignmentById), new {id = assignment.Id}, assignment);
     }
 
     [HttpPut("{assignmentId:int}")]

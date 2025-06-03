@@ -49,7 +49,8 @@ namespace AssetManagement.Core.Exceptions
         public static readonly ErrorCode USER_HAS_ACTIVE_ASSIGNMENTS = new(1006, "User has active assignments", StatusCodes.Status400BadRequest);
         public static readonly ErrorCode INVALID_ASSIGNMENT_ID = new(1007, "Invalid assignment id", StatusCodes.Status400BadRequest);
         public static readonly ErrorCode ASSIGNMENT_STATE_IS_NOT_WAITING_FOR_ACCEPTANCE = new(1008, "Assignment is not waiting for acceptance", StatusCodes.Status400BadRequest);
-
+        public static readonly ErrorCode ASSIGNMENT_ASSIGNEDBY_AND_ASSIGNEDTO_MUST_BE_IN_THE_SAME_LOCATION = new(1009, "User must assigned the same location with assignedBy and asset", StatusCodes.Status400BadRequest);
+        
         // Category related errors (1100 - 1199)
         public static readonly ErrorCode CATEGORY_NOT_FOUND = new(1100, "Category not found", StatusCodes.Status404NotFound);
         public static readonly ErrorCode CATEGORY_MODIFICATION_NOT_ALLOWED = new(1101, "Category modification is not allowed", StatusCodes.Status400BadRequest);
