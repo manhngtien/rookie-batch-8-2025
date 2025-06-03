@@ -85,7 +85,7 @@ public class AssignmentService : IAssignmentService
         return assignment.MapModelToResponse();
     }
 
-    public async Task<int> CreateAssignmentAsync(string staffCode, CreateAssignmentRequest assignmentRequest)
+    public async Task<AssignmentResponse> CreateAssignmentAsync(string staffCode, CreateAssignmentRequest assignmentRequest)
     {
         var staff = await _userRepository.GetByIdAsync(staffCode);
         if (staff is null)
@@ -98,11 +98,48 @@ public class AssignmentService : IAssignmentService
             throw new AppException(ErrorCode.USER_NOT_FOUND, attributes);
         }
 
-        var asset = await _assetRepository.GetByAssetCodeAsync(assignmentRequest.AssetCode) ?? throw new AppException(ErrorCode.ASSET_NOT_FOUND);
+        var assignedToUser = await _userRepository.GetByIdAsync(assignmentRequest.StaffCode);
+        if (assignedToUser is null)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "assignedToUser", assignmentRequest.StaffCode }
+            };
 
+            throw new AppException(ErrorCode.USER_NOT_FOUND, attributes);
+        }
+
+        if (staff.Location != assignedToUser.Location)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "location", assignedToUser.Location.ToString() },
+                { "assignedTo", assignedToUser.StaffCode },
+                { "assignedBy", staff.StaffCode }
+            };
+
+            throw new AppException(ErrorCode.ASSIGNMENT_ASSIGNEDBY_AND_ASSIGNEDTO_MUST_BE_IN_THE_SAME_LOCATION, attributes);
+        }
+
+        var asset = await _assetRepository.GetByAssetCodeAsync(assignmentRequest.AssetCode);
+        if (asset is null)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "assetCode", assignmentRequest.AssetCode }
+            };
+
+            throw new AppException(ErrorCode.ASSET_NOT_FOUND, attributes);
+        }
+        
         if (asset.State != AssetStatus.Available)
         {
-            var attributes = new Dictionary<string, object> { { "assetCode", asset.AssetCode } };
+            var attributes = new Dictionary<string, object>
+            {
+                { "assetCode", asset.AssetCode },
+                {"assetState", asset.State.ToString() }
+            };
+            
             throw new AppException(ErrorCode.ASSET_NOT_AVAILABLE, attributes);
         }
 
@@ -126,12 +163,12 @@ public class AssignmentService : IAssignmentService
             AssignedTo = assignmentRequest.StaffCode
         };
 
-        var createdAssignment = await _assignmentRepository.CreateAsync(assignment);
+        await _assignmentRepository.CreateAsync(assignment);
         asset.State = AssetStatus.Assigned;
         
         await _unitOfWork.CommitAsync();
-        
-        return createdAssignment.Id;
+
+        return assignment.MapModelToResponse();
     }
 
     public async Task<AssignmentResponse> UpdateAssignmentAsync(int id, string staffCode, UpdateAssignmentRequest assignmentRequest)
