@@ -58,17 +58,6 @@ namespace AssetManagement.Api.Controllers
             return NoContent();
         }
 
-        [HttpGet("myAssets")]
-        [Authorize]
-        public async Task<ActionResult<PagedList<AssetResponse>>> GetCurrentUserAssets([FromQuery] AssetParams assetParams)
-        {
-            var staffCode = User.GetUserId();
-
-            var assets = await _assetService.GetUserAssetsAsync(assetParams, staffCode);
-            Response.AddPaginationHeader(assets.Metadata);
-            return Ok(assets);
-        }
-
         [HttpPut("{assetCode}")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<AssetResponse>> UpdateAssets(string assetCode, [FromBody] UpdateAssetRequest updateAssetRequest)

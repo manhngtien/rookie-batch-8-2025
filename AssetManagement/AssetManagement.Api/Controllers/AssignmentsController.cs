@@ -39,27 +39,37 @@ public class AssignmentsController : BaseApiController
 
     [HttpPost]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult<AssignmentResponse>> CreateAssignment([FromForm] CreateAssignmentRequest assignmentRequest)
+    public async Task<IActionResult> CreateAssignment([FromForm] CreateAssignmentRequest assignmentRequest)
     {
         var staffCode = User.GetUserId();
-
-        var assignment = await _assignmentService.CreateAssignmentAsync(staffCode, assignmentRequest);
-
-        return CreatedAtAction(nameof(GetAssignmentById), new { id = assignment.Id }, assignment);
+        var assignmentId = await _assignmentService.CreateAssignmentAsync(staffCode, assignmentRequest);
+        
+        return CreatedAtAction(nameof(GetAssignmentById), new {id = assignmentId}, assignmentId);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{assignmentId:int}")]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult<AssignmentResponse>> UpdateAssignment(int id, [FromForm] UpdateAssignmentRequest assignmentRequest)
+    public async Task<ActionResult<AssignmentResponse>> UpdateAssignment(int assignmentId, [FromForm] UpdateAssignmentRequest assignmentRequest)
     {
         var staffCode = User.GetUserId();
 
-        var updatedAssignment = await _assignmentService.UpdateAssignmentAsync(id, staffCode, assignmentRequest);
+        if (assignmentId != assignmentRequest.Id)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                {"assignmentId", assignmentId},
+                { "id", assignmentRequest.Id }
+            };
+            
+            throw new AppException(ErrorCode.INVALID_ASSIGNMENT_ID, attributes);
+        }
+        
+        var updatedAssignment = await _assignmentService.UpdateAssignmentAsync(assignmentId, staffCode, assignmentRequest);
 
         return Ok(updatedAssignment);
     }
 
-    [HttpGet("myAssignments")]
+    [HttpGet("my-assignments")]
     [Authorize]
     public async Task<ActionResult<PagedList<AssignmentResponse>>> GetCurrentUserAssignments([FromQuery] AssignmentParams assignmentParams)
     {
@@ -80,6 +90,28 @@ public class AssignmentsController : BaseApiController
         return NoContent();
     }
 
+    [HttpPut("{assignmentId:int}/reply")]
+    [Authorize]
+    public async Task<IActionResult> ReplyAssignment(int assignmentId, ReplyAssignmentRequest assignmentRequest)
+    {
+        var staffCode = User.GetUserId();
+
+        if (assignmentId != assignmentRequest.AssignmentId)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                {"assignmentId", assignmentId},
+                {"id", assignmentRequest.AssignmentId},
+            };
+
+            throw new AppException(ErrorCode.INVALID_ASSIGNMENT_ID, attributes);
+        }
+
+        await _assignmentService.ReplyAssignmentAsync(staffCode, assignmentRequest);
+        
+        return NoContent();
+    }
+    
     private IActionResult MethodNotAllowed()
     {
         return StatusCode(StatusCodes.Status405MethodNotAllowed);
