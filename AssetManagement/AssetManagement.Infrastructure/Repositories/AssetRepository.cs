@@ -24,6 +24,9 @@ namespace AssetManagement.Infrastructure.Repositories
             return await _context.Assets
                 .Include(a => a.Category)
                 .Include(a => a.Assignments)
+                .ThenInclude(a => a.AssignedToUser)
+                .Include(a => a.Assignments)
+                .ThenInclude(a => a.AssignedByUser)
                 .FirstOrDefaultAsync(a => a.AssetCode == assetCode);
         }
         
