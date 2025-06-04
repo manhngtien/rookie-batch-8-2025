@@ -60,10 +60,9 @@ namespace AssetManagement.Core.Exceptions
         public static readonly ErrorCode CATEGORY_PREFIX_ALREADY_EXISTS = new(1102, "Prefix is already existed. Please enter a different prefix", StatusCodes.Status409Conflict);
 
         // Returning request related errors (1200 - 1299)
-        public static readonly ErrorCode RETURNING_REQUEST_NOT_FOUND = new(1202, "Returning request not found", StatusCodes.Status404NotFound);
-        public static readonly ErrorCode INVALID_RETURNING_REQUEST_ID = new(1203, "Invalid returning request id", StatusCodes.Status400BadRequest);
-        public static readonly ErrorCode INVALID_RETURNING_REQUEST_STATE = new(1204, "Invalid returning request state", StatusCodes.Status400BadRequest);
-
+        public static readonly ErrorCode INVALID_RETURNING_REQUEST_STATE = new(1200, "Invalid returning request state,must waiting for returning", StatusCodes.Status400BadRequest);
+        public static readonly ErrorCode RETURNING_REQUEST_NOT_FOUND = new(1201, "Returning request not found", StatusCodes.Status404NotFound);
+        public static readonly ErrorCode INVALID_RETURNING_REQUEST_ID = new(1202, "Invalid returning request id", StatusCodes.Status400BadRequest);
 
         /// <summary>
         /// Atributes for error code, message, and status.
