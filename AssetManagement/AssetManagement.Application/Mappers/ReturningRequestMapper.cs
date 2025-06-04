@@ -16,7 +16,7 @@ public static class ReturningRequestMapper
                 ? DateOnly.FromDateTime(returningRequest.ReturnedDate.Value)
                 : null,
             RequestedBy = returningRequest.RequestedByUser.UserName,
-            AcceptedBy = (returningRequest.RequestedByUser != null) ? returningRequest.RequestedByUser.UserName : "",
+            AcceptedBy = (returningRequest.AcceptedByUser != null) ? returningRequest.AcceptedByUser.UserName : "",
             AssetCode = (returningRequest.Assignment != null) ? returningRequest.Assignment.AssetCode : "",
             AssetName = (returningRequest.Assignment != null && returningRequest.Assignment.Asset != null)
                 ? returningRequest.Assignment.Asset.AssetName
