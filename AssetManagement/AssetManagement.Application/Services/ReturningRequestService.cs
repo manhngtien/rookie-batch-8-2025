@@ -155,7 +155,6 @@ public class ReturningRequestService : IReturningRequestService
         await _unitOfWork.CommitAsync();
     }
 
-
     public async Task<ReturningRequestResponse> CompleteReturningRequestAsync(string currentUserStaffCode, CompleteReturningRequestRequest request)
     {
         var currentUserLogin = await _userRepository.GetByIdAsync(currentUserStaffCode);
@@ -215,4 +214,70 @@ public class ReturningRequestService : IReturningRequestService
         return returningRequest.MapModelToResponse();
     }
 
+    public async Task CreateUserReturningRequestAsync(string staffCode, CreateUserReturningRequest createUserReturningRequest)
+    {
+        var requestedByUser = await _userRepository.GetByIdAsync(staffCode);
+        if (requestedByUser is null)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "staffCode", staffCode }
+            };
+            throw new AppException(ErrorCode.USER_NOT_FOUND, attributes);
+        }
+
+        var assignment = await _assignmentRepository.GetByIdAsync(createUserReturningRequest.AssignmentId);
+        if (assignment is null)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "assignmentId", createUserReturningRequest.AssignmentId }
+            };
+
+            throw new AppException(ErrorCode.ASSIGNMENT_NOT_FOUND, attributes);
+        }
+
+        if (assignment.State != AssignmentStatus.Accepted)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "assignmentId", createUserReturningRequest.AssignmentId },
+            };
+
+            switch (assignment.State)
+            {
+                case AssignmentStatus.Waiting_For_Acceptance:
+                    throw new AppException(ErrorCode.ASSIGNMENT_NOT_ACCEPTED, attributes);
+                case AssignmentStatus.Declined:
+                    throw new AppException(ErrorCode.ASSIGNMENT_DECLINED, attributes);
+                case AssignmentStatus.Accepted:
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        if(requestedByUser.Location != assignment.Asset.Location)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "staffLocation", requestedByUser.Location },
+                { "assetLocation", assignment.Asset.Location },
+                { "assignmentId", createUserReturningRequest.AssignmentId }
+            };
+
+            throw new AppException(ErrorCode.INVALID_LOCATION, attributes);
+        }
+
+        var returningRequest = new ReturningRequest
+        {
+            AssignmentId = createUserReturningRequest.AssignmentId,
+            State = ReturningRequestStatus.Waiting_For_Returning,
+            RequestedBy = requestedByUser.StaffCode
+        };
+
+        var savedRfr =  await _returningRequestRepository.CreateAsync(returningRequest);
+
+        await _unitOfWork.CommitAsync();
+    }
 }
