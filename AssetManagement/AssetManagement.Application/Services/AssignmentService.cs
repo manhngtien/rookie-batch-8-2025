@@ -318,10 +318,16 @@ public class AssignmentService : IAssignmentService
             
             throw new AppException(ErrorCode.ACCESS_DENIED, attributes);
         }
-        
-        assignment.State = replyAssignmentRequest.IsAccepted 
-            ? AssignmentStatus.Accepted
-            : AssignmentStatus.Declined;
+
+        if (replyAssignmentRequest.IsAccepted)
+        {
+            assignment.State = AssignmentStatus.Accepted;
+        }
+        else
+        {
+            assignment.State = AssignmentStatus.Declined;
+            assignment.Asset.State = AssetStatus.Available;
+        }
         
         await _unitOfWork.CommitAsync();
     }
