@@ -11,6 +11,6 @@ public class ReplyAssignmentRequestValidator : AbstractValidator<ReplyAssignment
             .NotEmpty().WithMessage("AssignmentId is required.");
 
         RuleFor(r => r.IsAccepted)
-            .NotEmpty().WithMessage("Action is required.");
+            .NotNull().WithMessage("Action is required.");
     }
 }

@@ -70,9 +70,10 @@ public class AssignmentService : IAssignmentService
     public async Task<PagedList<AssignmentResponse>> GetAssignmentsByStaffCodeAsync(string staffCode, AssignmentParams assignmentParams)
     {
         var query = _assignmentRepository.GetAllAsync()
-            .Sort(assignmentParams.OrderBy)
             .Where(a => a.AssignedTo == staffCode && a.AssignedDate <= DateTime.Now)
-            .Where(a => a.ReturningRequest == null || a.ReturningRequest.State != ReturningRequestStatus.Completed);
+            .Where(a => a.ReturningRequest == null || a.ReturningRequest.State != ReturningRequestStatus.Completed)
+            .Where(a => a.State != AssignmentStatus.Declined)
+            .Sort(assignmentParams.OrderBy);
 
         var projectedQuery = query.Select(a => a.MapModelToResponse());
 
@@ -318,10 +319,16 @@ public class AssignmentService : IAssignmentService
             
             throw new AppException(ErrorCode.ACCESS_DENIED, attributes);
         }
-        
-        assignment.State = replyAssignmentRequest.IsAccepted 
-            ? AssignmentStatus.Accepted
-            : AssignmentStatus.Declined;
+
+        if (replyAssignmentRequest.IsAccepted)
+        {
+            assignment.State = AssignmentStatus.Accepted;
+        }
+        else
+        {
+            assignment.State = AssignmentStatus.Declined;
+            assignment.Asset.State = AssetStatus.Available;
+        }
         
         await _unitOfWork.CommitAsync();
     }
