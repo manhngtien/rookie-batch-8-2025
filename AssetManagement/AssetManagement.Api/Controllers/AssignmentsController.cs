@@ -24,7 +24,9 @@ public class AssignmentsController : BaseApiController
     [Authorize(Roles = "Admin")]
     public async Task<ActionResult<PagedList<AssignmentResponse>>> GetAssignments([FromQuery] AssignmentParams assignmentParams)
     {
-        var result = await _assignmentService.GetAssignmentsAsync(assignmentParams);
+        var staffCode = User.GetUserId();
+
+        var result = await _assignmentService.GetAssignmentsAsync(staffCode, assignmentParams);
         Response.AddPaginationHeader(result.Metadata);
         return Ok(result);
     }
