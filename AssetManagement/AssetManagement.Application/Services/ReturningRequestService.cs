@@ -9,6 +9,7 @@ using AssetManagement.Core.Exceptions;
 using AssetManagement.Core.Interfaces;
 using AssetManagement.Infrastructure.Exceptions;
 using AssetManagement.Infrastructure.Extensions;
+using AssetManagement.Infrastructure.Repositories;
 
 namespace AssetManagement.Application.Services;
 
@@ -17,17 +18,20 @@ public class ReturningRequestService : IReturningRequestService
     private readonly IReturningRequestRepository _returningRequestRepository;
     private readonly IAssignmentRepository _assignmentRepository;
     private readonly IUserRepository _userRepository;
+    private readonly IAssetRepository _assetRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public ReturningRequestService(
         IReturningRequestRepository returningRequestRepository,
         IAssignmentRepository assignmentRepository,
         IUserRepository userRepository,
+        IAssetRepository assetRepository,
         IUnitOfWork unitOfWork)
     {
         _returningRequestRepository = returningRequestRepository;
         _assignmentRepository = assignmentRepository;
         _userRepository = userRepository;
+        _assetRepository = assetRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -150,4 +154,65 @@ public class ReturningRequestService : IReturningRequestService
 
         await _unitOfWork.CommitAsync();
     }
+
+
+    public async Task<ReturningRequestResponse> CompleteReturningRequestAsync(string currentUserStaffCode, CompleteReturningRequestRequest request)
+    {
+        var currentUserLogin = await _userRepository.GetByIdAsync(currentUserStaffCode);
+        if (currentUserLogin == null)
+        {
+            throw new AppException(ErrorCode.USER_NOT_FOUND,
+                new Dictionary<string, object> { { "staffCode", currentUserStaffCode } });
+        }
+
+        var returningRequest = await _returningRequestRepository.GetByIdAsync(request.Id);
+        if (returningRequest == null)
+        {
+            var attributes = new Dictionary<string, object> { { "returningRequestId", request.Id } };
+            throw new AppException(ErrorCode.RETURNING_REQUEST_NOT_FOUND, attributes);
+        }
+
+        if (returningRequest.State != ReturningRequestStatus.Waiting_For_Returning)
+        {
+            throw new AppException(ErrorCode.INVALID_RETURNING_REQUEST_STATE,
+                new Dictionary<string, object> { { "state", returningRequest.State.ToString() } });
+        }
+
+        var assignment = returningRequest.Assignment;
+        if (assignment == null)
+        {
+            throw new AppException(ErrorCode.ASSIGNMENT_NOT_FOUND,
+                new Dictionary<string, object> { { "assignmentId", returningRequest.AssignmentId } });
+        }
+
+        var asset = assignment.Asset;
+        if (asset == null)
+        {
+            throw new AppException(ErrorCode.ASSET_NOT_FOUND,
+                new Dictionary<string, object> { { "assetCode", assignment.AssetCode } });
+        }
+
+        if (asset.Location != currentUserLogin.Location)
+        {
+            throw new AppException(ErrorCode.ACCESS_DENIED,
+                new Dictionary<string, object> {
+                { "message", "Admin can only complete returning requests for assets in their location" },
+                { "currentUserLogin", currentUserLogin.Location },
+                { "assetLocation", asset.Location.ToString() }
+                });
+        }
+
+        returningRequest.State = ReturningRequestStatus.Completed;
+        returningRequest.ReturnedDate = DateTime.Now;
+        returningRequest.AcceptedBy = currentUserLogin.StaffCode;
+        asset.State = AssetStatus.Available;
+        await _assetRepository.UpdateAsync(asset);
+
+        await _returningRequestRepository.UpdateAsync(returningRequest);
+
+        await _unitOfWork.CommitAsync();
+
+        return returningRequest.MapModelToResponse();
+    }
+
 }

@@ -30,6 +30,26 @@ public class ReturningRequestsController : BaseApiController
         return Ok(returningRequests);
     }
 
+
+    [HttpPut("{returningRequestId:int}/complete")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<ReturningRequestResponse>> CompleteReturningRequest(int returningRequestId, [FromBody] CompleteReturningRequestRequest request)
+    {
+        if (returningRequestId != request.Id)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "returningRequestId", request.Id },
+            };
+            throw new AppException(ErrorCode.INVALID_RETURNING_REQUEST_ID, attributes);
+        }
+
+        var staffCode = User.GetUserId();
+
+        var completedRequest = await _returningRequestService.CompleteReturningRequestAsync(staffCode, request);
+        return Ok(completedRequest);
+    }
+
     [HttpPut("{returningRequestId:int}/cancel")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> CancelReturningRequest(int returningRequestId, [FromForm] CancelReturningRequestRequest request)
