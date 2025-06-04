@@ -1,5 +1,6 @@
 ﻿using AssetManagement.Application.DTOs.Assignments;
 using AssetManagement.Core.Entities;
+using AssetManagement.Core.Enums;
 
 namespace AssetManagement.Application.Mappers
 {
@@ -16,7 +17,8 @@ namespace AssetManagement.Application.Mappers
                 AssetName = assignment.Asset.AssetName,
                 AssignedByUser = assignment.AssignedByUser.MapModelToResponse(),
                 AssignedToUser = assignment.AssignedToUser.MapModelToResponse(),
-                Note = assignment.Note ?? string.Empty
+                Note = assignment.Note ?? string.Empty,
+                IsReturned = assignment.ReturningRequest != null
             };
         }
     }
