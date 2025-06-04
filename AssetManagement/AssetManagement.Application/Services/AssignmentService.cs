@@ -70,9 +70,10 @@ public class AssignmentService : IAssignmentService
     public async Task<PagedList<AssignmentResponse>> GetAssignmentsByStaffCodeAsync(string staffCode, AssignmentParams assignmentParams)
     {
         var query = _assignmentRepository.GetAllAsync()
-            .Sort(assignmentParams.OrderBy)
             .Where(a => a.AssignedTo == staffCode && a.AssignedDate <= DateTime.Now)
-            .Where(a => a.ReturningRequest == null || a.ReturningRequest.State != ReturningRequestStatus.Completed);
+            .Where(a => a.ReturningRequest == null || a.ReturningRequest.State != ReturningRequestStatus.Completed)
+            .Where(a => a.State != AssignmentStatus.Declined)
+            .Sort(assignmentParams.OrderBy);
 
         var projectedQuery = query.Select(a => a.MapModelToResponse());
 
