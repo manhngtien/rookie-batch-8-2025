@@ -216,7 +216,7 @@ public class AssetService : IAssetService
         }
 
         // Validate InstalledDate (not in the future relative to today, May 27, 2025)
-        var today = DateTime.UtcNow;
+        var today = DateTime.Now;
         if (updateAssetRequest.InstalledDate > today)
         {
             var attributes = new Dictionary<string, object>

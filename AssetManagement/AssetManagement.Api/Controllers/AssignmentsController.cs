@@ -1,6 +1,7 @@
 ﻿using AssetManagement.Api.Controllers.Base;
 using AssetManagement.Api.Extensions;
 using AssetManagement.Application.DTOs.Assignments;
+using AssetManagement.Application.DTOs.ReturningRequests;
 using AssetManagement.Application.Helpers.Params;
 using AssetManagement.Application.Interfaces;
 using AssetManagement.Application.Paginations;
@@ -14,17 +15,21 @@ namespace AssetManagement.Api.Controllers;
 public class AssignmentsController : BaseApiController
 {
     private readonly IAssignmentService _assignmentService;
+    private readonly IReturningRequestService _returningRequestService;
 
-    public AssignmentsController(IAssignmentService assignmentService)
+    public AssignmentsController(IAssignmentService assignmentService, IReturningRequestService returningRequestService)
     {
         _assignmentService = assignmentService;
+        _returningRequestService = returningRequestService;
     }
 
     [HttpGet]
     [Authorize(Roles = "Admin")]
     public async Task<ActionResult<PagedList<AssignmentResponse>>> GetAssignments([FromQuery] AssignmentParams assignmentParams)
     {
-        var result = await _assignmentService.GetAssignmentsAsync(assignmentParams);
+        var staffCode = User.GetUserId();
+
+        var result = await _assignmentService.GetAssignmentsAsync(staffCode, assignmentParams);
         Response.AddPaginationHeader(result.Metadata);
         return Ok(result);
     }
@@ -43,8 +48,8 @@ public class AssignmentsController : BaseApiController
     {
         var staffCode = User.GetUserId();
         var assignment = await _assignmentService.CreateAssignmentAsync(staffCode, assignmentRequest);
-        
-        return CreatedAtAction(nameof(GetAssignmentById), new {id = assignment.Id}, assignment);
+
+        return CreatedAtAction(nameof(GetAssignmentById), new { id = assignment.Id }, assignment);
     }
 
     [HttpPut("{assignmentId:int}")]
@@ -60,13 +65,33 @@ public class AssignmentsController : BaseApiController
                 {"assignmentId", assignmentId},
                 { "id", assignmentRequest.Id }
             };
-            
+
             throw new AppException(ErrorCode.INVALID_ASSIGNMENT_ID, attributes);
         }
-        
+
         var updatedAssignment = await _assignmentService.UpdateAssignmentAsync(assignmentId, staffCode, assignmentRequest);
 
         return Ok(updatedAssignment);
+    }
+
+    [HttpPost("{assignmentId:int}/return")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> CreateReturningRequest(int assignmentId, [FromForm] CreateAdminReturningRequest returningRequest)
+    {
+        if (assignmentId != returningRequest.AssignmentId)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "assignmentId", assignmentId },
+            };
+
+            throw new AppException(ErrorCode.INVALID_ASSIGNMENT_ID, attributes);
+        }
+
+        var staffCode = User.GetUserId();
+
+        var savedReturningRequest = await _returningRequestService.CreateReturningRequestAsync(returningRequest, staffCode);
+        return Created();
     }
 
     [HttpGet("my-assignments")]
@@ -108,10 +133,10 @@ public class AssignmentsController : BaseApiController
         }
 
         await _assignmentService.ReplyAssignmentAsync(staffCode, assignmentRequest);
-        
+
         return NoContent();
     }
-    
+
     private IActionResult MethodNotAllowed()
     {
         return StatusCode(StatusCodes.Status405MethodNotAllowed);

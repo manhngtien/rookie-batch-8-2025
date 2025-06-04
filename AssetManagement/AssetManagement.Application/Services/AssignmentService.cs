@@ -37,13 +37,26 @@ public class AssignmentService : IAssignmentService
         _logger = logger;
     }
 
-    public async Task<PagedList<AssignmentResponse>> GetAssignmentsAsync(AssignmentParams assignmentParams)
+    public async Task<PagedList<AssignmentResponse>> GetAssignmentsAsync(string staffCode, AssignmentParams assignmentParams)
     {
+        var admin = await _userRepository.GetByIdAsync(staffCode);
+
+        if (admin is null)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "staffCode", staffCode }
+            };
+            throw new AppException(ErrorCode.USER_NOT_FOUND, attributes);
+        }
+
         var query = _assignmentRepository.GetAllAsync()
+            .Where(a =>
+                (a.ReturningRequest == null || a.ReturningRequest.State != ReturningRequestStatus.Completed)
+                && a.AssignedByUser.Location == admin.Location)
             .Sort(assignmentParams.OrderBy)
             .Search(assignmentParams.SearchTerm)
-            .Filter(assignmentParams.State, assignmentParams.AssignedDate)
-            .Where(a => a.ReturningRequest == null || a.ReturningRequest.State != ReturningRequestStatus.Completed);
+            .Filter(assignmentParams.State, assignmentParams.AssignedDate);
 
         var projectedQuery = query.Select(a => a.MapModelToResponse());
 
@@ -58,7 +71,7 @@ public class AssignmentService : IAssignmentService
     {
         var query = _assignmentRepository.GetAllAsync()
             .Sort(assignmentParams.OrderBy)
-            .Where(a => a.AssignedTo == staffCode && a.AssignedDate <= DateTime.UtcNow)
+            .Where(a => a.AssignedTo == staffCode && a.AssignedDate <= DateTime.Now)
             .Where(a => a.ReturningRequest == null || a.ReturningRequest.State != ReturningRequestStatus.Completed);
 
         var projectedQuery = query.Select(a => a.MapModelToResponse());

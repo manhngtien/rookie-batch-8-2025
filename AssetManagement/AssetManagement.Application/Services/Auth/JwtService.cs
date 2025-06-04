@@ -38,7 +38,7 @@ namespace AssetManagement.Application.Services.Auth
                 issuer: _jwt.Issuer,
                 audience: _jwt.Audience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddDays(1),
+                expires: DateTime.Now.AddDays(1),
                 signingCredentials: creds
             );
 
@@ -60,7 +60,7 @@ namespace AssetManagement.Application.Services.Auth
                 issuer: _jwt.Issuer,
                 audience: _jwt.Audience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddDays(7),
+                expires: DateTime.Now.AddDays(7),
                 signingCredentials: creds
             );
 

@@ -60,7 +60,7 @@ public class ReturningRequestService : IReturningRequestService
         }
 
         var assignment = await _assignmentRepository.GetByIdAsync(createAdminReturningRequest.AssignmentId);
-        if(assignment == null)
+        if (assignment == null)
         {
             var attributes = new Dictionary<string, object>
             {
@@ -78,7 +78,7 @@ public class ReturningRequestService : IReturningRequestService
                 { "assignmentId", createAdminReturningRequest.AssignmentId },
             };
 
-            switch(assignment.State)
+            switch (assignment.State)
             {
                 case AssignmentStatus.Waiting_For_Acceptance:
                     throw new AppException(ErrorCode.ASSIGNMENT_NOT_ACCEPTED, attributes);
@@ -103,5 +103,51 @@ public class ReturningRequestService : IReturningRequestService
         await _unitOfWork.CommitAsync();
 
         return savedRfr.MapModelToResponse();
+    }
+
+    public async Task CancelReturningRequestsAsync(string staffCode, CancelReturningRequestRequest request)
+    {
+        var returningRequest = await _returningRequestRepository.GetByIdAsync(request.Id);
+        if (returningRequest is null)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "returningRequestId", request.Id }
+            };
+
+            throw new AppException(ErrorCode.RETURNING_REQUEST_NOT_FOUND, attributes);
+        }
+
+        var admin = await _userRepository.GetByIdAsync(staffCode);
+        if (admin is null)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "staffCode", staffCode }
+            };
+            throw new AppException(ErrorCode.USER_NOT_FOUND, attributes);
+        }
+
+        if (admin.Location != returningRequest.RequestedByUser.Location)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "location", returningRequest.RequestedByUser.Location }
+            };
+            throw new AppException(ErrorCode.INVALID_LOCATION, attributes);
+        }
+
+        if (returningRequest.State != ReturningRequestStatus.Waiting_For_Returning)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "state", returningRequest.State }
+            };
+            throw new AppException(ErrorCode.INVALID_RETURNING_REQUEST_STATE, attributes);
+        }
+
+        await _returningRequestRepository.DeleteAsync(returningRequest);
+
+        await _unitOfWork.CommitAsync();
     }
 }
