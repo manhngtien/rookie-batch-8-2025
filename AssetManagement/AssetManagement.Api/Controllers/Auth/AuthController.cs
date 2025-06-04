@@ -25,7 +25,7 @@ namespace AssetManagement.Api.Controllers.Auth
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.None,
-                Expires = DateTime.UtcNow.AddHours(1),
+                Expires = DateTime.Now.AddHours(1),
                 Path = "/"
             };
             _httpContextAccessor.HttpContext!.Response.Cookies.Append("auth_jwt", accessToken, jwtCookieOptions);
@@ -35,7 +35,7 @@ namespace AssetManagement.Api.Controllers.Auth
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.None,
-                Expires = DateTime.UtcNow.AddDays(7),
+                Expires = DateTime.Now.AddDays(7),
                 Path = "/"
             };
             _httpContextAccessor.HttpContext.Response.Cookies.Append("refresh", refreshToken, refreshCookieOptions);
