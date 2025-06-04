@@ -54,7 +54,7 @@ public class ReturningRequestService : IReturningRequestService
         {
             var attributes = new Dictionary<string, object>
             {
-                { "StaffCode", staffCode },
+                { "staffCode", staffCode },
             };
             throw new AppException(ErrorCode.USER_NOT_FOUND, attributes);
         }
@@ -64,19 +64,31 @@ public class ReturningRequestService : IReturningRequestService
         {
             var attributes = new Dictionary<string, object>
             {
-                { "AssignmentId", createAdminReturningRequest.AssignmentId },
+                { "assignmentId", createAdminReturningRequest.AssignmentId },
             };
+
             throw new AppException(ErrorCode.ASSIGNMENT_NOT_FOUND, attributes);
         }
 
         // AC 1
-        if (assignment.State.Equals(AssignmentStatus.Waiting_For_Acceptance))
+        if (!assignment.State.Equals(AssignmentStatus.Accepted))
         {
             var attributes = new Dictionary<string, object>
             {
-                { "AssignmentId", createAdminReturningRequest.AssignmentId },
+                { "assignmentId", createAdminReturningRequest.AssignmentId },
             };
-            throw new AppException(ErrorCode.ASSIGNMENT_NOT_ACCEPTED, attributes);
+
+            switch(assignment.State)
+            {
+                case AssignmentStatus.Waiting_For_Acceptance:
+                    throw new AppException(ErrorCode.ASSIGNMENT_NOT_ACCEPTED, attributes);
+                case AssignmentStatus.Declined:
+                    throw new AppException(ErrorCode.ASSIGNMENT_DECLINED, attributes);
+                case AssignmentStatus.Accepted:
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
         var returningRequest = new ReturningRequest
