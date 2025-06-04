@@ -30,19 +30,9 @@ public class ReturningRequestsController : BaseApiController
         return Ok(returningRequests);
     }
 
-    [HttpPost]
-    [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> CreateReturningRequest([FromForm] CreateAdminReturningRequest returningRequest)
-    {
-        var staffCode = User.GetUserId();
-
-        var savedReturningRequest = await _returningRequestService.CreateReturningRequestAsync(returningRequest, staffCode);
-        return CreatedAtAction(nameof(GetReturningRequests), new { id = savedReturningRequest.Id }, savedReturningRequest);
-    }
-
     [HttpPut("{returningRequestId:int}/cancel")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> CancelReturningRequest(int returningRequestId, [FromBody] CancelReturningRequestRequest request)
+    public async Task<IActionResult> CancelReturningRequest(int returningRequestId, [FromForm] CancelReturningRequestRequest request)
     {
         if (returningRequestId != request.Id)
         {
