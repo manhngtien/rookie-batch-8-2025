@@ -10,4 +10,5 @@ public interface IReturningRequestService
     Task<PagedList<ReturningRequestResponse>> GetReturningRequestsAsync(ReturningRequestParams returningRequestParams);
     Task<ReturningRequestResponse> CompleteReturningRequestAsync(string currentUserStaffCode,CompleteReturningRequestRequest request);
     Task CancelReturningRequestsAsync(string staffCode, CancelReturningRequestRequest request);
+    Task CreateUserReturningRequestAsync(string staffCode, CreateUserReturningRequest createAdminReturningRequest);
 }

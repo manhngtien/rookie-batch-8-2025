@@ -5,6 +5,7 @@ using AssetManagement.Application.Helpers.Params;
 using AssetManagement.Application.Interfaces;
 using AssetManagement.Core.Exceptions;
 using AssetManagement.Infrastructure.Exceptions;
+using AssetManagement.Core.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -69,4 +70,14 @@ public class ReturningRequestsController : BaseApiController
         await _returningRequestService.CancelReturningRequestsAsync(staffCode, request);
         return NoContent();
     }
+
+    [HttpPost]
+    [Authorize]
+    public async Task<IActionResult> CreateUserReturningRequest([FromBody] CreateUserReturningRequest returningRequest)
+    {
+        var staffCode = User.GetUserId();
+
+        await _returningRequestService.CreateUserReturningRequestAsync(staffCode, returningRequest);
+        return Created();
+    }   
 }
