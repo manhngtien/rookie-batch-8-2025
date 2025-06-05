@@ -21,8 +21,7 @@ namespace AssetManagement.Infrastructure.Repositories
                 .Include(r => r.AcceptedByUser)
                 .Include(r => r.RequestedByUser);
         }
-
-
+        
         public async Task<ReturningRequest?> GetByIdAsync(int returningRequestId)
         {
             return await _context.ReturnRequests

@@ -52,7 +52,9 @@ namespace AssetManagement.Core.Exceptions
         public static readonly ErrorCode ASSIGNMENT_ASSIGNEDBY_AND_ASSIGNEDTO_MUST_BE_IN_THE_SAME_LOCATION = new(1009, "User must assigned the same location with assignedBy and asset", StatusCodes.Status400BadRequest);
         public static readonly ErrorCode ASSIGNMENT_NOT_ACCEPTED = new(1010, "Assignment has not been accepted", StatusCodes.Status400BadRequest);
         public static readonly ErrorCode ASSIGNMENT_DECLINED = new(1011, "Assignment has been declined", StatusCodes.Status400BadRequest);
-
+        public static readonly ErrorCode ASSIGNMENT_ALREADY_HAD_RETURNING_REQUEST = new(1012, "Assignment already had request for returning", StatusCodes.Status400BadRequest);
+        public static readonly ErrorCode USER_NOT_ASSIGNED_TO_ASSET = new(1013, "User is not assigned to the asset and cannot create a return request", StatusCodes.Status403Forbidden);
+        
         // Category related errors (1100 - 1199)
         public static readonly ErrorCode CATEGORY_NOT_FOUND = new(1100, "Category not found", StatusCodes.Status404NotFound);
         public static readonly ErrorCode CATEGORY_MODIFICATION_NOT_ALLOWED = new(1101, "Category modification is not allowed", StatusCodes.Status400BadRequest);
@@ -63,7 +65,7 @@ namespace AssetManagement.Core.Exceptions
         public static readonly ErrorCode INVALID_RETURNING_REQUEST_STATE = new(1200, "Invalid returning request state,must waiting for returning", StatusCodes.Status400BadRequest);
         public static readonly ErrorCode RETURNING_REQUEST_NOT_FOUND = new(1201, "Returning request not found", StatusCodes.Status404NotFound);
         public static readonly ErrorCode INVALID_RETURNING_REQUEST_ID = new(1202, "Invalid returning request id", StatusCodes.Status400BadRequest);
-
+        
         /// <summary>
         /// Atributes for error code, message, and status.
         /// </summary>

@@ -18,7 +18,7 @@ namespace AssetManagement.Application.Mappers
                 AssignedByUser = assignment.AssignedByUser.MapModelToResponse(),
                 AssignedToUser = assignment.AssignedToUser.MapModelToResponse(),
                 Note = assignment.Note ?? string.Empty,
-                IsReturned = assignment.ReturningRequest != null
+                IsReturned = assignment.ReturningRequestId != null
             };
         }
     }

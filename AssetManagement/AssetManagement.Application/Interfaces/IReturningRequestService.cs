@@ -6,9 +6,9 @@ namespace AssetManagement.Application.Interfaces;
 
 public interface IReturningRequestService
 {
-    Task<ReturningRequestResponse> CreateReturningRequestAsync(CreateAdminReturningRequest createAdminReturningRequest, string staffCode);
-    Task<PagedList<ReturningRequestResponse>> GetReturningRequestsAsync(ReturningRequestParams returningRequestParams);
-    Task<ReturningRequestResponse> CompleteReturningRequestAsync(string currentUserStaffCode,CompleteReturningRequestRequest request);
+    Task<PagedList<ReturningRequestResponse>> GetReturningRequestsAsync(string staffCode, ReturningRequestParams returningRequestParams);
+    Task CreateReturningRequestAsync(string staffCode, CreateAdminReturningRequest request);
+    Task CompleteReturningRequestAsync(string staffCode,CompleteReturningRequestRequest request);
     Task CancelReturningRequestsAsync(string staffCode, CancelReturningRequestRequest request);
-    Task CreateUserReturningRequestAsync(string staffCode, CreateUserReturningRequest createAdminReturningRequest);
+    Task CreateUserReturningRequestAsync(string staffCode, CreateUserReturningRequest request);
 }

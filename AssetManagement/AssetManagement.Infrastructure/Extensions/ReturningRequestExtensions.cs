@@ -10,20 +10,28 @@ public static class ReturningRequestExtensions
         {
             "idAsc" => query.OrderBy(r => r.Id),
             "idDesc" => query.OrderByDescending(r => r.Id),
+            
             "assetCodeAsc" => query.OrderBy(r => r.Assignment.AssetCode),
             "assetCodeDesc" => query.OrderByDescending(r => r.Assignment.AssetCode),
+            
             "assetNameAsc" => query.OrderBy(r => r.Assignment.Asset.AssetName),
             "assetNameDesc" => query.OrderByDescending(r => r.Assignment.Asset.AssetName),
+            
             "requestedByAsc" => query.OrderBy(r => r.RequestedByUser.UserName),
             "requestedByDesc" => query.OrderByDescending(r => r.RequestedByUser.UserName),
+            
             "assignedDateAsc" => query.OrderBy(r => r.Assignment.AssignedDate),
             "assignedDateDesc" => query.OrderByDescending(r => r.Assignment.AssignedDate),
+            
             "acceptedByAsc" => query.OrderBy(r => r.AcceptedByUser.UserName),
             "acceptedByDesc" => query.OrderByDescending(r => r.AcceptedByUser.UserName),
+            
             "returnedDateAsc" => query.OrderBy(r => r.ReturnedDate),
             "returnedDateDesc" => query.OrderByDescending(r => r.ReturnedDate),
+            
             "stateAsc" => query.OrderBy(r => r.State),
             "stateDesc" => query.OrderByDescending(r => r.State),
+            
             _ => query.OrderBy(r => r.Id)
         };
 

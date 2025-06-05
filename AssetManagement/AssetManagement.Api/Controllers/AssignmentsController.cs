@@ -90,7 +90,7 @@ public class AssignmentsController : BaseApiController
 
         var staffCode = User.GetUserId();
 
-        var savedReturningRequest = await _returningRequestService.CreateReturningRequestAsync(returningRequest, staffCode);
+        await _returningRequestService.CreateReturningRequestAsync(staffCode, returningRequest);
         return Created();
     }
 
