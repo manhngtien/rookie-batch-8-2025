@@ -69,7 +69,7 @@ public class AssignmentsController : BaseApiController
             throw new AppException(ErrorCode.INVALID_ASSIGNMENT_ID, attributes);
         }
 
-        var updatedAssignment = await _assignmentService.UpdateAssignmentAsync(assignmentId, staffCode, assignmentRequest);
+        var updatedAssignment = await _assignmentService.UpdateAssignmentAsync(staffCode, assignmentRequest);
 
         return Ok(updatedAssignment);
     }
