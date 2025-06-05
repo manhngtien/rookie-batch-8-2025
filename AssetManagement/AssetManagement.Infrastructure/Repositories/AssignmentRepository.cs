@@ -19,7 +19,8 @@ namespace AssetManagement.Infrastructure.Repositories
             return _context.Assignments
                 .Include(a => a.Asset)
                 .Include(a => a.AssignedToUser)
-                .Include(a => a.AssignedByUser);
+                .Include(a => a.AssignedByUser)
+                .Include(a => a.ReturningRequest);
         }
 
         public async Task<Assignment?> GetByIdAsync(int assignmentId)

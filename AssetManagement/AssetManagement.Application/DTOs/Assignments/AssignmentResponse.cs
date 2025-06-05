@@ -12,6 +12,7 @@ public class AssignmentResponse
     public required UserResponse AssignedByUser { get; set; }
     public required UserResponse AssignedToUser { get; set; }
     public required string Note { get; set; }
+    public required bool IsReturned { get; set; }
 }
 
 
