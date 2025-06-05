@@ -137,7 +137,6 @@ public class ReturningRequestService : IReturningRequestService
         };
         
         await _returningRequestRepository.CreateAsync(returningRequest);
-        assignment.ReturningRequestId = returningRequest.Id;
         
         await _unitOfWork.CommitAsync();
     }
@@ -279,6 +278,7 @@ public class ReturningRequestService : IReturningRequestService
             {
                 { "staffCode", staffCode }
             };
+            
             throw new AppException(ErrorCode.USER_NOT_FOUND, attributes);
         }
 
@@ -293,7 +293,7 @@ public class ReturningRequestService : IReturningRequestService
             throw new AppException(ErrorCode.ASSIGNMENT_NOT_FOUND, attributes);
         }
 
-        if (assignment.AssignedTo == requestedByUser.StaffCode)
+        if (assignment.AssignedTo != requestedByUser.StaffCode)
         {
             var attributes = new Dictionary<string, object>
             {
@@ -355,7 +355,6 @@ public class ReturningRequestService : IReturningRequestService
         };
 
         await _returningRequestRepository.CreateAsync(returningRequest);
-        assignment.ReturningRequestId = returningRequest.Id;
         
         await _unitOfWork.CommitAsync();
     }
