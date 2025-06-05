@@ -25,8 +25,10 @@ public class ReturningRequestsController : BaseApiController
     public async Task<ActionResult<IEnumerable<ReturningRequestResponse>>> GetReturningRequests(
         [FromQuery] ReturningRequestParams returningRequestParams)
     {
+        var staffCode = User.GetUserId();
         var returningRequests =
-            await _returningRequestService.GetReturningRequestsAsync(returningRequestParams);
+            await _returningRequestService.GetReturningRequestsAsync(staffCode, returningRequestParams);
+        
         Response.AddPaginationHeader(returningRequests.Metadata);
         return Ok(returningRequests);
     }
@@ -42,13 +44,14 @@ public class ReturningRequestsController : BaseApiController
             {
                 { "returningRequestId", request.Id },
             };
+            
             throw new AppException(ErrorCode.INVALID_RETURNING_REQUEST_ID, attributes);
         }
 
         var staffCode = User.GetUserId();
 
-        var completedRequest = await _returningRequestService.CompleteReturningRequestAsync(staffCode, request);
-        return Ok(completedRequest);
+        await _returningRequestService.CompleteReturningRequestAsync(staffCode, request);
+        return NoContent();
     }
 
     [HttpPut("{returningRequestId:int}/cancel")]

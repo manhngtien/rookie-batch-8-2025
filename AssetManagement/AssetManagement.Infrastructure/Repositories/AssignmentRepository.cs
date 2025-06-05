@@ -29,6 +29,7 @@ namespace AssetManagement.Infrastructure.Repositories
                 .Include(a => a.Asset)
                 .Include(a => a.AssignedToUser)
                 .Include(a => a.AssignedByUser)
+                .Include(a => a.ReturningRequest)
                 .FirstOrDefaultAsync(a => a.Id == assignmentId);
         }
 

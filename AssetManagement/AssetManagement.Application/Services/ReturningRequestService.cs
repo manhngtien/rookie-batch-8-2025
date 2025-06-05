@@ -9,7 +9,6 @@ using AssetManagement.Core.Exceptions;
 using AssetManagement.Core.Interfaces;
 using AssetManagement.Infrastructure.Exceptions;
 using AssetManagement.Infrastructure.Extensions;
-using AssetManagement.Infrastructure.Repositories;
 
 namespace AssetManagement.Application.Services;
 
@@ -35,13 +34,25 @@ public class ReturningRequestService : IReturningRequestService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<PagedList<ReturningRequestResponse>> GetReturningRequestsAsync(ReturningRequestParams returningRequestParams)
+    public async Task<PagedList<ReturningRequestResponse>> GetReturningRequestsAsync(string staffCode, ReturningRequestParams returningRequestParams)
     {
+        var staff = await _userRepository.GetByIdAsync(staffCode);
+        if (staff is null)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "staffCode", staffCode },
+            };
+            
+            throw new AppException(ErrorCode.USER_NOT_FOUND, attributes);
+        }
+        
         var returningRequests = _returningRequestRepository.GetAllAsync()
+            .Where(r => r.Assignment.Asset.Location == staff.Location)
             .Sort(returningRequestParams.OrderBy)
             .Search(returningRequestParams.SearchTerm)
             .Filter(returningRequestParams.State, returningRequestParams.ReturnedDate);
-
+        
         var returningRequestDto = returningRequests.Select(x => x.MapModelToResponse());
 
         return await PaginationService.ToPagedList(
@@ -51,35 +62,47 @@ public class ReturningRequestService : IReturningRequestService
         );
     }
 
-    public async Task<ReturningRequestResponse> CreateReturningRequestAsync(CreateAdminReturningRequest createAdminReturningRequest, string staffCode)
+    public async Task CreateReturningRequestAsync(string staffCode, CreateAdminReturningRequest request)
     {
         var requestedByUser = await _userRepository.GetByIdAsync(staffCode);
-        if (requestedByUser == null)
+        if (requestedByUser is null)
         {
             var attributes = new Dictionary<string, object>
             {
                 { "staffCode", staffCode },
             };
+            
             throw new AppException(ErrorCode.USER_NOT_FOUND, attributes);
         }
 
-        var assignment = await _assignmentRepository.GetByIdAsync(createAdminReturningRequest.AssignmentId);
-        if (assignment == null)
+        var assignment = await _assignmentRepository.GetByIdAsync(request.AssignmentId);
+        if (assignment is null)
         {
             var attributes = new Dictionary<string, object>
             {
-                { "assignmentId", createAdminReturningRequest.AssignmentId },
+                { "assignmentId", request.AssignmentId },
             };
 
             throw new AppException(ErrorCode.ASSIGNMENT_NOT_FOUND, attributes);
         }
 
-        // AC 1
+        if (requestedByUser.Location != assignment.Asset.Location)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "staffLocation", requestedByUser.Location },
+                { "assetLocation", assignment.Asset.Location },
+                { "assignmentId", request.AssignmentId }
+            };
+
+            throw new AppException(ErrorCode.INVALID_LOCATION, attributes);
+        }
+        
         if (!assignment.State.Equals(AssignmentStatus.Accepted))
         {
             var attributes = new Dictionary<string, object>
             {
-                { "assignmentId", createAdminReturningRequest.AssignmentId },
+                { "assignmentId", request.AssignmentId },
             };
 
             switch (assignment.State)
@@ -95,22 +118,43 @@ public class ReturningRequestService : IReturningRequestService
             }
         }
 
+        if (assignment.ReturningRequest is not null)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "assignmentId", request.AssignmentId },
+                { "returningRequestId", assignment.ReturningRequestId!},
+            };
+
+            throw new AppException(ErrorCode.ASSIGNMENT_ALREADY_HAD_RETURNING_REQUEST, attributes);
+        }
+        
         var returningRequest = new ReturningRequest
         {
-            AssignmentId = createAdminReturningRequest.AssignmentId,
+            AssignmentId = request.AssignmentId,
             State = ReturningRequestStatus.Waiting_For_Returning,
-            RequestedByUser = requestedByUser,
+            RequestedBy = staffCode,
         };
-
-        var savedRfr = await _returningRequestRepository.CreateAsync(returningRequest);
-
+        
+        await _returningRequestRepository.CreateAsync(returningRequest);
+        assignment.ReturningRequestId = returningRequest.Id;
+        
         await _unitOfWork.CommitAsync();
-
-        return savedRfr.MapModelToResponse();
     }
 
     public async Task CancelReturningRequestsAsync(string staffCode, CancelReturningRequestRequest request)
     {
+        var admin = await _userRepository.GetByIdAsync(staffCode);
+        if (admin is null)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "staffCode", staffCode }
+            };
+            
+            throw new AppException(ErrorCode.USER_NOT_FOUND, attributes);
+        }
+        
         var returningRequest = await _returningRequestRepository.GetByIdAsync(request.Id);
         if (returningRequest is null)
         {
@@ -121,23 +165,16 @@ public class ReturningRequestService : IReturningRequestService
 
             throw new AppException(ErrorCode.RETURNING_REQUEST_NOT_FOUND, attributes);
         }
-
-        var admin = await _userRepository.GetByIdAsync(staffCode);
-        if (admin is null)
+        
+        if (admin.Location != returningRequest.Assignment.Asset.Location)
         {
             var attributes = new Dictionary<string, object>
             {
-                { "staffCode", staffCode }
+                { "staffLocation", admin.Location },
+                { "assetLocation", returningRequest.Assignment.Asset.Location },
+                { "returningRequestId", request.Id }
             };
-            throw new AppException(ErrorCode.USER_NOT_FOUND, attributes);
-        }
-
-        if (admin.Location != returningRequest.RequestedByUser.Location)
-        {
-            var attributes = new Dictionary<string, object>
-            {
-                { "location", returningRequest.RequestedByUser.Location }
-            };
+            
             throw new AppException(ErrorCode.INVALID_LOCATION, attributes);
         }
 
@@ -150,71 +187,90 @@ public class ReturningRequestService : IReturningRequestService
             throw new AppException(ErrorCode.INVALID_RETURNING_REQUEST_STATE, attributes);
         }
 
+        var assignment = await _assignmentRepository.GetByIdAsync(returningRequest.AssignmentId);
+        if (assignment is null)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "assignmentId", returningRequest.AssignmentId }
+            };
+            
+            throw new AppException(ErrorCode.ASSIGNMENT_NOT_FOUND, attributes);
+        }
+        
+        assignment.ReturningRequestId = null;
         await _returningRequestRepository.DeleteAsync(returningRequest);
-
+        
         await _unitOfWork.CommitAsync();
     }
 
-    public async Task<ReturningRequestResponse> CompleteReturningRequestAsync(string currentUserStaffCode, CompleteReturningRequestRequest request)
+    public async Task CompleteReturningRequestAsync(string staffCode, CompleteReturningRequestRequest request)
     {
-        var currentUserLogin = await _userRepository.GetByIdAsync(currentUserStaffCode);
-        if (currentUserLogin == null)
+        var currentUserLogin = await _userRepository.GetByIdAsync(staffCode);
+        if (currentUserLogin is null)
         {
-            throw new AppException(ErrorCode.USER_NOT_FOUND,
-                new Dictionary<string, object> { { "staffCode", currentUserStaffCode } });
+            var attributes = new Dictionary<string, object>
+            {
+                { "staffCode", staffCode }
+            };
+                
+            throw new AppException(ErrorCode.USER_NOT_FOUND, attributes);
         }
 
         var returningRequest = await _returningRequestRepository.GetByIdAsync(request.Id);
-        if (returningRequest == null)
+        if (returningRequest is null)
         {
-            var attributes = new Dictionary<string, object> { { "returningRequestId", request.Id } };
+            var attributes = new Dictionary<string, object>
+            {
+                { "returningRequestId", request.Id }
+            };
+            
             throw new AppException(ErrorCode.RETURNING_REQUEST_NOT_FOUND, attributes);
         }
 
+        if (currentUserLogin.Location != returningRequest.Assignment.Asset.Location)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "staffLocation", currentUserLogin.Location },
+                { "assetLocation", returningRequest.Assignment.Asset.Location },
+                { "returningRequestId", request.Id }
+            };
+
+            throw new AppException(ErrorCode.INVALID_LOCATION, attributes);
+        }
+        
         if (returningRequest.State != ReturningRequestStatus.Waiting_For_Returning)
         {
-            throw new AppException(ErrorCode.INVALID_RETURNING_REQUEST_STATE,
-                new Dictionary<string, object> { { "state", returningRequest.State.ToString() } });
+            var attributes = new Dictionary<string, object>
+            {
+                {"returningRequestId", request.Id },
+                { "state", returningRequest.State.ToString() }
+            };
+            
+            throw new AppException(ErrorCode.INVALID_RETURNING_REQUEST_STATE, attributes);
         }
-
-        var assignment = returningRequest.Assignment;
-        if (assignment == null)
+        
+        var assignment = await _assignmentRepository.GetByIdAsync(returningRequest.AssignmentId);
+        if (assignment is null)
         {
-            throw new AppException(ErrorCode.ASSIGNMENT_NOT_FOUND,
-                new Dictionary<string, object> { { "assignmentId", returningRequest.AssignmentId } });
+            var attributes = new Dictionary<string, object>
+            {
+                { "assignmentId", returningRequest.AssignmentId }
+            };
+            
+            throw new AppException(ErrorCode.ASSIGNMENT_NOT_FOUND,attributes);
         }
-
-        var asset = assignment.Asset;
-        if (asset == null)
-        {
-            throw new AppException(ErrorCode.ASSET_NOT_FOUND,
-                new Dictionary<string, object> { { "assetCode", assignment.AssetCode } });
-        }
-
-        if (asset.Location != currentUserLogin.Location)
-        {
-            throw new AppException(ErrorCode.ACCESS_DENIED,
-                new Dictionary<string, object> {
-                { "message", "Admin can only complete returning requests for assets in their location" },
-                { "currentUserLogin", currentUserLogin.Location },
-                { "assetLocation", asset.Location.ToString() }
-                });
-        }
-
+        
         returningRequest.State = ReturningRequestStatus.Completed;
         returningRequest.ReturnedDate = DateTime.Now;
         returningRequest.AcceptedBy = currentUserLogin.StaffCode;
-        asset.State = AssetStatus.Available;
-        await _assetRepository.UpdateAsync(asset);
-
-        await _returningRequestRepository.UpdateAsync(returningRequest);
-
+        assignment.Asset.State = AssetStatus.Available;
+        
         await _unitOfWork.CommitAsync();
-
-        return returningRequest.MapModelToResponse();
     }
 
-    public async Task CreateUserReturningRequestAsync(string staffCode, CreateUserReturningRequest createUserReturningRequest)
+    public async Task CreateUserReturningRequestAsync(string staffCode, CreateUserReturningRequest request)
     {
         var requestedByUser = await _userRepository.GetByIdAsync(staffCode);
         if (requestedByUser is null)
@@ -226,22 +282,45 @@ public class ReturningRequestService : IReturningRequestService
             throw new AppException(ErrorCode.USER_NOT_FOUND, attributes);
         }
 
-        var assignment = await _assignmentRepository.GetByIdAsync(createUserReturningRequest.AssignmentId);
+        var assignment = await _assignmentRepository.GetByIdAsync(request.AssignmentId);
         if (assignment is null)
         {
             var attributes = new Dictionary<string, object>
             {
-                { "assignmentId", createUserReturningRequest.AssignmentId }
+                { "assignmentId", request.AssignmentId }
             };
 
             throw new AppException(ErrorCode.ASSIGNMENT_NOT_FOUND, attributes);
         }
 
-        if (assignment.State != AssignmentStatus.Accepted)
+        if (assignment.AssignedTo == requestedByUser.StaffCode)
         {
             var attributes = new Dictionary<string, object>
             {
-                { "assignmentId", createUserReturningRequest.AssignmentId },
+                { "requestedStaffCode", requestedByUser.StaffCode },
+                { "assignedToStaffCode", assignment.AssignedTo }
+            };
+
+            throw new AppException(ErrorCode.USER_NOT_ASSIGNED_TO_ASSET, attributes);
+        }
+        
+        if(requestedByUser.Location != assignment.Asset.Location)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "staffLocation", requestedByUser.Location },
+                { "assetLocation", assignment.Asset.Location },
+                { "assignmentId", request.AssignmentId }
+            };
+
+            throw new AppException(ErrorCode.INVALID_LOCATION, attributes);
+        }
+        
+        if (assignment.State is not AssignmentStatus.Accepted)
+        {
+            var attributes = new Dictionary<string, object>
+            {
+                { "assignmentId", request.AssignmentId },
             };
 
             switch (assignment.State)
@@ -256,28 +335,28 @@ public class ReturningRequestService : IReturningRequestService
                     throw new NotImplementedException();
             }
         }
-
-        if(requestedByUser.Location != assignment.Asset.Location)
+        
+        if (assignment.ReturningRequest is not null)
         {
             var attributes = new Dictionary<string, object>
             {
-                { "staffLocation", requestedByUser.Location },
-                { "assetLocation", assignment.Asset.Location },
-                { "assignmentId", createUserReturningRequest.AssignmentId }
+                { "assignmentId", request.AssignmentId },
+                { "returningRequestId", assignment.ReturningRequestId!},
             };
 
-            throw new AppException(ErrorCode.INVALID_LOCATION, attributes);
+            throw new AppException(ErrorCode.ASSIGNMENT_ALREADY_HAD_RETURNING_REQUEST, attributes);
         }
-
+        
         var returningRequest = new ReturningRequest
         {
-            AssignmentId = createUserReturningRequest.AssignmentId,
+            AssignmentId = request.AssignmentId,
             State = ReturningRequestStatus.Waiting_For_Returning,
             RequestedBy = requestedByUser.StaffCode
         };
 
-        var savedRfr =  await _returningRequestRepository.CreateAsync(returningRequest);
-
+        await _returningRequestRepository.CreateAsync(returningRequest);
+        assignment.ReturningRequestId = returningRequest.Id;
+        
         await _unitOfWork.CommitAsync();
     }
 }
