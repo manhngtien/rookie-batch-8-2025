@@ -159,11 +159,11 @@ namespace AssetManagement.Application.Services
                 JoinedDate = createUserRequest.JoinedDate,
                 Gender = createUserRequest.Gender,
                 Type = roleType,
-                Location = userLocation, 
+                Location = userLocation,
                 IsDisabled = false,
                 IsFirstLogin = true
             };
-           
+
             await _userRepository.CreateAsync(user);
 
             var account = new Account
@@ -223,7 +223,7 @@ namespace AssetManagement.Application.Services
             }
 
             int newNumber = lastNumber + 1;
-           
+
             return $"SD{newNumber:D4}";
         }
 
@@ -235,7 +235,7 @@ namespace AssetManagement.Application.Services
 
             StringBuilder usernameBuilder = new StringBuilder(firstName.ToLower());
 
-           
+
             string[] lastNameParts = lastName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             foreach (var part in lastNameParts)
             {
@@ -336,12 +336,12 @@ namespace AssetManagement.Application.Services
             if (user == null)
             {
                 throw new AppException(ErrorCode.USER_NOT_FOUND, new Dictionary<string, object>
-                { 
+                {
                     { "staffCode", staffCode }
                 });
             }
 
-            if(await _assignmentRepository.IsUserInViewAssignments(staffCode))
+            if (await _assignmentRepository.IsUserInViewAssignments(staffCode))
             {
                 throw new AppException(ErrorCode.USER_HAS_ACTIVE_ASSIGNMENTS, new Dictionary<string, object>
                 {

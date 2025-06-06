@@ -67,7 +67,7 @@ public class AssignmentService : IAssignmentService
     public async Task<PagedList<AssignmentResponse>> GetAssignmentsByStaffCodeAsync(string staffCode, AssignmentParams assignmentParams)
     {
         var query = _assignmentRepository.GetAllAsync()
-            .Where(a => a.AssignedTo == staffCode && a.AssignedDate <= DateTime.Now)
+            .Where(a => a.AssignedTo == staffCode && DateOnly.FromDateTime(a.AssignedDate) <= DateOnly.FromDateTime(DateTime.Now))
             .Where(a => a.ReturningRequest == null || a.ReturningRequest.State != ReturningRequestStatus.Completed)
             .Where(a => a.State != AssignmentStatus.Declined)
             .Sort(assignmentParams.OrderBy);
@@ -142,7 +142,7 @@ public class AssignmentService : IAssignmentService
 
             throw new AppException(ErrorCode.ASSET_NOT_FOUND, attributes);
         }
-        
+
         if (asset.State != AssetStatus.Available)
         {
             var attributes = new Dictionary<string, object>
@@ -150,7 +150,7 @@ public class AssignmentService : IAssignmentService
                 { "assetCode", asset.AssetCode },
                 {"assetState", asset.State.ToString() }
             };
-            
+
             throw new AppException(ErrorCode.ASSET_NOT_AVAILABLE, attributes);
         }
 
@@ -176,7 +176,7 @@ public class AssignmentService : IAssignmentService
 
         await _assignmentRepository.CreateAsync(assignment);
         asset.State = AssetStatus.Assigned;
-        
+
         await _unitOfWork.CommitAsync();
 
         return assignment.MapModelToResponse();
@@ -202,10 +202,10 @@ public class AssignmentService : IAssignmentService
             {
                 { "assignmentId", assignmentRequest.Id }
             };
-            
+
             throw new AppException(ErrorCode.ASSIGNMENT_NOT_FOUND, attributes);
         }
-        
+
         if (staff.Location != assignment.Asset.Location)
         {
             var attributes = new Dictionary<string, object>
@@ -215,17 +215,17 @@ public class AssignmentService : IAssignmentService
 
             throw new AppException(ErrorCode.INVALID_LOCATION, attributes);
         }
-        
+
         if (assignment.State != AssignmentStatus.Waiting_For_Acceptance)
         {
             var attributes = new Dictionary<string, object>
             {
                 { "assetCode", assignment.AssetCode }
             };
-            
+
             throw new AppException(ErrorCode.ASSIGNMENT_STATE_IS_NOT_WAITING_FOR_ACCEPTANCE, attributes);
         }
-        
+
         if (assignment.AssetCode != assignmentRequest.AssetCode)
         {
             var newAsset = await _assetRepository.GetByAssetCodeAsync(assignmentRequest.AssetCode);
@@ -235,10 +235,10 @@ public class AssignmentService : IAssignmentService
                 {
                     { "assetCode", assignmentRequest.AssetCode }
                 };
-                
+
                 throw new AppException(ErrorCode.ASSET_NOT_FOUND, attributes);
             }
-            
+
             if (newAsset.Location != staff.Location)
             {
                 var attributes = new Dictionary<string, object>
@@ -248,27 +248,27 @@ public class AssignmentService : IAssignmentService
 
                 throw new AppException(ErrorCode.ACCESS_DENIED, attributes);
             }
-            
+
             if (newAsset.State is not AssetStatus.Available)
             {
                 var attributes = new Dictionary<string, object>
                 {
                     { "assetCode", newAsset.AssetCode }
                 };
-                
+
                 throw new AppException(ErrorCode.ASSET_NOT_AVAILABLE, attributes);
             }
-            
+
             if (assignment.Asset.State is not AssetStatus.Assigned)
             {
                 var attributes = new Dictionary<string, object>
                 {
                     { "assetCode", assignment.AssetCode }
                 };
-                
+
                 throw new AppException(ErrorCode.ASSET_INVALID_STATE, attributes);
             }
-            
+
             assignment.Asset.State = AssetStatus.Available;
             assignment.AssetCode = newAsset.AssetCode;
             newAsset.State = AssetStatus.Assigned;
@@ -295,16 +295,16 @@ public class AssignmentService : IAssignmentService
                     { "assetLocation", assignment.Asset.Location.ToString() },
                     { "newAssignedToLocation", newAssignedTo.Location.ToString() }
                 };
-                
+
                 throw new AppException(ErrorCode.ACCESS_DENIED, attributes);
             }
-            
+
             assignment.AssignedTo = assignmentRequest.StaffCode;
         }
-        
+
         assignment.AssignedDate = assignmentRequest.AssignedDate;
         assignment.Note = assignmentRequest.Note ?? string.Empty;
-        
+
         await _unitOfWork.CommitAsync();
 
         return assignment.MapModelToResponse();
@@ -319,10 +319,10 @@ public class AssignmentService : IAssignmentService
             {
                 { "staffCode", staffCode }
             };
-            
+
             throw new AppException(ErrorCode.USER_NOT_FOUND, attributes);
         }
-        
+
         var assignment = await _assignmentRepository.GetByIdAsync(replyAssignmentRequest.AssignmentId);
         if (assignment is null)
         {
@@ -330,7 +330,7 @@ public class AssignmentService : IAssignmentService
             {
                 { "assignmentId", replyAssignmentRequest.AssignmentId }
             };
-            
+
             throw new AppException(ErrorCode.ASSIGNMENT_NOT_FOUND, attributes);
         }
 
@@ -340,7 +340,7 @@ public class AssignmentService : IAssignmentService
             {
                 { "assignmentState", assignment.State.ToString() }
             };
-            
+
             throw new AppException(ErrorCode.ASSIGNMENT_STATE_IS_NOT_WAITING_FOR_ACCEPTANCE, attributes);
         }
 
@@ -350,7 +350,7 @@ public class AssignmentService : IAssignmentService
             {
                 { "staffCode", staffCode }
             };
-            
+
             throw new AppException(ErrorCode.ACCESS_DENIED, attributes);
         }
 
@@ -363,7 +363,7 @@ public class AssignmentService : IAssignmentService
             assignment.State = AssignmentStatus.Declined;
             assignment.Asset.State = AssetStatus.Available;
         }
-        
+
         await _unitOfWork.CommitAsync();
     }
 
@@ -422,12 +422,12 @@ public class AssignmentService : IAssignmentService
 
             throw new AppException(ErrorCode.ASSIGNMENT_ALREADY_ACCEPTED, attributes);
         }
-        
+
         if (assignment.State is AssignmentStatus.Waiting_For_Acceptance)
         {
             asset.State = AssetStatus.Available;
         }
-        
+
         await _assignmentRepository.DeleteAsync(assignment);
 
         await _unitOfWork.CommitAsync();

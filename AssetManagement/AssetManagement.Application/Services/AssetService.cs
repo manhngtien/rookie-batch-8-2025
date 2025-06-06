@@ -47,7 +47,7 @@ public class AssetService : IAssetService
         }
 
         var query = _assetRepository.GetAllAsync()
-            .Where(a => a.Location.ToString().ToLower() == staff.Location.ToString().ToLower())
+            .Where(a => a.Location == staff.Location)
             .Sort(assetParams.OrderBy)
             .Search(assetParams.SearchTerm)
             .Filter(assetParams.Category, assetParams.State?.ToString());
