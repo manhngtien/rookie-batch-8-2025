@@ -43,16 +43,16 @@ public class ReturningRequestService : IReturningRequestService
             {
                 { "staffCode", staffCode },
             };
-            
+
             throw new AppException(ErrorCode.USER_NOT_FOUND, attributes);
         }
-        
+
         var returningRequests = _returningRequestRepository.GetAllAsync()
             .Where(r => r.Assignment.Asset.Location == staff.Location)
             .Sort(returningRequestParams.OrderBy)
             .Search(returningRequestParams.SearchTerm)
             .Filter(returningRequestParams.State, returningRequestParams.ReturnedDate);
-        
+
         var returningRequestDto = returningRequests.Select(x => x.MapModelToResponse());
 
         return await PaginationService.ToPagedList(
@@ -71,7 +71,7 @@ public class ReturningRequestService : IReturningRequestService
             {
                 { "staffCode", staffCode },
             };
-            
+
             throw new AppException(ErrorCode.USER_NOT_FOUND, attributes);
         }
 
@@ -97,7 +97,7 @@ public class ReturningRequestService : IReturningRequestService
 
             throw new AppException(ErrorCode.INVALID_LOCATION, attributes);
         }
-        
+
         if (!assignment.State.Equals(AssignmentStatus.Accepted))
         {
             var attributes = new Dictionary<string, object>
@@ -128,16 +128,16 @@ public class ReturningRequestService : IReturningRequestService
 
             throw new AppException(ErrorCode.ASSIGNMENT_ALREADY_HAD_RETURNING_REQUEST, attributes);
         }
-        
+
         var returningRequest = new ReturningRequest
         {
             AssignmentId = request.AssignmentId,
             State = ReturningRequestStatus.Waiting_For_Returning,
             RequestedBy = staffCode,
         };
-        
+
         await _returningRequestRepository.CreateAsync(returningRequest);
-        
+
         await _unitOfWork.CommitAsync();
     }
 
@@ -150,10 +150,10 @@ public class ReturningRequestService : IReturningRequestService
             {
                 { "staffCode", staffCode }
             };
-            
+
             throw new AppException(ErrorCode.USER_NOT_FOUND, attributes);
         }
-        
+
         var returningRequest = await _returningRequestRepository.GetByIdAsync(request.Id);
         if (returningRequest is null)
         {
@@ -164,7 +164,7 @@ public class ReturningRequestService : IReturningRequestService
 
             throw new AppException(ErrorCode.RETURNING_REQUEST_NOT_FOUND, attributes);
         }
-        
+
         if (admin.Location != returningRequest.Assignment.Asset.Location)
         {
             var attributes = new Dictionary<string, object>
@@ -173,7 +173,7 @@ public class ReturningRequestService : IReturningRequestService
                 { "assetLocation", returningRequest.Assignment.Asset.Location },
                 { "returningRequestId", request.Id }
             };
-            
+
             throw new AppException(ErrorCode.INVALID_LOCATION, attributes);
         }
 
@@ -193,13 +193,13 @@ public class ReturningRequestService : IReturningRequestService
             {
                 { "assignmentId", returningRequest.AssignmentId }
             };
-            
+
             throw new AppException(ErrorCode.ASSIGNMENT_NOT_FOUND, attributes);
         }
-        
+
         assignment.ReturningRequestId = null;
         await _returningRequestRepository.DeleteAsync(returningRequest);
-        
+
         await _unitOfWork.CommitAsync();
     }
 
@@ -212,7 +212,7 @@ public class ReturningRequestService : IReturningRequestService
             {
                 { "staffCode", staffCode }
             };
-                
+
             throw new AppException(ErrorCode.USER_NOT_FOUND, attributes);
         }
 
@@ -223,7 +223,7 @@ public class ReturningRequestService : IReturningRequestService
             {
                 { "returningRequestId", request.Id }
             };
-            
+
             throw new AppException(ErrorCode.RETURNING_REQUEST_NOT_FOUND, attributes);
         }
 
@@ -238,7 +238,7 @@ public class ReturningRequestService : IReturningRequestService
 
             throw new AppException(ErrorCode.INVALID_LOCATION, attributes);
         }
-        
+
         if (returningRequest.State != ReturningRequestStatus.Waiting_For_Returning)
         {
             var attributes = new Dictionary<string, object>
@@ -246,10 +246,10 @@ public class ReturningRequestService : IReturningRequestService
                 {"returningRequestId", request.Id },
                 { "state", returningRequest.State.ToString() }
             };
-            
+
             throw new AppException(ErrorCode.INVALID_RETURNING_REQUEST_STATE, attributes);
         }
-        
+
         var assignment = await _assignmentRepository.GetByIdAsync(returningRequest.AssignmentId);
         if (assignment is null)
         {
@@ -257,15 +257,15 @@ public class ReturningRequestService : IReturningRequestService
             {
                 { "assignmentId", returningRequest.AssignmentId }
             };
-            
-            throw new AppException(ErrorCode.ASSIGNMENT_NOT_FOUND,attributes);
+
+            throw new AppException(ErrorCode.ASSIGNMENT_NOT_FOUND, attributes);
         }
-        
+
         returningRequest.State = ReturningRequestStatus.Completed;
         returningRequest.ReturnedDate = DateTime.Now;
         returningRequest.AcceptedBy = currentUserLogin.StaffCode;
         assignment.Asset.State = AssetStatus.Available;
-        
+
         await _unitOfWork.CommitAsync();
     }
 
@@ -278,7 +278,7 @@ public class ReturningRequestService : IReturningRequestService
             {
                 { "staffCode", staffCode }
             };
-            
+
             throw new AppException(ErrorCode.USER_NOT_FOUND, attributes);
         }
 
@@ -303,8 +303,8 @@ public class ReturningRequestService : IReturningRequestService
 
             throw new AppException(ErrorCode.USER_NOT_ASSIGNED_TO_ASSET, attributes);
         }
-        
-        if(requestedByUser.Location != assignment.Asset.Location)
+
+        if (requestedByUser.Location != assignment.Asset.Location)
         {
             var attributes = new Dictionary<string, object>
             {
@@ -315,7 +315,7 @@ public class ReturningRequestService : IReturningRequestService
 
             throw new AppException(ErrorCode.INVALID_LOCATION, attributes);
         }
-        
+
         if (assignment.State is not AssignmentStatus.Accepted)
         {
             var attributes = new Dictionary<string, object>
@@ -335,7 +335,7 @@ public class ReturningRequestService : IReturningRequestService
                     throw new NotImplementedException();
             }
         }
-        
+
         if (assignment.ReturningRequest is not null)
         {
             var attributes = new Dictionary<string, object>
@@ -346,7 +346,7 @@ public class ReturningRequestService : IReturningRequestService
 
             throw new AppException(ErrorCode.ASSIGNMENT_ALREADY_HAD_RETURNING_REQUEST, attributes);
         }
-        
+
         var returningRequest = new ReturningRequest
         {
             AssignmentId = request.AssignmentId,
@@ -355,7 +355,7 @@ public class ReturningRequestService : IReturningRequestService
         };
 
         await _returningRequestRepository.CreateAsync(returningRequest);
-        
+
         await _unitOfWork.CommitAsync();
     }
 }
