@@ -16,6 +16,7 @@ namespace AssetManagement.Infrastructure.Repositories
         public IQueryable<ReturningRequest> GetAllAsync()
         {
             return _context.ReturnRequests
+                .AsNoTracking()
                 .Include(r => r.Assignment)
                 .ThenInclude(x => x.Asset)
                 .Include(r => r.AcceptedByUser)

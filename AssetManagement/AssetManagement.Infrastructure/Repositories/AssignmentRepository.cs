@@ -17,6 +17,7 @@ namespace AssetManagement.Infrastructure.Repositories
         public IQueryable<Assignment> GetAllAsync()
         {
             return _context.Assignments
+                .AsNoTracking()
                 .Include(a => a.Asset)
                 .Include(a => a.AssignedToUser)
                 .Include(a => a.AssignedByUser)

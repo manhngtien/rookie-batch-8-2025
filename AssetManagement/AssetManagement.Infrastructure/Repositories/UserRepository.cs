@@ -27,7 +27,7 @@ namespace AssetManagement.Infrastructure.Repositories
 
         public IQueryable<User> GetAllAsync()
         {
-            return _context.Staffs;
+            return _context.Staffs.AsNoTracking();
         }
 
         public async Task<User?> GetByIdAsync(string userId)

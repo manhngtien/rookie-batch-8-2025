@@ -36,7 +36,7 @@ namespace AssetManagement.Infrastructure.Repositories
 
         public IQueryable<Account> GetAllAccounts()
         {
-            return _context.Users;
+            return _context.Users.AsNoTracking();
         }
 
         public async Task<Account?> GetByIdAsync(Guid accountId)

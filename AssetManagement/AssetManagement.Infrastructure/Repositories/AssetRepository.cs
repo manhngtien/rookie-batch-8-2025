@@ -16,6 +16,7 @@ namespace AssetManagement.Infrastructure.Repositories
         public IQueryable<Asset> GetAllAsync()
         {
             return _context.Assets
+                .AsNoTracking()
                 .Include(a => a.Category);
         }
 
