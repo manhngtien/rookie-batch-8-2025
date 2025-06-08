@@ -6,4 +6,5 @@ namespace AssetManagement.Application.Interfaces;
 public interface IReportService
 {
     Task<IList<ReportResponse>> GetReportsAsync(ReportParams reportParams);
+    Task<byte[]> ExportReportsToExcelAsync();
 }

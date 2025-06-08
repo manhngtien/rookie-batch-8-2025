@@ -20,7 +20,17 @@ public class ReportsController : BaseApiController
     public async Task<IActionResult> GetReport([FromQuery] ReportParams reportParams)
     {
         var reports = await _reportService.GetReportsAsync(reportParams);
-        
+
         return Ok(reports);
+    }
+
+    [HttpGet("export")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> ExportReport()
+    {
+        var fileBytes = await _reportService.ExportReportsToExcelAsync();
+        var fileName = $"AssetManagement_Report_{System.DateTime.UtcNow:yyyyMMdd_HHmmss}.xlsx";
+
+        return File(fileBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
     }
 }
