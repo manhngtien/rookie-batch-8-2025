@@ -26,7 +26,7 @@ namespace AssetManagement.Infrastructure.Repositories
 
         public IQueryable<Category> GetAllAsync()
         {
-            return _context.Categories;
+            return _context.Categories.AsNoTracking();
         }
 
         public async Task<Category?> GetByIdAsync(int categoryId)

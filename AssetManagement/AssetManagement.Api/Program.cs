@@ -13,7 +13,8 @@ var configuration = builder.Configuration;
 builder.Services.AddCustomSwagger();
 
 // Add Infrastructure
-builder.Services.AddAssetInfrastructure(configuration);
+builder.Services.AddAssetInfrastructure(opt => 
+    configuration.GetSection("InfrastructureSettings").Bind(opt));
 
 // Add Services
 builder.Services.AddAssetApplication(configuration);
@@ -48,9 +49,6 @@ builder.Services.AddCors(options =>
 // Exception handling and authentication
 builder.Services.AddGlobalExceptionHandling();
 builder.Services.AddCustomJwtAuthentication(configuration);
-
-
-
 
 /// App configuration
 var app = builder.Build();

@@ -1,23 +1,23 @@
 using AssetManagement.Core.Entities;
 using AssetManagement.Core.Interfaces;
-using AssetManagement.Infrastructure.Settings.Options;
+using AssetManagement.Infrastructure.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
 public static class DependencyInjection
 {
     public static IServiceCollection AddAssetInfrastructure(this IServiceCollection services,
-        IConfiguration configuration)
+        Action<InfrastructureSettings> configureOptions)
     {
         // Read Configuration Options From AppSettings
-        var connectionStringsOption = new ConnectionStringsOption();
-        configuration.GetSection("InfrastructureSettings:ConnectionStringsOption").Bind(connectionStringsOption);
-
+        var settings = new InfrastructureSettings();
+        configureOptions(settings);
+        services.Configure(configureOptions);
+        
         services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(connectionStringsOption.Default));
+            options.UseSqlServer(settings.ConnectionStringsOption.Default));
 
         services.AddIdentity<Account, IdentityRole<Guid>>(opt =>
         {
@@ -39,6 +39,7 @@ public static class DependencyInjection
         services.AddScoped<IAssignmentRepository, AssignmentRepository>();
         services.AddScoped<IReturningRequestRepository, ReturningRequestRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
+        
         return services;
     }
 }

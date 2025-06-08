@@ -25,6 +25,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<IReturningRequestService, ReturningRequestService>();
             services.AddScoped<IAssetService, AssetService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IReportService, ReportService>();
+            
             return services;
         }
     }
