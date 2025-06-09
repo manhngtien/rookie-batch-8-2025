@@ -63,15 +63,24 @@ public class ReportService : IReportService
     {
         var reports = await _categoryRepository
             .GetAllAsync()
-            .Select(c => new Report
+            .Select(c => new
             {
-                CategoryName = c.CategoryName,
-                Total = c.Total,
+                c.CategoryName,
                 TotalAvailable = c.Assets.Count(a => a.State == AssetStatus.Available),
                 TotalNotAvailable = c.Assets.Count(a => a.State == AssetStatus.Not_Available),
                 TotalAssigned = c.Assets.Count(a => a.State == AssetStatus.Assigned),
                 TotalWaitingForRecycling = c.Assets.Count(a => a.State == AssetStatus.Waiting_For_Recycling),
                 TotalRecycled = c.Assets.Count(a => a.State == AssetStatus.Recycled)
+            })
+            .Select(c => new Report
+            {
+                CategoryName = c.CategoryName,
+                Total = c.TotalAvailable + c.TotalNotAvailable + c.TotalAssigned + c.TotalWaitingForRecycling + c.TotalRecycled,
+                TotalAvailable = c.TotalAvailable,
+                TotalNotAvailable = c.TotalNotAvailable,
+                TotalAssigned = c.TotalAssigned,
+                TotalWaitingForRecycling = c.TotalWaitingForRecycling,
+                TotalRecycled = c.TotalRecycled
             })
             .ToListAsync();
 
