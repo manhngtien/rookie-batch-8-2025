@@ -1,4 +1,5 @@
 using AssetManagement.Application.DTOs.Assets;
+using AssetManagement.Application.Exceptions;
 using AssetManagement.Application.Helpers.Params;
 using AssetManagement.Application.Interfaces;
 using AssetManagement.Application.Mappers;
@@ -7,8 +8,7 @@ using AssetManagement.Core.Entities;
 using AssetManagement.Core.Enums;
 using AssetManagement.Core.Exceptions;
 using AssetManagement.Core.Interfaces;
-using AssetManagement.Infrastructure.Exceptions;
-using AssetManagement.Infrastructure.Extensions;
+using AssetManagement.Application.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace AssetManagement.Application.Services;

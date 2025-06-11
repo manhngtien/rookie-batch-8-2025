@@ -1,6 +1,6 @@
 ﻿using AssetManagement.Core.Exceptions;
 
-namespace AssetManagement.Infrastructure.Exceptions
+namespace AssetManagement.Application.Exceptions
 {
     public class AccessDeniedException : Exception
     {

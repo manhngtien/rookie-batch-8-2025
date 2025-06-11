@@ -1,6 +1,6 @@
 ﻿using AssetManagement.Core.Entities;
 
-namespace AssetManagement.Infrastructure.Extensions
+namespace AssetManagement.Application.Extensions
 {
     public static class AssetExtensions
     {

@@ -1,5 +1,5 @@
 ﻿using AssetManagement.Core.Exceptions;
-using AssetManagement.Infrastructure.Exceptions;
+using AssetManagement.Application.Exceptions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace AssetManagement.Api.Filters

@@ -1,6 +1,4 @@
-﻿using AssetManagement.Api.Filters;
-
-namespace AssetManagement.Api.Extensions
+﻿namespace AssetManagement.Api.Extensions
 {
     public static class ExceptionHandlingExtensions
     {

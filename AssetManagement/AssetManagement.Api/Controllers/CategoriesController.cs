@@ -1,5 +1,4 @@
-﻿using AssetManagement.Api.Controllers.Base;
-using AssetManagement.Application.DTOs.Categories;
+﻿using AssetManagement.Application.DTOs.Categories;
 using AssetManagement.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

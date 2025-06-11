@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc.Filters;
+using ValidationException = AssetManagement.Application.Exceptions.ValidationException;
 
 namespace AssetManagement.Api.Filters
 {
@@ -50,7 +51,7 @@ namespace AssetManagement.Api.Filters
                         kvp => kvp.Value?.Errors.Select(e => e.ErrorMessage).ToArray() ?? Array.Empty<string>()
                     );
 
-                throw new Infrastructure.Exceptions.ValidationException(errors);
+                throw new ValidationException(errors);
             }
 
             await next();

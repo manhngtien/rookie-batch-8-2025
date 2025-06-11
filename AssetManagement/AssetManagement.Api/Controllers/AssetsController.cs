@@ -1,9 +1,6 @@
-﻿using AssetManagement.Api.Controllers.Base;
-using AssetManagement.Api.Extensions;
-using AssetManagement.Application.DTOs.Assets;
+﻿using AssetManagement.Application.DTOs.Assets;
 using AssetManagement.Application.Helpers.Params;
 using AssetManagement.Application.Interfaces;
-using AssetManagement.Application.Paginations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

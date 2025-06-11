@@ -1,6 +1,4 @@
-﻿using AssetManagement.Core.Enums;
-
-namespace AssetManagement.Application.DTOs.Assets;
+﻿namespace AssetManagement.Application.DTOs.Assets;
 
 public class CreateAssetRequest
 {
