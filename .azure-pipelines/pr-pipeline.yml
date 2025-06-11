@@ -71,16 +71,16 @@ stages:
             displayName: 'Test'
             inputs:
               command: 'test'
-              projects: '$(solution)'
-              arguments: '/p:CollectCoverage=true /p:CoverletOutputFormat=cobertuna'
+              projects: 'AssetManagement/Tests/**/*.csproj'
+              arguments: '/p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
           - task: reportgenerator@4
             displayName: Generate Test Report
             inputs:
               reports: '$(Build.SourcesDirectory)/**/*.cobertura.xml'
-              targetDir: '$(Build.SourcesDirectory)/CoverageResults' 
-              assemblyFilters: '+*.Api;+*.Application;+*.Core;+*.Infrastructure'
+              targetdir: '$(Build.SourcesDirectory)/CoverageResults' 
+              assemblyfilters: '+*.Api;+*.Application;+*.Core;+*.Infrastructure'
           - task: PublishCodeCoverageResults@1
             displayName: 'Publish Code Coverage'
             inputs:
               codeCoverageTool: Cobertura
-              summaryFileLocation: '$(Build.SourcesDirectory)/CoverageResults/Cobertura'
+              summaryFileLocation: '$(Build.SourcesDirectory)/CoverageResults/Cobertura.xml'
