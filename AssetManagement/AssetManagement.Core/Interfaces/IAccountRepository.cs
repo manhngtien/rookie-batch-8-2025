@@ -1,5 +1,4 @@
 ﻿using AssetManagement.Core.Entities;
-using System.ComponentModel;
 
 namespace AssetManagement.Core.Interfaces
 {

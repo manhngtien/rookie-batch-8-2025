@@ -1,5 +1,4 @@
-﻿
-namespace AssetManagement.Application.DTOs.Assignments;
+﻿namespace AssetManagement.Application.DTOs.Assignments;
 
 public class UpdateAssignmentRequest
 {

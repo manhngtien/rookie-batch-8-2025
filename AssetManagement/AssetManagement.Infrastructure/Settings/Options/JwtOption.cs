@@ -1,4 +1,4 @@
-﻿namespace AssetManagement.Api.Settings
+﻿namespace AssetManagement.Infrastructure.Settings.Options
 {
     public class JwtOption
     {

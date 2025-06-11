@@ -1,10 +1,10 @@
 ﻿using AssetManagement.Application.DTOs.Categories;
+using AssetManagement.Application.Exceptions;
 using AssetManagement.Application.Interfaces;
 using AssetManagement.Application.Mappers;
 using AssetManagement.Core.Entities;
 using AssetManagement.Core.Exceptions;
 using AssetManagement.Core.Interfaces;
-using AssetManagement.Infrastructure.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace AssetManagement.Application.Services
@@ -31,7 +31,7 @@ namespace AssetManagement.Application.Services
             return projectedQuery;
         }
 
-        public async Task<CategoryResponse> GetCategoryByIdAsync(int categoryId)
+        public async Task<CategoryResponse?> GetCategoryByIdAsync(int categoryId)
         {
             var category = await _categoryRepository.GetByIdAsync(categoryId);
             if (category is null)

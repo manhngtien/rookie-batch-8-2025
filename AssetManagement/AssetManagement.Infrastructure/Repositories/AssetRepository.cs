@@ -28,6 +28,7 @@ namespace AssetManagement.Infrastructure.Repositories
                 .ThenInclude(a => a.AssignedToUser)
                 .Include(a => a.Assignments)
                 .ThenInclude(a => a.AssignedByUser)
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(a => a.AssetCode == assetCode);
         }
         

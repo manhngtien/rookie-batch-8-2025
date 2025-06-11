@@ -1,5 +1,4 @@
-﻿using AssetManagement.Api.Filters;
-using AssetManagement.Api.Settings;
+﻿using AssetManagement.Infrastructure.Settings.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;

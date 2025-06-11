@@ -5,7 +5,7 @@ using AssetManagement.Application.Mappers;
 using AssetManagement.Core.Exceptions;
 using AssetManagement.Core.Interfaces;
 using AssetManagement.Core.Interfaces.Services.Auth;
-using AssetManagement.Infrastructure.Exceptions;
+using AssetManagement.Application.Exceptions;
 
 namespace AssetManagement.Application.Services.Auth
 {

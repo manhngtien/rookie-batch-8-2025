@@ -1,80 +1,78 @@
-using AssetManagement.Api.Extensions;
-using AssetManagement.Api.Filters;
-using AssetManagement.Application.Validators.Accounts;
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
-var builder = WebApplication.CreateBuilder(args);
-var configuration = builder.Configuration;
+namespace AssetManagement.Api;
 
-/// Add services to the container.
-
-// Add Swagger
-builder.Services.AddCustomSwagger();
-
-// Add Infrastructure
-builder.Services.AddAssetInfrastructure(opt => 
-    configuration.GetSection("InfrastructureSettings").Bind(opt));
-
-// Add Services
-builder.Services.AddAssetApplication(configuration);
-
-// Disable automatic model state error response
-builder.Services.Configure<ApiBehaviorOptions>(options =>
+public class Program
 {
-    options.SuppressModelStateInvalidFilter = true;
-});
-
-// Add Controller and Validation filters
-builder.Services.AddControllers(options =>
-{
-    options.Filters.Add<ValidationFilter>();
-});
-builder.Services.AddValidatorsFromAssembly(typeof(ChangePasswordRequestValidator).Assembly);
-
-builder.Services.AddHttpContextAccessor();
-
-// Enable CORS
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(policy =>
+    public static void Main(string[] args)
     {
-        policy.WithOrigins("https://ntg-asset-management.vercel.app")
-              .AllowAnyMethod()
-              .AllowAnyHeader()
-              .AllowCredentials();
-    });
-});
+        var builder = WebApplication.CreateBuilder(args);
+        var configuration = builder.Configuration;
 
-// Exception handling and authentication
-builder.Services.AddGlobalExceptionHandling();
-builder.Services.AddCustomJwtAuthentication(configuration);
+        // Add Swagger
+        builder.Services.AddCustomSwagger();
 
-/// App configuration
-var app = builder.Build();
+        // Add Infrastructure
+        builder.Services.AddAssetInfrastructure(opt => 
+            configuration.GetSection("InfrastructureSettings").Bind(opt));
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Asset Management API v1");
-        c.DocumentTitle = "Asset Management API";
-        c.RoutePrefix = string.Empty;
-    });
+        // Disable automatic model state error response
+        builder.Services.Configure<ApiBehaviorOptions>(options =>
+        {
+            options.SuppressModelStateInvalidFilter = true;
+        });
+
+        // Add Controller and Validation filters
+        builder.Services.AddControllers(options =>
+        {
+            options.Filters.Add<ValidationFilter>();
+        });
+
+        builder.Services.AddHttpContextAccessor();
+
+        // Enable CORS
+        builder.Services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(policy =>
+            {
+                policy.WithOrigins("https://ntg-asset-management.vercel.app")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials();
+            });
+        });
+
+        // Exception handling and authentication
+        builder.Services.AddGlobalExceptionHandling();
+        builder.Services.AddCustomJwtAuthentication(configuration);
+
+        /// App configuration
+        var app = builder.Build();
+
+        // Configure the HTTP request pipeline.
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Asset Management API v1");
+                c.DocumentTitle = "Asset Management API";
+                c.RoutePrefix = string.Empty;
+            });
+        }
+
+        app.UseHttpsRedirection();
+
+        app.UseExceptionHandler();
+
+        app.UseCors();
+
+        app.UseAuthentication();
+
+        app.UseAuthorization();
+
+        app.MapControllers();
+
+        app.Run();
+    }
 }
-
-app.UseHttpsRedirection();
-
-app.UseExceptionHandler();
-
-app.UseCors();
-
-app.UseAuthentication();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();

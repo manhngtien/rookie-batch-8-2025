@@ -20,7 +20,8 @@ namespace AssetManagement.Infrastructure.Repositories
                 .Include(r => r.Assignment)
                 .ThenInclude(x => x.Asset)
                 .Include(r => r.AcceptedByUser)
-                .Include(r => r.RequestedByUser);
+                .Include(r => r.RequestedByUser)
+                .AsSplitQuery();
         }
         
         public async Task<ReturningRequest?> GetByIdAsync(int returningRequestId)
@@ -30,6 +31,7 @@ namespace AssetManagement.Infrastructure.Repositories
                 .ThenInclude(x => x.Asset)
                 .Include(r => r.AcceptedByUser)
                 .Include(r => r.RequestedByUser)
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(r => r.Id == returningRequestId);
         }
 

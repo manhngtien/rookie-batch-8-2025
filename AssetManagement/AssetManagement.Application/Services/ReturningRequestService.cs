@@ -7,8 +7,8 @@ using AssetManagement.Core.Entities;
 using AssetManagement.Core.Enums;
 using AssetManagement.Core.Exceptions;
 using AssetManagement.Core.Interfaces;
-using AssetManagement.Infrastructure.Exceptions;
-using AssetManagement.Infrastructure.Extensions;
+using AssetManagement.Application.Exceptions;
+using AssetManagement.Application.Extensions;
 
 namespace AssetManagement.Application.Services;
 
