@@ -1,4 +1,4 @@
-﻿namespace AssetManagement.Core.DTOs.Exceptions
+﻿namespace AssetManagement.Application.DTOs.Errors
 {
     public class ErrorResponse
     {

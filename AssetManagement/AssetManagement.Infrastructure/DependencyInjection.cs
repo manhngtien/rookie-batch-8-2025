@@ -1,6 +1,13 @@
+using AssetManagement.Application.Interfaces;
+using AssetManagement.Application.Interfaces.Auth;
+using AssetManagement.Application.Services;
+using AssetManagement.Application.Services.Auth;
+using AssetManagement.Application.Validators.Accounts;
 using AssetManagement.Core.Entities;
 using AssetManagement.Core.Interfaces;
-using AssetManagement.Infrastructure.Settings;
+using AssetManagement.Core.Interfaces.Services.Auth;
+using AssetManagement.Infrastructure.Services;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,7 +38,7 @@ public static class DependencyInjection
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
 
-        // Dependencies Services, Repos
+        // Dependencies Repos
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IAccountRepository, AccountRepository>();
@@ -39,6 +46,22 @@ public static class DependencyInjection
         services.AddScoped<IAssignmentRepository, AssignmentRepository>();
         services.AddScoped<IReturningRequestRepository, ReturningRequestRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
+
+        // Dependencies Services
+        services.AddValidatorsFromAssembly(typeof(ChangePasswordRequestValidator).Assembly);
+
+        services.AddScoped<ITokenService, JwtService>(_ =>
+        {
+            return new JwtService(settings.JwtOption);
+        });
+        
+        services.AddScoped<IIdentityService, IdentityService>();
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IAssignmentService, AssignmentService>();
+        services.AddScoped<IReturningRequestService, ReturningRequestService>();
+        services.AddScoped<IAssetService, AssetService>();
+        services.AddScoped<ICategoryService, CategoryService>();
+        services.AddScoped<IReportService, ReportService>();
         
         return services;
     }

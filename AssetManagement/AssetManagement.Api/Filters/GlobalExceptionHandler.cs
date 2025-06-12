@@ -1,6 +1,5 @@
 ﻿using AssetManagement.Application.DTOs.Errors;
-using AssetManagement.Core.DTOs.Exceptions;
-using AssetManagement.Infrastructure.Exceptions;
+using AssetManagement.Application.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 

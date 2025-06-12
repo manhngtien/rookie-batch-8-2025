@@ -5,7 +5,7 @@ using AssetManagement.Application.Mappers;
 using AssetManagement.Core.Enums;
 using AssetManagement.Core.Interfaces;
 using AssetManagement.Core.Shared;
-using AssetManagement.Infrastructure.Extensions;
+using AssetManagement.Application.Extensions;
 using ClosedXML.Excel;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,9 +24,9 @@ public class ReportService : IReportService
 
     public async Task<IList<ReportResponse>> GetReportsAsync(ReportParams reportParams)
     {
-        var categories = await _categoryRepository.GetAllAsync().ToListAsync();
+        var categories = _categoryRepository.GetAllAsync().ToList(); 
 
-        var assetCounts = await _assetRepository
+        var assetCounts = _assetRepository
             .GetAllAsync()
             .GroupBy(a => new { a.CategoryId, a.State })
             .Select(g => new
@@ -35,7 +35,7 @@ public class ReportService : IReportService
                 g.Key.State,
                 Count = g.Count()
             })
-            .ToListAsync();
+            .ToList();
 
         var reports = categories.Select(c =>
             {
@@ -55,10 +55,11 @@ public class ReportService : IReportService
             .Sort(reportParams.OrderBy)
             .Select(c => c.MapModelToResponse())
             .ToList();
-
+        
         return reports;
     }
 
+    // [BenchMark]
     public async Task<byte[]> ExportReportsToExcelAsync()
     {
         var reports = await _categoryRepository

@@ -1,7 +1,7 @@
 ﻿using AssetManagement.Core.Entities;
 using AssetManagement.Core.Enums;
 
-namespace AssetManagement.Infrastructure.Extensions
+namespace AssetManagement.Application.Extensions
 {
     public static class UserExtensions
     {

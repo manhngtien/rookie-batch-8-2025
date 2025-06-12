@@ -1,6 +1,5 @@
 ﻿using AssetManagement.Application.DTOs.Assignments;
 using AssetManagement.Core.Entities;
-using AssetManagement.Core.Enums;
 
 namespace AssetManagement.Application.Mappers
 {

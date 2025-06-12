@@ -1,6 +1,4 @@
-﻿using AssetManagement.Core.DTOs.Exceptions;
-
-namespace AssetManagement.Application.DTOs.Errors
+﻿namespace AssetManagement.Application.DTOs.Errors
 {
     public class ErrorWithBodyResponse<T> : ErrorResponse
     {

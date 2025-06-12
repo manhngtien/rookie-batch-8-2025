@@ -1,5 +1,4 @@
-﻿using AssetManagement.Api.Settings;
-using AssetManagement.Infrastructure.Settings.Options;
+﻿using AssetManagement.Infrastructure.Settings.Options;
 
 namespace AssetManagement.Infrastructure.Settings;
 

@@ -1,5 +1,4 @@
-﻿// Updated UserService.cs
-using AssetManagement.Application.DTOs.Users;
+﻿using AssetManagement.Application.DTOs.Users;
 using AssetManagement.Application.Helpers.Params;
 using AssetManagement.Application.Interfaces;
 using AssetManagement.Application.Mappers;
@@ -8,11 +7,9 @@ using AssetManagement.Core.Entities;
 using AssetManagement.Core.Enums;
 using AssetManagement.Core.Exceptions;
 using AssetManagement.Core.Interfaces;
-using AssetManagement.Infrastructure.Exceptions;
-using AssetManagement.Infrastructure.Extensions;
-using Microsoft.AspNetCore.Identity;
+using AssetManagement.Application.Exceptions;
+using AssetManagement.Application.Extensions;
 using System.Globalization;
-using System.Security;
 using System.Text;
 
 namespace AssetManagement.Application.Services
