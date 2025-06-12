@@ -10,11 +10,11 @@
 
     <ItemGroup>
         <PackageReference Include="coverlet.msbuild" Version="6.0.4">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0"/>
-        <PackageReference Include="NetArchTest.Rules" Version="1.3.2" />
+        <PackageReference Include="Moq" Version="4.20.72" />
         <PackageReference Include="xunit" Version="2.9.3"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="3.1.1">
             <PrivateAssets>all</PrivateAssets>
@@ -27,9 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\AssetManagement.Api\AssetManagement.Api.csproj" />
         <ProjectReference Include="..\..\AssetManagement.Application\AssetManagement.Application.csproj" />
-        <ProjectReference Include="..\..\AssetManagement.Core\AssetManagement.Core.csproj" />
-        <ProjectReference Include="..\..\AssetManagement.Infrastructure\AssetManagement.Infrastructure.csproj" />
     </ItemGroup>
+
 </Project>

@@ -6,7 +6,7 @@ pr:
   branches:
     include:
       - main
-      - test
+      - dev
 
   paths:
     include:
@@ -68,14 +68,14 @@ stages:
               projects: '$(solution)'
               arguments: '--configuration $(buildConfiguration) --no-restore'
           - task: DotNetCoreCLI@2
-            displayName: 'Test'
+            displayName: 'Run ArchTests, IntegrationTests, UnitTests'
             inputs:
               command: 'test'
               projects: 'AssetManagement/Tests/**/*.csproj'
               arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
             env:
               InfrastructureSettings__ConnectionStringsOption__Default: $(APP_CONNECTION_STRING)
-          - task: reportgenerator@5
+          - task: reportgenerator@4
             displayName: Generate Test Report
             inputs:
               reports: '$(Build.SourcesDirectory)/**/*.cobertura.xml'
