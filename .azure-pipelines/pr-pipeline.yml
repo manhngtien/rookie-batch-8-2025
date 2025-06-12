@@ -6,7 +6,7 @@ pr:
   branches:
     include:
       - main
-      - dev
+      - test
 
   paths:
     include:
@@ -44,7 +44,7 @@ stages:
         displayName: Build
         steps:
           - task: UseDotNet@2
-            displayName: 'USe .NET SDK 9.0.x'
+            displayName: 'Use .NET SDK 9.0.x'
             inputs:
               packageType: 'sdk'
               version: '9.x'
@@ -72,15 +72,17 @@ stages:
             inputs:
               command: 'test'
               projects: 'AssetManagement/Tests/**/*.csproj'
-              arguments: '/p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
-          - task: reportgenerator@4
+              arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
+            env:
+              InfrastructureSettings__ConnectionStringsOption__Default: $(APP_CONNECTION_STRING)
+          - task: reportgenerator@5
             displayName: Generate Test Report
             inputs:
               reports: '$(Build.SourcesDirectory)/**/*.cobertura.xml'
-              targetdir: '$(Build.SourcesDirectory)/CoverageResults' 
+              targetdir: '$(Build.Repository.LocalPath)/CoverageResults' 
               assemblyfilters: '+*.Api;+*.Application;+*.Core;+*.Infrastructure'
           - task: PublishCodeCoverageResults@1
             displayName: 'Publish Code Coverage'
             inputs:
-              codeCoverageTool: Cobertura
-              summaryFileLocation: '$(Build.SourcesDirectory)/CoverageResults/Cobertura.xml'
+              codeCoverageTool: 'Cobertura'
+              summaryFileLocation: '$(Build.Repository.LocalPath)/CoverageResults/Cobertura.xml'
