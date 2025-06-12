@@ -75,7 +75,7 @@ stages:
               arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
             env:
               InfrastructureSettings__ConnectionStringsOption__Default: $(APP_CONNECTION_STRING)
-          - task: reportgenerator@4
+          - task: reportgenerator@5
             displayName: Generate Test Report
             inputs:
               reports: '$(Build.SourcesDirectory)/**/*.cobertura.xml'
